@@ -21,7 +21,7 @@
 
 // 시트에 묶인 스크립트(확장 프로그램 → Apps Script)라면 비워 두면 된다. 따로 만든 스크립트면 시트 ID를 넣는다
 const SHEET_ID = '';
-const DEFAULT_ADMIN_PIN = 'CHANGE_ME'; // 공개 저장소용 자리표시자. 실제 비밀번호는 편집기에서 스크립트 속성 ADMIN_PIN 으로
+// 관리자 비밀번호: 편집기 → 프로젝트 설정 → 스크립트 속성에 ADMIN_PIN 을 직접 추가한다. 없으면 관리자 기능은 꺼진다.
 const TZ = 'Asia/Seoul';
 const LANGS = ['ko', 'en', 'ja'];
 const SITE_NAME = '오늘 미술 뭐 하지';
@@ -716,7 +716,8 @@ function setStatus_(key, idField, idVal, status) {
 
 function checkPin_(pin) {
   if (!pin) return false;
-  const saved = PropertiesService.getScriptProperties().getProperty('ADMIN_PIN') || DEFAULT_ADMIN_PIN;
+  const saved = PropertiesService.getScriptProperties().getProperty('ADMIN_PIN');
+  if (!saved) return false; // 비밀번호를 설정하기 전에는 아무도 관리자로 들어올 수 없다
   return String(pin) === saved;
 }
 
