@@ -428,7 +428,7 @@
 <footer class="site-footer container">
   <p class="copy-main" id="footerCopyright">영상과 도안의 저작권은 원작자에게 있으며, 이 사이트는 소개와 연결만 합니다.</p>
   <p id="footerHow"></p>
-  <p><span id="footerTakedownText"></span> <a id="footerMail" href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a><span class="needs-server"> · <button type="button" class="footer-link" id="btnTakedown" onclick="openTakedown()"></button></span></p>
+  <p><span id="footerTakedownText"></span> <a id="footerMail" href="mailto:abujangi@korea.kr">abujangi@korea.kr</a><span class="needs-server"> · <button type="button" class="footer-link" id="btnTakedown" onclick="openTakedown()"></button></span></p>
   <form class="takedown-form" id="takedownForm" hidden onsubmit="submitTakedown(event)">
     <label for="takedownText" id="takedownLabel"></label>
     <textarea id="takedownText" class="input-box" rows="3" maxlength="300" required></textarea>
@@ -653,7 +653,7 @@
   // Apps Script 웹 앱 주소. 비어 있으면 후기·추천·제안·관리 기능은 조용히 꺼지고 data/ 파일만으로 동작한다
   const GAS_DEFAULT_URL = "";
   // 원작자 삭제 요청을 받을 이메일 (배포 전에 바꾸기)
-  const CONTACT_EMAIL = "{{CONTACT_EMAIL}}";
+  const CONTACT_EMAIL = "abujangi@korea.kr";
   const LANGS = ["ko", "en", "ja"];
   const PAGE = 36;
   const KEY = { lang: "art_lang_v1", liked: "art_liked_v1", saved: "art_saved_v1", device: "art_device_v1",
