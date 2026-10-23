@@ -1,0 +1,3 @@
+# 원작자가 삭제를 요청하면 영상 ID 또는 채널 ID를 한 줄씩 적고 다시 발행합니다.
+# (today-art/optout.txt 에 적힌 것도 함께 반영됩니다)
+# 예) UCxxxxxxxxxxxxxxxxxxxxxx  # 2026-12-01 이메일 요청

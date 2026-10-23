@@ -1,0 +1,2380 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오늘 미술 뭐 하지?</title>
+  <meta name="description" content="선생님을 위한 미술 수업 영상 모음. 세계 여러 나라의 초등 미술 수업 영상을 학년·차시·준비 난이도·도안 여부로 찾고, 원작자의 영상과 도안 페이지로 바로 연결합니다." />
+  <link rel="canonical" href="https://goodjobman-eng.github.io/today-art/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="오늘 미술 뭐 하지?" />
+  <meta property="og:title" content="오늘 미술 뭐 하지?" />
+  <meta property="og:description" content="초등 미술 수업 영상을 학년·차시·도안 여부로 찾고, 원작자의 영상과 도안 페이지로 연결합니다." />
+  <meta property="og:url" content="https://goodjobman-eng.github.io/today-art/" />
+  <meta name="theme-color" content="#faf6ef" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3C8.8 3 3 8.4 3 15.2 3 21 7.6 24 11.4 24c2.2 0 2.6 1.4 2.6 2.6 0 1.6 1 2.4 2.6 2.4C23 29 29 23.4 29 16.4 29 9 23.2 3 16 3z' fill='%23e8590c'/%3E%3Ccircle cx='10' cy='13' r='2.4' fill='%23fff'/%3E%3Ccircle cx='15.5' cy='9' r='2.4' fill='%23ffd43b'/%3E%3Ccircle cx='21.5' cy='11.5' r='2.4' fill='%2374c0fc'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+  <style>
+    :root {
+      --bg: #faf6ef;
+      --surface: #ffffff;
+      --surface-subtle: #f4eee5;
+      --text-primary: #2a231d;
+      --text-secondary: #5c5148;
+      --text-muted: #85786c;
+      --border: #ece3d7;
+      --border-strong: #d9ccbc;
+      --ink: #2a231d;
+      --accent: #e8590c;
+      --accent-strong: #c2410c;
+      --accent-soft: #fff1e6;
+      --accent-line: #ffc9a3;
+      --blue: #1c6ea4;
+      --blue-soft: #eaf4fb;
+      --green: #2b8a3e;
+      --green-soft: #ebfbee;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 7px;
+      --header-h: 64px;
+      --panel-w: 272px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Meiryo", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background-color: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 48px;
+    }
+    button, input, select, textarea { font-family: inherit; }
+    a { color: var(--accent-strong); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    body.no-server .needs-server { display: none !important; }
+    body.no-server .modal-grid-2 { grid-template-columns: 1fr; }
+
+    /* ===== 머리 ===== */
+    .site-header { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+    .header-inner { height: var(--header-h); display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 20px; }
+    .site-title { display: inline-flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 800; letter-spacing: -0.03em; cursor: pointer; white-space: nowrap; background: none; border: none; color: var(--text-primary); padding: 0; }
+    .site-title svg { width: 26px; height: 26px; flex-shrink: 0; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .lang-toggle { display: inline-flex; background: var(--surface-subtle); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 2px; gap: 2px; }
+    .lang-btn { padding: 5px 10px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); background: transparent; border: none; border-radius: 5px; cursor: pointer; white-space: nowrap; }
+    .lang-btn.active { background: var(--surface); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+    .lang-short { display: none; }
+    .btn-admin { padding: 7px 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn-admin:hover { color: var(--text-primary); background: var(--surface-subtle); }
+    .btn-admin[hidden] { display: none; }
+
+    .search-bar-wrap { display: flex; gap: 8px; max-width: 640px; width: 100%; align-items: center; }
+    .search-field { position: relative; flex: 1; min-width: 0; }
+    .search-icon { position: absolute; left: 13px; top: 50%; width: 17px; height: 17px; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+    .search-input { width: 100%; height: 42px; padding: 0 14px 0 38px; font-size: 15px; color: var(--text-primary); background: var(--bg); border: 1px solid var(--border-strong); border-radius: var(--radius-md); outline: none; -webkit-appearance: none; appearance: none; }
+    .search-input:focus { background: var(--surface); border-color: var(--text-primary); }
+    .btn-search, .btn-reset { height: 42px; padding: 0 16px; font-size: 13.5px; font-weight: 600; border-radius: var(--radius-md); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+    .btn-search { color: #fff; background: var(--ink); border: 1px solid var(--ink); }
+    .btn-reset { color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border-strong); }
+    .btn-open-filters { display: none; }
+
+    /* ===== 본문: 필터 사이드바 + 결과 ===== */
+    .page-layout { display: grid; grid-template-columns: var(--panel-w) minmax(0, 1fr); gap: 28px; align-items: start; padding-top: 20px; }
+    .filter-panel { position: sticky; top: calc(var(--header-h) + 16px); max-height: calc(100vh - var(--header-h) - 32px); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .filter-panel-head { display: flex; align-items: center; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+    .filter-panel-title { font-size: 15px; font-weight: 800; flex: 1; outline: none; }
+    .filter-panel-reset { background: none; border: none; color: var(--accent-strong); font-size: 13px; font-weight: 600; cursor: pointer; padding: 4px 2px; }
+    .filter-panel-close { display: none; }
+    .filter-panel-body { overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 16px; }
+    .filter-panel-foot, .filter-scrim { display: none; }
+    .filter-line { padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .filter-line:last-child { border-bottom: none; }
+    .filter-label { font-size: 13px; font-weight: 700; color: var(--text-primary); padding-bottom: 8px; display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+    .filter-hint { font-size: 11px; font-weight: 500; color: var(--text-muted); }
+    .chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip { padding: 5px 10px; font-size: 12.5px; font-weight: 500; color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; cursor: pointer; user-select: none; white-space: nowrap; }
+    .chip:hover { border-color: var(--border-strong); color: var(--text-primary); }
+    .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); font-weight: 600; }
+    .chip.tpl.active { background: var(--accent); border-color: var(--accent); }
+    .chip-count { margin-left: 4px; font-size: 11px; font-weight: 500; opacity: 0.6; }
+
+    .results-col { min-width: 0; }
+    .intro { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 16px 18px; margin-bottom: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .intro-text { font-size: 14px; color: var(--text-secondary); line-height: 1.55; min-width: 0; }
+    .intro-text strong { color: var(--text-primary); }
+    .tpl-toggle { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 12px; font-size: 14.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border: 1.5px solid var(--accent-line); border-radius: 999px; cursor: pointer; white-space: nowrap; }
+    .tpl-toggle svg { width: 20px; height: 20px; }
+    .tpl-toggle .n { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #fff; color: var(--accent-strong); }
+    .tpl-toggle:hover { border-color: var(--accent); }
+    .tpl-toggle[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .tpl-toggle[aria-pressed="true"] .n { color: var(--accent-strong); }
+
+    .quick-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
+    .quick-label { font-size: 12.5px; color: var(--text-muted); font-weight: 600; margin-right: 2px; white-space: nowrap; }
+    .quick-chip { padding: 6px 12px; font-size: 13px; font-weight: 600; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; cursor: pointer; white-space: nowrap; }
+    .quick-chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+    .popular-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 12.5px; flex-wrap: nowrap; }
+    .popular-label { color: var(--text-muted); font-weight: 600; margin-right: 2px; flex-shrink: 0; }
+    .popular-wrap { display: flex; gap: 6px; flex-wrap: wrap; min-width: 0; }
+    .popular-tag { padding: 3px 10px; background: var(--surface-subtle); color: var(--text-secondary); border-radius: 999px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid transparent; white-space: nowrap; }
+    .popular-tag:hover { border-color: var(--border-strong); color: var(--text-primary); }
+
+    .results-toolbar { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 12px; gap: 12px; flex-wrap: wrap; }
+    .results-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .results-count { font-size: 15px; font-weight: 700; }
+    .results-count span { color: var(--accent-strong); }
+    .sync-status { font-size: 12px; color: var(--text-muted); }
+    .sync-status[data-state="fail"] { color: #b45309; }
+    .results-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .sort-select { height: 36px; padding: 0 10px; font-size: 13px; font-weight: 500; color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); outline: none; cursor: pointer; }
+    .btn-saved-filter { height: 36px; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; }
+    .btn-saved-filter.active { color: #a15c00; border-color: #f2c14e; background: #fff8e1; }
+    .btn-draw { height: 36px; padding: 0 14px; font-size: 13.5px; font-weight: 700; color: #fff; background: var(--blue); border: none; border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; }
+    .btn-propose { height: 36px; padding: 0 14px; font-size: 13.5px; font-weight: 600; color: var(--text-primary); background: var(--surface); border: 1px dashed var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; }
+    .btn-propose.solid { color: #fff; background: var(--accent); border: 1px solid var(--accent); }
+    .btn-propose:disabled, .btn-submit:disabled, .btn-admin:disabled { opacity: 0.6; cursor: wait; }
+
+    .active-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 14px; }
+    .active-filters[hidden] { display: none; }
+    .af-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 8px 5px 11px; font-size: 12.5px; font-weight: 600; color: var(--accent-strong); background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 999px; cursor: pointer; white-space: nowrap; }
+    .af-chip .af-x { font-size: 11px; opacity: 0.75; }
+    .af-clear { background: none; border: none; color: var(--text-muted); font-size: 12.5px; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 5px 4px; white-space: nowrap; }
+
+    .saved-tools { margin: 0 0 14px; padding: 12px 14px; background: #fff8e1; border: 1px solid #f2d27a; border-radius: var(--radius-md); }
+    .saved-tools[hidden] { display: none; }
+    .saved-tools-note { font-size: 12.5px; color: #7a4f00; margin-bottom: 8px; line-height: 1.5; }
+    .saved-tools-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tool-btn { height: 34px; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+    .tool-btn:hover { color: var(--text-primary); background: var(--surface-subtle); }
+    .tool-btn.draw { color: #fff; background: var(--blue); border-color: var(--blue); }
+
+    /* ===== 카드 ===== */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 16px; }
+    .card { position: relative; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+    .card:hover { border-color: var(--border-strong); box-shadow: 0 8px 24px rgba(60, 40, 20, 0.08); transform: translateY(-1px); }
+    .card-thumb { position: relative; aspect-ratio: 16 / 9; background: var(--surface-subtle); overflow: hidden; }
+    .card-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .thumb-dur { position: absolute; right: 8px; bottom: 8px; padding: 1px 6px; font-size: 11.5px; font-weight: 700; color: #fff; background: rgba(20, 14, 10, 0.78); border-radius: 4px; font-variant-numeric: tabular-nums; }
+    .tpl-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px 3px 7px; font-size: 12px; font-weight: 800; border-radius: 999px; white-space: nowrap; line-height: 1.4; }
+    .tpl-badge svg { width: 14px; height: 14px; }
+    .tpl-badge.free { color: #fff; background: var(--accent); }
+    .tpl-badge.paid { color: var(--accent-strong); background: #fff; border: 1.5px solid var(--accent); }
+    .tpl-badge.video { color: var(--text-secondary); background: #fff; border: 1px solid var(--border-strong); }
+    .card-thumb .tpl-badge { position: absolute; left: 8px; top: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.18); }
+    .card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .card-cats { display: flex; gap: 5px; flex-wrap: wrap; font-size: 11.5px; font-weight: 600; }
+    .region-tag { background: var(--blue-soft); color: var(--blue); padding: 2px 7px; border-radius: 4px; font-weight: 700; }
+    .cat-tag { background: var(--surface-subtle); color: var(--text-secondary); padding: 2px 7px; border-radius: 4px; }
+    .card-title { font-size: 16px; font-weight: 750; line-height: 1.38; letter-spacing: -0.01em; }
+    .card-desc { font-size: 13.5px; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .card-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--text-muted); margin-top: auto; padding-top: 4px; }
+    .card-meta b { color: var(--text-primary); font-weight: 650; }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px dashed var(--border); }
+    .card-rating { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .card-react { display: flex; gap: 6px; margin-left: auto; }
+    mark.hl { background: #ffe8a3; color: inherit; padding: 0 1px; border-radius: 2px; }
+
+    .btn-recommend { height: 32px; padding: 0 11px; font-size: 12.5px; font-weight: 600; color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+    .btn-recommend:hover { background: var(--surface-subtle); color: var(--text-primary); }
+    .btn-recommend.liked { color: var(--blue); border-color: #a5d0ec; background: var(--blue-soft); }
+    .btn-recommend.saved { color: #a15c00; border-color: #f2c14e; background: #fff8e1; }
+    .btn-recommend[aria-busy="true"] { opacity: 0.6; pointer-events: none; }
+
+    .load-more-wrap { margin-top: 28px; display: flex; justify-content: center; }
+    .btn-load-more { padding: 11px 28px; font-size: 13.5px; font-weight: 600; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); cursor: pointer; }
+    .btn-load-more:hover { border-color: var(--text-primary); }
+    .empty-box, .loading-box { grid-column: 1 / -1; padding: 52px 20px; text-align: center; color: var(--text-muted); font-size: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+    .empty-box p:first-child { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+    .empty-box button { margin-top: 14px; height: 36px; }
+
+    /* ===== 창(모달) ===== */
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(30, 22, 15, 0.5); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; overflow-y: auto; }
+    .modal-backdrop.open { display: flex; }
+    .modal-box { background: var(--surface); width: 100%; max-width: 980px; max-height: 92vh; overflow-y: auto; border-radius: var(--radius-lg); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18); padding: 24px; }
+    .modal-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+    .modal-top h2 { font-size: 21px; font-weight: 800; line-height: 1.35; letter-spacing: -0.02em; }
+    .modal-cat { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+    .modal-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; align-items: center; }
+    .btn-close { flex-shrink: 0; background: transparent; border: 1px solid var(--border); width: 34px; height: 34px; border-radius: var(--radius-sm); font-size: 15px; color: var(--text-secondary); cursor: pointer; }
+    .modal-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 22px; }
+    .panel-block { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 14px; background: var(--surface); }
+    .panel-title { font-size: 14px; font-weight: 750; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .panel-text { font-size: 14px; color: var(--text-primary); line-height: 1.7; white-space: pre-line; }
+    .panel-sub { font-size: 12.5px; color: var(--text-muted); }
+    .video-embed { position: relative; width: 100%; padding-bottom: 56.25%; background: #1d1712; border-radius: var(--radius-md); overflow: hidden; margin-bottom: 10px; }
+    .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .source-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px 10px; font-size: 12.5px; color: var(--text-muted); padding: 9px 12px; background: var(--bg); border-radius: var(--radius-sm); margin-bottom: 8px; }
+    .source-bar a { color: var(--accent-strong); font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .source-bar a.channel-link { color: var(--text-secondary); text-decoration: underline; font-weight: 700; }
+    .copy-note { font-size: 12px; color: var(--text-muted); line-height: 1.55; margin-bottom: 14px; padding-left: 10px; border-left: 3px solid var(--border-strong); }
+    .video-report-btn, .review-report-btn { background: none; border: none; padding: 2px 4px; font-size: 11.5px; color: var(--text-muted); text-decoration: underline; cursor: pointer; white-space: nowrap; }
+    .video-report-btn.armed, .review-report-btn.armed { color: #b91c1c; font-weight: 700; }
+
+    .tpl-box { border: 2px solid var(--accent-line); background: var(--accent-soft); }
+    .tpl-box.none { border: 1px solid var(--border); background: var(--bg); }
+    .tpl-box .panel-title { color: var(--accent-strong); }
+    .tpl-box.none .panel-title { color: var(--text-secondary); }
+    .link-note { font-size: 13.5px; line-height: 1.6; color: var(--text-primary); margin-bottom: 10px; }
+    .link-list { display: grid; gap: 8px; }
+    .link-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 14px; border-radius: var(--radius-md); text-decoration: none; font-weight: 700; font-size: 14px; }
+    .link-btn small { display: block; font-size: 11.5px; font-weight: 500; opacity: 0.85; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .link-btn > span { min-width: 0; }
+    .link-btn.tpl { color: #fff; background: var(--accent); }
+    .link-btn.tpl:hover { background: var(--accent-strong); }
+    .link-btn.rel { color: var(--text-primary); background: #fff; border: 1px solid var(--border-strong); }
+    .link-btn.rel:hover { border-color: var(--text-primary); }
+    .link-btn .arr { flex-shrink: 0; font-size: 16px; }
+    .link-warn { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+
+    .flow { display: flex; flex-wrap: wrap; gap: 6px 4px; align-items: center; }
+    .flow .step { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; font-size: 13.5px; font-weight: 600; background: var(--surface-subtle); border-radius: 999px; }
+    .flow .step i { font-style: normal; font-size: 11px; font-weight: 800; color: #fff; background: var(--ink); width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; }
+    .flow .arrow { color: var(--text-muted); font-weight: 700; padding: 0 2px; }
+    .mat-list { display: grid; gap: 8px; font-size: 14px; line-height: 1.6; }
+    .mat-list dt { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+    .info-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .info-table th { text-align: left; font-weight: 600; color: var(--text-muted); padding: 6px 10px 6px 0; width: 34%; vertical-align: top; white-space: nowrap; }
+    .info-table td { padding: 6px 0; color: var(--text-primary); font-weight: 600; }
+    .info-table tr + tr th, .info-table tr + tr td { border-top: 1px solid var(--border); }
+    .tag-list { display: flex; flex-wrap: wrap; gap: 5px; }
+    .tag { padding: 2px 9px; font-size: 12px; color: var(--text-secondary); background: var(--surface-subtle); border-radius: 999px; cursor: pointer; border: none; }
+    .tag:hover { color: var(--text-primary); }
+    .skeleton { color: var(--text-muted); font-size: 13px; }
+
+    .review-card { border-top: 1px solid var(--border); padding: 12px 0; font-size: 13px; }
+    .review-card:first-child { border-top: none; padding-top: 0; }
+    .review-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; flex-wrap: wrap; }
+    .review-meta strong { color: var(--text-primary); }
+    .review-del-btn { margin-left: 6px; padding: 1px 7px; font-size: 11px; font-weight: 600; color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; cursor: pointer; }
+    .similar-list { display: grid; gap: 6px; }
+    .similar-item { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; align-items: center; text-align: left; width: 100%; padding: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; }
+    .similar-item:hover { border-color: var(--border-strong); background: var(--surface); }
+    .similar-item img { width: 96px; height: 54px; object-fit: cover; border-radius: 5px; background: var(--surface-subtle); }
+    .similar-meta { display: block; font-size: 11.5px; color: var(--text-muted); font-weight: 600; }
+    .similar-title { display: block; font-size: 13.5px; color: var(--text-primary); font-weight: 700; line-height: 1.35; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .form-field { margin-bottom: 10px; }
+    .form-field label, .form-row label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+    .input-box { width: 100%; padding: 8px 10px; font-size: 13.5px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); color: var(--text-primary); background: var(--surface); }
+    .btn-submit { width: 100%; padding: 10px; font-size: 13.5px; font-weight: 700; color: #fff; background: var(--ink); border: none; border-radius: var(--radius-sm); cursor: pointer; }
+    .btn-submit:hover { background: #4a3d33; }
+    .admin-tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .admin-tab { padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; }
+    .admin-tab.active { color: var(--text-primary); border-bottom-color: var(--text-primary); }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: #fff; padding: 12px 18px; border-radius: var(--radius-md); font-size: 13.5px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 2000; display: none; max-width: 420px; }
+
+    .site-footer { margin-top: 48px; padding-top: 22px; padding-bottom: 24px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-muted); line-height: 1.75; }
+    .site-footer .copy-main { font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px; }
+    .footer-link { background: none; border: none; padding: 0; font: inherit; color: var(--accent-strong); text-decoration: underline; cursor: pointer; }
+    .takedown-form { display: grid; gap: 8px; max-width: 520px; margin-top: 10px; }
+    .takedown-form[hidden] { display: none; }
+    .takedown-form label { font-size: 12.5px; color: var(--text-secondary); font-weight: 600; }
+
+    /* ===== 태블릿·휴대폰 ===== */
+    @media (max-width: 1023px) {
+      :root { --header-h: 108px; }
+      .header-inner { height: auto; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "title right" "search search"; gap: 8px 12px; padding-top: 10px; padding-bottom: 10px; }
+      .site-title { grid-area: title; font-size: 18px; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+      .header-right { grid-area: right; gap: 6px; }
+      .search-bar-wrap { grid-area: search; max-width: none; }
+      .search-bar-wrap .btn-search, .search-bar-wrap .btn-reset { display: none; }
+      .btn-open-filters { display: inline-flex; align-items: center; gap: 6px; height: 42px; padding: 0 14px; font-size: 14px; font-weight: 700; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-md); cursor: pointer; flex-shrink: 0; }
+      .btn-open-filters svg { width: 18px; height: 18px; }
+      .btn-open-filters.has-filters { border-color: var(--accent); color: var(--accent-strong); }
+      .filter-badge { min-width: 19px; height: 19px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+      .filter-badge[hidden] { display: none; }
+      .page-layout { display: block; padding-top: 12px; }
+      .filter-panel { position: fixed; z-index: 1200; top: 0; bottom: 0; left: 0; width: min(88vw, 400px); max-height: none; border-radius: 0 16px 16px 0; border: none; transform: translateX(-102%); transition: transform .24s ease; box-shadow: 8px 0 32px rgba(30, 22, 15, 0.2); visibility: hidden; }
+      body.filters-open .filter-panel { transform: none; visibility: visible; }
+      .filter-scrim { display: block; position: fixed; inset: 0; z-index: 1150; background: rgba(30, 22, 15, 0.45); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+      body.filters-open .filter-scrim { opacity: 1; pointer-events: auto; }
+      body.filters-open { overflow: hidden; }
+      .filter-panel-head { padding-top: max(14px, env(safe-area-inset-top)); }
+      .filter-panel-close { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-secondary); font-size: 15px; cursor: pointer; }
+      .filter-panel .chip { padding: 7px 12px; font-size: 13.5px; }
+      .filter-panel-foot { display: block; padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom)); border-top: 1px solid var(--border); }
+      .btn-show-results { width: 100%; height: 48px; border: none; border-radius: var(--radius-md); background: var(--ink); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; }
+      .popular-row, .quick-row { flex-wrap: nowrap; overflow-x: auto; margin-left: -20px; margin-right: -20px; padding: 2px 20px; scrollbar-width: none; }
+      .popular-row::-webkit-scrollbar, .quick-row::-webkit-scrollbar { display: none; }
+      .popular-wrap { flex-wrap: nowrap; }
+      .active-filters { flex-wrap: nowrap; overflow-x: auto; margin: 0 -20px 12px; padding: 0 20px; scrollbar-width: none; }
+      .modal-grid { grid-template-columns: 1fr; gap: 0; }
+    }
+    @media (max-width: 640px) {
+      .container { padding: 0 16px; }
+      .page-layout { padding-top: 12px; }
+      .popular-row, .quick-row, .active-filters { margin-left: -16px; margin-right: -16px; padding-left: 16px; padding-right: 16px; }
+      .lang-long { display: none; }
+      .lang-short { display: inline; }
+      .lang-btn { padding: 5px 8px; min-width: 30px; }
+      .btn-admin { padding: 6px 9px; font-size: 12.5px; }
+      .intro { padding: 12px 14px; }
+      .intro-text { font-size: 13px; }
+      .tpl-toggle { width: 100%; justify-content: center; }
+      .results-toolbar { margin: 10px 0; flex-direction: column; align-items: stretch; gap: 8px; }
+      .results-right { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .results-right > * { width: 100%; }
+      .results-right .btn-draw, .results-right .btn-propose { grid-column: 1 / -1; height: 40px; }
+      .cards-grid { grid-template-columns: 1fr; gap: 12px; }
+      .toast { left: 16px; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); text-align: center; max-width: none; }
+      .modal-backdrop { padding: 0; align-items: flex-end; }
+      .modal-box { max-height: 100dvh; height: 100dvh; border-radius: 0; padding: 0 16px 24px; }
+      .modal-top { position: sticky; top: 0; z-index: 2; background: var(--surface); margin: 0 -16px 14px; padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); }
+      .modal-top h2 { font-size: 18px; }
+      .form-row { grid-template-columns: 1fr; }
+      .panel-block { padding: 14px; }
+      .info-table th { width: 38%; }
+    }
+    @media (prefers-reduced-motion: reduce) { .filter-panel, .filter-scrim, .card { transition: none; } }
+  </style>
+</head>
+<body class="no-server">
+
+<header class="site-header">
+  <div class="container header-inner">
+    <button type="button" class="site-title" onclick="resetFilters()" aria-label="처음으로">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3C8.8 3 3 8.4 3 15.2 3 21 7.6 24 11.4 24c2.2 0 2.6 1.4 2.6 2.6 0 1.6 1 2.4 2.6 2.4C23 29 29 23.4 29 16.4 29 9 23.2 3 16 3z" fill="#e8590c"/><circle cx="10" cy="13" r="2.4" fill="#fff"/><circle cx="15.5" cy="9" r="2.4" fill="#ffd43b"/><circle cx="21.5" cy="11.5" r="2.4" fill="#74c0fc"/><circle cx="22" cy="18" r="2.4" fill="#8ce99a"/></svg>
+      <span id="siteTitleText">오늘 미술 뭐 하지?</span>
+    </button>
+    <div class="search-bar-wrap" role="search">
+      <div class="search-field">
+        <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.75" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input type="search" id="searchInput" class="search-input" enterkeyhint="search" autocomplete="off"
+          oninput="onSearchInput()" oncompositionend="onSearchInput()"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();recordSearchQuery(this.value);clearTimeout(_searchTimer);resetPageAndRender();this.blur();}" />
+      </div>
+      <button type="button" class="btn-search" id="btnSearchExec" onclick="recordSearchQuery(document.getElementById('searchInput').value);clearTimeout(_searchTimer);resetPageAndRender();">검색</button>
+      <button type="button" class="btn-reset" id="btnResetText" onclick="resetFilters()">초기화</button>
+      <button type="button" class="btn-open-filters" id="btnOpenFilters" onclick="openFilterPanel()" aria-controls="filterPanel" aria-expanded="false">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M6 10h8M8.5 15h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span id="btnOpenFiltersText">필터</span>
+        <span class="filter-badge" id="filterBadge" hidden>0</span>
+      </button>
+    </div>
+    <div class="header-right">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" class="lang-btn active" id="langBtnKo" onclick="setLanguage('ko')"><span class="lang-long">한국어</span><span class="lang-short">한</span></button>
+        <button type="button" class="lang-btn" id="langBtnEn" onclick="setLanguage('en')"><span class="lang-long">English</span><span class="lang-short">EN</span></button>
+        <button type="button" class="lang-btn" id="langBtnJa" onclick="setLanguage('ja')"><span class="lang-long">日本語</span><span class="lang-short">日</span></button>
+      </div>
+      <button type="button" class="btn-admin" id="adminHeaderBtn" onclick="openAdminModal()" hidden>관리자</button>
+    </div>
+  </div>
+</header>
+
+<div class="container page-layout">
+  <div class="filter-scrim" id="filterScrim" onclick="closeFilterPanel()"></div>
+  <aside class="filter-panel" id="filterPanel" aria-labelledby="filterPanelTitle">
+    <div class="filter-panel-head">
+      <h2 class="filter-panel-title" id="filterPanelTitle" tabindex="-1">필터</h2>
+      <button type="button" class="filter-panel-reset" id="filterPanelReset" onclick="resetFilters()">초기화</button>
+      <button type="button" class="filter-panel-close" id="filterPanelClose" onclick="closeFilterPanel()" aria-label="닫기">✕</button>
+    </div>
+    <div class="filter-panel-body" id="filterBody"></div>
+    <div class="filter-panel-foot">
+      <button type="button" class="btn-show-results" id="btnShowResults" onclick="closeFilterPanel()">결과 보기</button>
+    </div>
+  </aside>
+
+  <main class="results-col">
+    <section class="intro">
+      <p class="intro-text" id="introText"></p>
+      <button type="button" class="tpl-toggle" id="btnTplOnly" aria-pressed="false" onclick="toggleTemplateOnly()">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>
+        <span id="tplOnlyText">도안 있는 수업만</span><span class="n" id="tplOnlyCount">0</span>
+      </button>
+    </section>
+
+    <div class="quick-row" id="quickRow"></div>
+    <div class="popular-row">
+      <span class="popular-label" id="popularLabelText">추천 검색어</span>
+      <div id="popularKeywordsWrap" class="popular-wrap"></div>
+    </div>
+
+    <div class="results-toolbar">
+      <div class="results-left">
+        <div class="results-count" id="resultsCountText"></div>
+        <span id="syncStatus" class="sync-status"></span>
+      </div>
+      <div class="results-right">
+        <select id="sortSelect" class="sort-select" onchange="resetPageAndRender()" aria-label="정렬"></select>
+        <button type="button" class="btn-saved-filter" id="btnSavedFilter" onclick="toggleSavedOnly()" aria-pressed="false"></button>
+        <button type="button" class="btn-draw" id="btnDraw" onclick="drawActivity()"></button>
+        <button type="button" class="btn-propose needs-server" id="btnProposeText" onclick="openAddActivityModal()"></button>
+      </div>
+    </div>
+
+    <div class="active-filters" id="activeFilters" hidden></div>
+    <div class="saved-tools" id="savedTools" hidden>
+      <p class="saved-tools-note" id="savedToolsNote"></p>
+      <div class="saved-tools-btns">
+        <button type="button" class="tool-btn" id="btnSavedLink" onclick="copySavedLink()"></button>
+        <button type="button" class="tool-btn" id="btnSavedFile" onclick="downloadSavedList()"></button>
+      </div>
+    </div>
+
+    <section class="cards-grid" id="cardsGrid" aria-live="polite"></section>
+    <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+      <button type="button" class="btn-load-more" id="btnLoadMore" onclick="loadMoreItems()"></button>
+    </div>
+  </main>
+</div>
+
+<footer class="site-footer container">
+  <p class="copy-main" id="footerCopyright">영상과 도안의 저작권은 원작자에게 있으며, 이 사이트는 소개와 연결만 합니다.</p>
+  <p id="footerHow"></p>
+  <p><span id="footerTakedownText"></span> <a id="footerMail" href="mailto:{{CONTACT_EMAIL}}">{{CONTACT_EMAIL}}</a><span class="needs-server"> · <button type="button" class="footer-link" id="btnTakedown" onclick="openTakedown()"></button></span></p>
+  <form class="takedown-form" id="takedownForm" hidden onsubmit="submitTakedown(event)">
+    <label for="takedownText" id="takedownLabel"></label>
+    <textarea id="takedownText" class="input-box" rows="3" maxlength="300" required></textarea>
+    <button type="submit" class="btn-submit" id="btnTakedownSend" style="width:auto; padding:9px 18px;"></button>
+  </form>
+</footer>
+
+<!-- 수업 상세 -->
+<div class="modal-backdrop" id="detailModal" onclick="if(event.target===this)closeDetailModal()">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-top">
+      <div style="min-width:0;">
+        <div class="modal-cat" id="modalCategoryLine"></div>
+        <h2 id="modalTitle"></h2>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+      <button class="btn-close" onclick="closeDetailModal()" id="btnCloseDetail" aria-label="닫기">✕</button>
+    </div>
+    <div class="modal-grid">
+      <div>
+        <div class="video-embed" id="modalVideoBox"></div>
+        <div class="source-bar" id="modalSourceBar"></div>
+        <p class="copy-note" id="modalCopyNote"></p>
+        <div id="modalTemplateBox"></div>
+        <div class="panel-block">
+          <div class="panel-title" id="tSummary"></div>
+          <p class="panel-text" id="modalSummary"></p>
+        </div>
+        <div class="panel-block">
+          <div class="panel-title" id="tObjective"></div>
+          <p class="panel-text" id="modalObjective"></p>
+        </div>
+      </div>
+      <div>
+        <div class="panel-block">
+          <div class="panel-title" id="tOutline"></div>
+          <div class="flow" id="modalOutline"></div>
+        </div>
+        <div class="panel-block">
+          <div class="panel-title" id="tMaterials"></div>
+          <dl class="mat-list" id="modalMaterials"></dl>
+        </div>
+        <div class="panel-block">
+          <div class="panel-title" id="tPrep"></div>
+          <p class="panel-text" id="modalPrep"></p>
+        </div>
+        <div class="panel-block">
+          <div class="panel-title" id="tTips"></div>
+          <p class="panel-text" id="modalTips"></p>
+        </div>
+        <div class="panel-block">
+          <div class="panel-title" id="tInfo"></div>
+          <table class="info-table"><tbody id="modalInfo"></tbody></table>
+          <div class="tag-list" id="modalTags" style="margin-top:10px;"></div>
+          <div style="margin-top:10px;" class="needs-server"><button type="button" class="tool-btn" id="btnProposeEdit" onclick="openEditModal()"></button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-grid modal-grid-2">
+      <div class="needs-server">
+        <div class="panel-block">
+          <div class="panel-title" id="modalReviewCountTitle"></div>
+          <div id="modalReviewsList"></div>
+        </div>
+        <div class="panel-block">
+          <div class="panel-title" id="modalWriteReviewTitle"></div>
+          <form id="reviewForm" onsubmit="submitReview(event)">
+            <div class="form-row">
+              <div><label id="lblRevTeacher" for="revTeacher"></label><input type="text" id="revTeacher" class="input-box" maxlength="40" required /></div>
+              <div><label id="lblRevGrade" for="revGrade"></label><select id="revGrade" class="input-box"></select></div>
+            </div>
+            <div class="form-row">
+              <div><label id="lblRevRating" for="revRating"></label><select id="revRating" class="input-box"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
+              <div><label id="lblRevSession" for="revSessionType"></label><select id="revSessionType" class="input-box"></select></div>
+            </div>
+            <div class="form-field"><label id="lblRevCaution" for="revCaution"></label><textarea id="revCaution" class="input-box" rows="2" maxlength="1000"></textarea></div>
+            <div class="form-field"><label id="lblRevTip" for="revUpgradeTip"></label><textarea id="revUpgradeTip" class="input-box" rows="2" maxlength="1000"></textarea></div>
+            <button type="submit" class="btn-submit" id="btnSubmitReview"></button>
+          </form>
+        </div>
+      </div>
+      <div>
+        <div class="panel-block" id="modalSimilarPanel" hidden>
+          <div class="panel-title" id="modalSimilarTitle"></div>
+          <div id="modalSimilarList" class="similar-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 새 수업 제안 -->
+<div class="modal-backdrop" id="addActivityModal" onclick="if(event.target===this)closeAddActivityModal()">
+  <div class="modal-box" style="max-width:640px;">
+    <div class="modal-top">
+      <div>
+        <h2 id="proposeModalTitle"></h2>
+        <p id="proposeModalSub" class="panel-sub" style="margin-top:4px;"></p>
+      </div>
+      <button class="btn-close" onclick="closeAddActivityModal()" aria-label="닫기">✕</button>
+    </div>
+    <form onsubmit="submitNewActivity(event)">
+      <div class="form-field"><label id="lblNewUrl" for="newYoutubeUrl"></label><input type="url" id="newYoutubeUrl" class="input-box" placeholder="https://www.youtube.com/watch?v=..." required /></div>
+      <div class="form-field"><label id="lblNewTitle" for="newTitle"></label><input type="text" id="newTitle" class="input-box" maxlength="200" required /></div>
+      <div class="form-row">
+        <div><label id="lblNewRegion" for="newRegion"></label><select id="newRegion" class="input-box"></select></div>
+        <div><label id="lblNewArea" for="newArea"></label><select id="newArea" class="input-box"></select></div>
+      </div>
+      <div class="form-row">
+        <div><label id="lblNewType" for="newType"></label><select id="newType" class="input-box"></select></div>
+        <div><label id="lblNewGrade" for="newGrade"></label><select id="newGrade" class="input-box"></select></div>
+      </div>
+      <div class="form-row">
+        <div><label id="lblNewPeriods" for="newPeriods"></label><select id="newPeriods" class="input-box"></select></div>
+        <div><label id="lblNewTpl" for="newTpl"></label><select id="newTpl" class="input-box"></select></div>
+      </div>
+      <div class="form-field"><label id="lblNewTplLink" for="newTplLink"></label><input type="url" id="newTplLink" class="input-box" placeholder="https://" /></div>
+      <div class="form-field"><label id="lblNewMat" for="newMat"></label><input type="text" id="newMat" class="input-box" maxlength="300" required /></div>
+      <div class="form-field"><label id="lblNewSummary" for="newSummary"></label><textarea id="newSummary" class="input-box" rows="3" maxlength="1500" required></textarea></div>
+      <div class="form-field"><label id="lblNewTips" for="newTips"></label><textarea id="newTips" class="input-box" rows="2" maxlength="1000"></textarea></div>
+      <button type="submit" class="btn-submit" id="btnSubmitPropose"></button>
+    </form>
+  </div>
+</div>
+
+<!-- 설명 수정 제안 -->
+<div class="modal-backdrop" id="editModal" style="z-index:1100;" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal-box" style="max-width:640px;">
+    <div class="modal-top">
+      <div>
+        <h2 id="editModalTitle"></h2>
+        <p id="editModalSub" class="panel-sub" style="margin-top:4px;"></p>
+      </div>
+      <button class="btn-close" onclick="closeEditModal()" aria-label="닫기">✕</button>
+    </div>
+    <form onsubmit="submitEditProposal(event)">
+      <div id="editFields"></div>
+      <div class="form-row">
+        <div><label id="lblEditProposer" for="editProposer"></label><input type="text" id="editProposer" class="input-box" maxlength="40" required /></div>
+        <div><label id="lblEditReason" for="editReason"></label><input type="text" id="editReason" class="input-box" maxlength="500" /></div>
+      </div>
+      <button type="submit" class="btn-submit" id="btnSubmitEdit"></button>
+    </form>
+  </div>
+</div>
+
+<!-- 관리자 (한국어 전용) -->
+<div class="modal-backdrop" id="adminModal" onclick="if(event.target===this)closeAdminModal()">
+  <div class="modal-box" style="max-width:820px;">
+    <div class="modal-top">
+      <h2>관리자</h2>
+      <button class="btn-close" onclick="closeAdminModal()" aria-label="닫기">✕</button>
+    </div>
+    <div class="panel-block" style="background:var(--bg);">
+      <div class="panel-title">시트 연결 (Apps Script 웹 앱 주소)</div>
+      <p class="panel-sub" style="margin-bottom:8px;">비어 있으면 후기·추천·제안·관리 기능이 꺼지고, 저장소의 data/ 파일만으로 사이트가 동작합니다. 여기서 넣은 주소는 이 브라우저에만 저장됩니다. 모든 방문자에게 켜려면 index.html의 <code>GAS_DEFAULT_URL</code>을 채우세요.</p>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input type="url" id="gasWebAppUrlInput" class="input-box" style="flex:1; min-width:220px;" placeholder="https://script.google.com/macros/s/.../exec" />
+        <button class="btn-admin" onclick="saveGasWebAppUrl()">저장</button>
+        <button class="btn-admin" onclick="exportCurrentDbToCsv()">현재 목록 CSV</button>
+      </div>
+      <div id="gasSyncStatusMsg" style="margin-top:8px; font-size:12px; color:var(--blue); font-weight:600;"></div>
+    </div>
+    <div id="adminAuthBox" class="panel-block needs-server">
+      <div class="panel-title">관리자 인증</div>
+      <p class="panel-sub" style="margin-bottom:10px;">비밀번호는 Apps Script에서 확인합니다. 이 페이지 소스에는 저장되지 않습니다.</p>
+      <form onsubmit="event.preventDefault(); verifyAdminPin();" style="display:flex; gap:8px; max-width:360px;">
+        <input type="password" id="adminPinInput" class="input-box" placeholder="관리자 비밀번호" autocomplete="current-password" />
+        <button type="submit" class="btn-submit" style="width:90px;">확인</button>
+      </form>
+      <div id="adminAuthError" style="color:#b91c1c; font-size:12px; font-weight:600; margin-top:6px;"></div>
+    </div>
+    <div id="adminPanelContent" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px;">
+        <p class="panel-sub">로그인한 동안 수업 상세의 후기마다 <strong>삭제</strong> 버튼이 보입니다.</p>
+        <button type="button" class="btn-admin" onclick="adminLogout()">로그아웃</button>
+      </div>
+      <div class="admin-tabs">
+        <button class="admin-tab active" id="tabBtnPending" onclick="switchAdminTab('pending')">새 수업 승인</button>
+        <button class="admin-tab" id="tabBtnEdits" onclick="switchAdminTab('edits')">수정 제안 승인</button>
+        <button class="admin-tab" id="tabBtnReports" onclick="switchAdminTab('reports')">신고·삭제 요청</button>
+        <button class="admin-tab" id="tabBtnSecurity" onclick="switchAdminTab('security')">비밀번호·보관</button>
+      </div>
+      <div id="adminTabPending"><div id="pendingListContainer"></div></div>
+      <div id="adminTabEdits" style="display:none;">
+        <p class="panel-sub" style="margin-bottom:12px;">승인하면 시트 「수업」 탭의 해당 칸이 바뀌고, 나머지 두 언어는 자동 번역되어 함께 바뀝니다. 사이트에는 다음 데이터 발행 때 반영됩니다.</p>
+        <div id="editListContainer"></div>
+      </div>
+      <div id="adminTabReports" style="display:none;">
+        <p class="panel-sub" style="margin-bottom:10px;">후기는 서로 다른 기기 3곳에서 신고되면 처리 전까지 자동으로 숨겨집니다. 원작자 삭제 요청은 시트에서 해당 수업의 status를 「숨김」으로 바꾸거나 optout.txt에 영상·채널 ID를 적은 뒤 데이터를 다시 발행하세요.</p>
+        <div id="reportListContainer"></div>
+      </div>
+      <div id="adminTabSecurity" style="display:none;">
+        <div class="panel-block">
+          <div class="panel-title">관리자 비밀번호 변경</div>
+          <div style="display:flex; gap:8px; max-width:440px; flex-wrap:wrap;">
+            <input type="password" id="newAdminPinInput" class="input-box" style="flex:1;" placeholder="새 비밀번호 (4글자 이상)" autocomplete="new-password" />
+            <button type="button" class="btn-submit" style="width:130px;" onclick="changeAdminPassword()">변경</button>
+          </div>
+          <div id="pinChangeStatusMsg" style="margin-top:8px; font-size:12px; color:var(--blue); font-weight:600;"></div>
+        </div>
+        <div class="panel-block">
+          <div class="panel-title">연도별 후기·추천 기록 보관</div>
+          <p class="panel-sub" style="margin-bottom:10px;">해가 바뀌면 지난해 후기와 추천·저장 기록을 새 구글 시트 파일로 옮깁니다. 옮긴 후기도 사이트에 계속 보입니다.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <button type="button" class="btn-admin" id="btnArchiveYear" onclick="archiveLastYear()"></button>
+            <span id="archiveList" class="panel-sub"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toastBox" class="toast" role="status"></div>
+
+<script>
+  /* =========================================================================
+     0. 설정
+     ========================================================================= */
+  // Apps Script 웹 앱 주소. 비어 있으면 후기·추천·제안·관리 기능은 조용히 꺼지고 data/ 파일만으로 동작한다
+  const GAS_DEFAULT_URL = "";
+  // 원작자 삭제 요청을 받을 이메일 (배포 전에 바꾸기)
+  const CONTACT_EMAIL = "{{CONTACT_EMAIL}}";
+  const LANGS = ["ko", "en", "ja"];
+  const PAGE = 36;
+  const KEY = { lang: "art_lang_v1", liked: "art_liked_v1", saved: "art_saved_v1", device: "art_device_v1",
+    popular: "art_popular_v1", gas: "art_gas_url_v1", admin: "art_admin_session", hiddenRev: "art_hidden_reviews_v1" };
+
+  let currentLang = "ko";
+
+  /* =========================================================================
+     1. 3개 국어 문구
+     ========================================================================= */
+  const UI = {
+    ko: {
+      siteTitle: "오늘 미술 뭐 하지?",
+      docTitle: "오늘 미술 뭐 하지? · 초등 미술 수업 영상 모음",
+      searchPh: "제목·내용·준비물·태그 검색 (예: 색종이, 명화, 판화, 추석)",
+      search: "검색", reset: "초기화", filter: "필터", close: "닫기", show: n => `${n.toLocaleString()}개 보기`, clearAll: "모두 지우기",
+      admin: "관리자", popular: "추천 검색어", quick: "바로가기",
+      intro: (n, t) => `세계 여러 나라의 초등 미술 수업 영상 <strong>${n.toLocaleString()}개</strong>를 학년·차시·준비물로 골라 보세요. 그중 <strong>${t.toLocaleString()}개</strong>는 원작자가 도안을 함께 나눠요.`,
+      tplOnly: "도안 있는 수업만", tplOnlyOn: "도안 있는 수업만 보는 중",
+      results: n => `미술 수업 <span>${n.toLocaleString()}</span>개`,
+      loading: "미술 수업을 불러오는 중…", loadFail: "수업 목록을 불러오지 못했어요. 잠시 후 새로고침해 주세요.",
+      syncOk: at => at ? `업데이트 ${at}` : "", syncFail: "목록 연결 안 됨",
+      sortDefault: "기본순 (도안 먼저)", sortPopular: "인기순", sortNewest: "새로 들어온 순", sortShort: "영상 짧은 순", sortLong: "영상 긴 순",
+      saved: n => `★ 내 저장 ${n}`, draw: "오늘 미술 뭐 하지? 뽑기", drawAgain: "다른 수업 뽑기", drawNone: "조건에 맞는 수업이 없어요. 필터를 조금 풀어 보세요.",
+      propose: "새 수업 제안",
+      more: (rem, total) => `더 보기 (남은 ${rem.toLocaleString()}개 / 전체 ${total.toLocaleString()}개)`,
+      emptyTitle: "조건에 맞는 미술 수업이 없어요.", emptySub: "검색어를 바꾸거나 필터를 줄여 보세요.",
+      savedEmptyTitle: "아직 저장한 수업이 없어요.", savedEmptySub: "마음에 드는 수업에서 ☆ 저장을 누르면 여기에 모여요. 저장 목록은 이 기기에 보관돼요.", showAll: "전체 수업 보기",
+      savedOnly: "★ 내 저장만", searchChip: q => `“${q}”`,
+      grade: "학년", periods: "차시", prep: "준비", cleanup: "정리",
+      like: n => n === null ? "추천" : `추천 ${n}`, save: n => n === null ? "저장" : `저장 ${n}`,
+      share: "공유", shareCopied: "링크를 복사했어요. 카톡이나 메신저에 붙여 넣으세요.",
+      toastLike: "추천했어요.", toastUnlike: "추천을 취소했어요.", toastSave: "내 저장에 담았어요.", toastUnsave: "저장을 취소했어요.",
+      toastSendFail: "보내지 못했어요. 잠시 후 다시 해 주세요.",
+      rating: "평점", reviews: "후기",
+      // 상세
+      sourceLabel: "출처", openYoutube: "유튜브에서 원본 영상 보기 ↗",
+      copyNote: "영상과 도안의 저작권은 원작자에게 있으며, 이 사이트는 소개와 연결만 합니다. 영상은 유튜브 공식 플레이어로 재생되고, 도안은 원작자 페이지에서 받습니다.",
+      tTemplate: "도안·자료 받기", tTemplateNone: "도안 안내",
+      tplBtn: "원작자 페이지에서 도안 받기", relBtn: "관련 자료 보기",
+      tplPaid: "원작자 페이지에서 유료 구매나 회원가입이 필요할 수 있어요.",
+      tplVideoOnly: "도안 파일은 따로 없고, 영상 속에서 모양을 보고 따라 그리는 방식이에요.",
+      tplNone: "이 수업은 따로 받을 도안이 없어요. 영상을 보며 직접 그리거나 만들어요.",
+      tplUnknown: "도안 여부를 확인하지 못했어요. 영상 설명란을 확인해 주세요.",
+      tplLinkWarn: "링크는 원작자가 영상 설명란·고정 댓글에 올린 주소예요. 파일은 원작자 페이지에서만 받을 수 있어요.",
+      tSummary: "어떤 수업인가요", tObjective: "학습 목표", tOutline: "활동 흐름", tMaterials: "준비물", tPrep: "사전 준비", tTips: "교실 적용 팁", tInfo: "수업 정보",
+      matReq: "꼭 필요한 것", matOpt: "있으면 좋은 것", none: "—", detailLoading: "불러오는 중…",
+      infoRegion: "나라", infoArea: "영역", infoType: "활동 유형", infoGrade: "학년", infoPeriods: "차시", infoPrep: "준비 난이도", infoCleanup: "정리 난이도",
+      infoSafety: "안전 유의", infoScreen: "화면", infoSeason: "계절·행사", infoFormat: "도안 형식", infoLength: "영상 길이",
+      videoReport: "영상이 안 나와요", reportAsk: "신고할까요? 한 번 더 누르세요", report: "신고", reportDone: "알려 주셔서 고마워요. 확인 후 정리할게요.", reportFail: "지금은 신고를 받을 수 없어요.",
+      similar: "비슷한 수업",
+      // 후기
+      reviewTitle: c => `선생님 후기 (${c})`, noReviews: "아직 후기가 없어요. 수업해 보셨다면 첫 후기를 남겨 주세요.", loadingReviews: "후기를 불러오는 중…",
+      moreReviews: n => `후기 더 보기 (${n}개 남음)`,
+      writeReview: "수업 후기 남기기", lblRevTeacher: "작성자 (별칭)", lblRevGrade: "지도 학년", lblRevRating: "추천 점수", lblRevSession: "실제 걸린 시간",
+      lblRevCaution: "수업할 때 조심할 점", lblRevTip: "해 보니 좋았던 방법", btnSubmitReview: "후기 등록 (한·영·일 자동 번역)",
+      revCaution: "조심할 점:", revTip: "좋았던 방법:", revMeta: (t, g, s) => `<strong>${t}</strong> · ${g}${s ? " · " + s : ""}`,
+      toastReview: "후기를 등록했어요. 한·영·일로 자동 번역됩니다.", reviewNeedText: "조심할 점이나 좋았던 방법 중 하나는 적어 주세요.", submitting: "보내는 중…",
+      // 수정 제안
+      editBtn: "설명 고치기 제안", editTitle: "설명 수정 제안", editSub: t => `「${t}」에서 고칠 부분만 바꿔 주세요. 관리자 확인 후 반영되고, 다른 언어는 자동 번역됩니다.`,
+      editFields: { title: "제목", summary: "어떤 수업인가요", objective: "학습 목표", matReq: "꼭 필요한 준비물", prep: "사전 준비", tips: "교실 적용 팁" },
+      lblEditProposer: "제안자 (별칭)", lblEditReason: "고치는 이유 (선택)", btnSubmitEdit: "수정 제안 보내기",
+      toastNoChange: "바뀐 내용이 없어요.", toastEditProposed: "수정 제안을 받았어요. 관리자 확인 후 반영됩니다.",
+      // 새 수업 제안
+      proposeTitle: "새 미술 수업 제안", proposeSub: "좋은 미술 수업 영상을 알려 주세요. 관리자 확인 후 한·영·일로 번역해 올립니다. 영상과 도안은 원작자 링크로만 소개합니다.",
+      lblNewUrl: "유튜브 영상 주소", lblNewTitle: "수업 제목", lblNewRegion: "나라", lblNewArea: "영역", lblNewType: "활동 유형", lblNewGrade: "학년",
+      lblNewPeriods: "차시", lblNewTpl: "도안", lblNewTplLink: "도안 받는 곳 (원작자 페이지 주소, 있으면)", lblNewMat: "준비물", lblNewSummary: "어떤 수업인지 (결과물·대상·특징)", lblNewTips: "교실 적용 팁 (선택)",
+      btnSubmitPropose: "제안 보내기", toastProposed: "수업 제안을 받았어요. 관리자 확인 후 올라갑니다.",
+      // 저장 옮기기
+      savedNote: "내 저장은 이 기기 브라우저에만 남아요. 휴대폰을 바꾸거나 인터넷 기록을 지우면 사라지니 옮겨 두세요.",
+      savedLink: "다른 기기로 옮기기(링크)", savedFile: "목록 파일로 받기", savedLinkTitle: n => `오늘 미술 뭐 하지? 내 저장 ${n}개`,
+      savedCsvHead: ["제목", "나라", "영역", "활동 유형", "학년", "차시", "도안", "도안 링크", "사이트 링크", "영상 링크", "채널"], savedFileName: "오늘미술_내저장",
+      savedNothingNew: "이미 모두 저장되어 있어요.", savedImportAsk: n => `링크에 담긴 수업 ${n}개를 내 저장에 더할까요?`, savedImported: n => `내 저장에 ${n}개를 더했어요.`,
+      // 바닥글
+      footerCopyright: "영상과 도안의 저작권은 원작자에게 있으며, 이 사이트는 소개와 연결만 합니다.",
+      footerHow: "영상은 유튜브 공식 플레이어(퍼가기)로만 보여 주며 내려받거나 다시 올리지 않습니다. 도안 파일과 화면 캡처는 올리지 않고 원작자 페이지 링크만 겁니다. 소개 글은 영상을 보고 선생님이 수업을 고르는 데 필요한 정보만 새로 정리한 것입니다.",
+      footerTakedown: "원작자께서 소개를 원하지 않으시면 알려 주세요. 바로 내리겠습니다. 삭제 요청:",
+      takedownBtn: "사이트에서 바로 요청하기", takedownLabel: "영상 주소(또는 채널 이름)와 연락받을 방법을 적어 주세요.", takedownSend: "보내기", takedownDone: "요청을 받았어요. 확인하는 대로 내리겠습니다.",
+      quickPicks: { easy: "준비·정리 쉬운 수업", one: "1차시에 끝내기", low: "저학년", appreciate: "감상 수업", season: s => `지금 계절: ${s}` },
+      filterLabels: { tpl: "도안", region: "나라", area: "영역", type: "활동 유형", grade: "학년", periods: "차시", prep: "준비 난이도", cleanup: "정리 난이도", season: "계절·행사" },
+      multiHint: "여러 개 선택 가능", gradeHint: "전 학년 수업 포함"
+    },
+    en: {
+      siteTitle: "What Art Today?",
+      docTitle: "What Art Today? · Elementary art lesson videos",
+      searchPh: "Search titles, content, materials, tags (e.g., origami, Van Gogh, printmaking)",
+      search: "Search", reset: "Reset", filter: "Filters", close: "Close", show: n => `Show ${n.toLocaleString()}`, clearAll: "Clear all",
+      admin: "Admin", popular: "Popular", quick: "Quick picks",
+      intro: (n, t) => `Browse <strong>${n.toLocaleString()}</strong> elementary art lesson videos from around the world by grade, length and materials. <strong>${t.toLocaleString()}</strong> of them come with templates shared by the creators.`,
+      tplOnly: "With templates only", tplOnlyOn: "Showing lessons with templates",
+      results: n => `<span>${n.toLocaleString()}</span> art lessons`,
+      loading: "Loading art lessons…", loadFail: "Couldn't load the lesson list. Please refresh in a moment.",
+      syncOk: at => at ? `Updated ${at}` : "", syncFail: "List unavailable",
+      sortDefault: "Default (templates first)", sortPopular: "Most popular", sortNewest: "Newest", sortShort: "Shortest video", sortLong: "Longest video",
+      saved: n => `★ Saved ${n}`, draw: "Pick an art lesson for me", drawAgain: "Pick another", drawNone: "No lesson matches. Try loosening the filters.",
+      propose: "Suggest a lesson",
+      more: (rem, total) => `Load more (${rem.toLocaleString()} left of ${total.toLocaleString()})`,
+      emptyTitle: "No art lessons match.", emptySub: "Try other keywords or fewer filters.",
+      savedEmptyTitle: "You haven't saved any lessons yet.", savedEmptySub: "Tap ☆ Save on a lesson you like. Your list stays on this device.", showAll: "Show all lessons",
+      savedOnly: "★ Saved only", searchChip: q => `“${q}”`,
+      grade: "Grade", periods: "Periods", prep: "Prep", cleanup: "Cleanup",
+      like: n => n === null ? "Like" : `Like ${n}`, save: n => n === null ? "Save" : `Save ${n}`,
+      share: "Share", shareCopied: "Link copied. Paste it into a chat or message.",
+      toastLike: "Liked.", toastUnlike: "Like removed.", toastSave: "Saved to your list.", toastUnsave: "Removed from your list.",
+      toastSendFail: "Couldn't send. Please try again shortly.",
+      rating: "Rating", reviews: "Reviews",
+      sourceLabel: "Source", openYoutube: "Watch the original on YouTube ↗",
+      copyNote: "Videos and templates are copyrighted by their original creators; this site only introduces and links to them. Videos play in YouTube's official player, and templates are downloaded from the creators' own pages.",
+      tTemplate: "Get the template", tTemplateNone: "About templates",
+      tplBtn: "Get the template from the creator's page", relBtn: "See related material",
+      tplPaid: "The creator's page may require a purchase or sign-up.",
+      tplVideoOnly: "There is no separate file; students copy the design shown in the video.",
+      tplNone: "No template needed. Students draw or make it while watching the video.",
+      tplUnknown: "We couldn't confirm whether a template exists. Please check the video description.",
+      tplLinkWarn: "These links were posted by the creator in the video description or pinned comment. Files are available only on the creator's page.",
+      tSummary: "About this lesson", tObjective: "Learning goal", tOutline: "Lesson flow", tMaterials: "Materials", tPrep: "Before class", tTips: "Classroom tips", tInfo: "Lesson details",
+      matReq: "Required", matOpt: "Nice to have", none: "—", detailLoading: "Loading…",
+      infoRegion: "Country", infoArea: "Area", infoType: "Activity type", infoGrade: "Grade", infoPeriods: "Periods", infoPrep: "Prep", infoCleanup: "Cleanup",
+      infoSafety: "Safety", infoScreen: "Screen", infoSeason: "Season / event", infoFormat: "Template format", infoLength: "Video length",
+      videoReport: "Video not playing", reportAsk: "Report it? Tap again", report: "Report", reportDone: "Thanks for letting us know. We'll check it.", reportFail: "Reports can't be sent right now.",
+      similar: "Similar lessons",
+      reviewTitle: c => `Teacher reviews (${c})`, noReviews: "No reviews yet. If you've taught this, share the first one.", loadingReviews: "Loading reviews…",
+      moreReviews: n => `Show more reviews (${n} left)`,
+      writeReview: "Write a review", lblRevTeacher: "Your name (nickname)", lblRevGrade: "Grade taught", lblRevRating: "Recommendation", lblRevSession: "Time it took",
+      lblRevCaution: "Things to watch out for", lblRevTip: "What worked well", btnSubmitReview: "Submit (auto-translated)",
+      revCaution: "Watch out:", revTip: "Worked well:", revMeta: (t, g, s) => `<strong>${t}</strong> · ${g}${s ? " · " + s : ""}`,
+      toastReview: "Review posted and auto-translated into KO/EN/JA.", reviewNeedText: "Please fill in at least one of the two text boxes.", submitting: "Sending…",
+      editBtn: "Suggest an edit", editTitle: "Suggest an edit", editSub: t => `Change only what needs fixing in "${t}". Applied after admin review; other languages are auto-translated.`,
+      editFields: { title: "Title", summary: "About this lesson", objective: "Learning goal", matReq: "Required materials", prep: "Before class", tips: "Classroom tips" },
+      lblEditProposer: "Your name (nickname)", lblEditReason: "Reason (optional)", btnSubmitEdit: "Send suggestion",
+      toastNoChange: "Nothing changed.", toastEditProposed: "Suggestion received. It will be applied after admin review.",
+      proposeTitle: "Suggest an art lesson", proposeSub: "Tell us about a great art lesson video. After review it will be translated into Korean, English and Japanese. Videos and templates are only linked to the creator.",
+      lblNewUrl: "YouTube video URL", lblNewTitle: "Lesson title", lblNewRegion: "Country", lblNewArea: "Area", lblNewType: "Activity type", lblNewGrade: "Grade",
+      lblNewPeriods: "Periods", lblNewTpl: "Template", lblNewTplLink: "Where to get the template (creator's page, if any)", lblNewMat: "Materials", lblNewSummary: "What the lesson is about (result, level, features)", lblNewTips: "Classroom tips (optional)",
+      btnSubmitPropose: "Send suggestion", toastProposed: "Thanks! It will be posted after admin review.",
+      savedNote: "Your saved list lives only in this browser. Changing phones or clearing browsing data erases it, so move it somewhere safe.",
+      savedLink: "Move to another device (link)", savedFile: "Download as a file", savedLinkTitle: n => `What Art Today: ${n} saved`,
+      savedCsvHead: ["Title", "Country", "Area", "Activity type", "Grade", "Periods", "Template", "Template link", "Site link", "Video link", "Channel"], savedFileName: "ArtToday_saved",
+      savedNothingNew: "They're all saved already.", savedImportAsk: n => `Add ${n} lessons from this link to your saved list?`, savedImported: n => `Added ${n} to your saved list.`,
+      footerCopyright: "Videos and templates are copyrighted by their original creators; this site only introduces and links to them.",
+      footerHow: "Videos are shown only through YouTube's official embedded player and are never downloaded or re-uploaded. We never post template files or screenshots, only links to the creators' pages. Lesson notes are our own short write-ups to help teachers choose.",
+      footerTakedown: "Creators: if you'd rather not be featured, tell us and we'll remove it right away. Removal requests:",
+      takedownBtn: "Request on this site", takedownLabel: "Enter the video link (or channel name) and how we can reach you.", takedownSend: "Send", takedownDone: "Request received. We'll remove it as soon as we check.",
+      quickPicks: { easy: "Easy prep & cleanup", one: "Done in one period", low: "Grades 1–2", appreciate: "Art appreciation", season: s => `Now: ${s}` },
+      filterLabels: { tpl: "Template", region: "Country", area: "Area", type: "Activity type", grade: "Grade", periods: "Periods", prep: "Prep difficulty", cleanup: "Cleanup difficulty", season: "Season / event" },
+      multiHint: "Multi-select", gradeHint: "incl. all-grade lessons"
+    },
+    ja: {
+      siteTitle: "今日の図工、何する？",
+      docTitle: "今日の図工、何する？ · 小学校の図工・美術授業動画",
+      searchPh: "タイトル・内容・材料・タグで検索（例：折り紙、名画、版画）",
+      search: "検索", reset: "リセット", filter: "絞り込み", close: "閉じる", show: n => `${n.toLocaleString()}件を表示`, clearAll: "すべて解除",
+      admin: "管理者", popular: "人気ワード", quick: "ショートカット",
+      intro: (n, t) => `世界各国の小学校の図工・美術授業動画 <strong>${n.toLocaleString()}件</strong>を、学年・時間・材料で探せます。そのうち <strong>${t.toLocaleString()}件</strong>は作者が図案（型紙）も公開しています。`,
+      tplOnly: "図案ありだけ", tplOnlyOn: "図案ありの授業を表示中",
+      results: n => `図工の授業 <span>${n.toLocaleString()}</span>件`,
+      loading: "授業を読み込み中…", loadFail: "授業一覧を読み込めませんでした。しばらくして再読み込みしてください。",
+      syncOk: at => at ? `更新 ${at}` : "", syncFail: "一覧に接続できません",
+      sortDefault: "標準（図案ありを先に）", sortPopular: "人気順", sortNewest: "新着順", sortShort: "動画が短い順", sortLong: "動画が長い順",
+      saved: n => `★ 保存 ${n}`, draw: "今日の図工をくじ引き", drawAgain: "別の授業を引く", drawNone: "条件に合う授業がありません。絞り込みを少し外してください。",
+      propose: "授業を提案",
+      more: (rem, total) => `もっと見る（残り${rem.toLocaleString()}件 / 全${total.toLocaleString()}件）`,
+      emptyTitle: "条件に合う授業がありません。", emptySub: "キーワードを変えるか、絞り込みを減らしてください。",
+      savedEmptyTitle: "まだ保存した授業がありません。", savedEmptySub: "気に入った授業で ☆ 保存 を押すとここに集まります。保存リストはこの端末に保管されます。", showAll: "すべての授業を見る",
+      savedOnly: "★ 保存のみ", searchChip: q => `「${q}」`,
+      grade: "学年", periods: "時間", prep: "準備", cleanup: "片付け",
+      like: n => n === null ? "いいね" : `いいね ${n}`, save: n => n === null ? "保存" : `保存 ${n}`,
+      share: "共有", shareCopied: "リンクをコピーしました。メッセージに貼り付けてください。",
+      toastLike: "いいねしました。", toastUnlike: "いいねを取り消しました。", toastSave: "保存リストに追加しました。", toastUnsave: "保存を取り消しました。",
+      toastSendFail: "送信できませんでした。しばらくしてからお試しください。",
+      rating: "評価", reviews: "レビュー",
+      sourceLabel: "出典", openYoutube: "YouTubeで元の動画を見る ↗",
+      copyNote: "動画と図案の著作権は原作者にあり、本サイトは紹介とリンクのみを行います。動画はYouTube公式プレーヤーで再生され、図案は作者のページから入手します。",
+      tTemplate: "図案・資料を入手", tTemplateNone: "図案について",
+      tplBtn: "作者のページで図案を入手", relBtn: "関連資料を見る",
+      tplPaid: "作者のページで購入や会員登録が必要な場合があります。",
+      tplVideoOnly: "別のファイルはなく、動画に映る形を見て描く方式です。",
+      tplNone: "この授業に図案はありません。動画を見ながら自分で描いたり作ったりします。",
+      tplUnknown: "図案の有無を確認できませんでした。動画の説明欄をご確認ください。",
+      tplLinkWarn: "リンクは作者が動画の説明欄・固定コメントに載せたものです。ファイルは作者のページでのみ入手できます。",
+      tSummary: "どんな授業？", tObjective: "めあて", tOutline: "活動の流れ", tMaterials: "準備物", tPrep: "事前の準備", tTips: "授業で使うコツ", tInfo: "授業の情報",
+      matReq: "必ず必要", matOpt: "あると便利", none: "—", detailLoading: "読み込み中…",
+      infoRegion: "国", infoArea: "領域", infoType: "活動の種類", infoGrade: "学年", infoPeriods: "時間", infoPrep: "準備の手間", infoCleanup: "片付けの手間",
+      infoSafety: "安全の注意", infoScreen: "画面", infoSeason: "季節・行事", infoFormat: "図案の形式", infoLength: "動画の長さ",
+      videoReport: "動画が再生されない", reportAsk: "報告しますか？もう一度押してください", report: "報告", reportDone: "お知らせありがとうございます。確認して対応します。", reportFail: "今は報告を送れません。",
+      similar: "似ている授業",
+      reviewTitle: c => `先生のレビュー (${c})`, noReviews: "まだレビューがありません。授業をされた方は最初のレビューをお願いします。", loadingReviews: "レビューを読み込み中…",
+      moreReviews: n => `レビューをもっと見る（残り${n}件）`,
+      writeReview: "授業レビューを書く", lblRevTeacher: "名前（ニックネーム）", lblRevGrade: "指導学年", lblRevRating: "おすすめ度", lblRevSession: "実際にかかった時間",
+      lblRevCaution: "気をつけること", lblRevTip: "うまくいった方法", btnSubmitReview: "登録（日・韓・英に自動翻訳）",
+      revCaution: "注意:", revTip: "うまくいった:", revMeta: (t, g, s) => `<strong>${t}</strong> · ${g}${s ? " · " + s : ""}`,
+      toastReview: "レビューを登録しました。自動翻訳されます。", reviewNeedText: "どちらか一つは書いてください。", submitting: "送信中…",
+      editBtn: "説明の修正を提案", editTitle: "説明の修正を提案", editSub: t => `「${t}」で直したい部分だけ変更してください。管理者確認後に反映され、他の言語は自動翻訳されます。`,
+      editFields: { title: "タイトル", summary: "どんな授業？", objective: "めあて", matReq: "必要な準備物", prep: "事前の準備", tips: "授業で使うコツ" },
+      lblEditProposer: "提案者（ニックネーム）", lblEditReason: "理由（任意）", btnSubmitEdit: "修正提案を送る",
+      toastNoChange: "変更がありません。", toastEditProposed: "修正提案を受け付けました。管理者確認後に反映されます。",
+      proposeTitle: "図工の授業を提案", proposeSub: "よい授業動画を教えてください。管理者確認後、日・韓・英に翻訳して掲載します。動画と図案は作者へのリンクでのみ紹介します。",
+      lblNewUrl: "YouTube動画のURL", lblNewTitle: "授業のタイトル", lblNewRegion: "国", lblNewArea: "領域", lblNewType: "活動の種類", lblNewGrade: "学年",
+      lblNewPeriods: "時間", lblNewTpl: "図案", lblNewTplLink: "図案の入手先（作者のページ、あれば）", lblNewMat: "準備物", lblNewSummary: "どんな授業か（作品・対象・特徴）", lblNewTips: "授業で使うコツ（任意）",
+      btnSubmitPropose: "提案を送る", toastProposed: "提案を受け付けました。管理者確認後に掲載されます。",
+      savedNote: "保存リストはこの端末のブラウザにだけ残ります。機種変更や閲覧データの削除で消えるので、移しておきましょう。",
+      savedLink: "別の端末に移す（リンク）", savedFile: "ファイルでダウンロード", savedLinkTitle: n => `今日の図工 保存 ${n}件`,
+      savedCsvHead: ["タイトル", "国", "領域", "活動の種類", "学年", "時間", "図案", "図案のリンク", "サイトのリンク", "動画のリンク", "チャンネル"], savedFileName: "今日の図工_保存",
+      savedNothingNew: "すべて保存済みです。", savedImportAsk: n => `リンクの授業${n}件を保存リストに追加しますか？`, savedImported: n => `保存リストに${n}件追加しました。`,
+      footerCopyright: "動画と図案の著作権は原作者にあり、本サイトは紹介とリンクのみを行います。",
+      footerHow: "動画はYouTube公式の埋め込みプレーヤーでのみ表示し、ダウンロードや再アップロードはしません。図案ファイルや画面キャプチャは掲載せず、作者のページへのリンクのみを載せます。紹介文は先生が授業を選ぶための情報を新たにまとめたものです。",
+      footerTakedown: "作者の方で掲載を望まれない場合はお知らせください。すぐに削除します。削除依頼:",
+      takedownBtn: "サイトから依頼する", takedownLabel: "動画のURL（またはチャンネル名）と連絡先をご記入ください。", takedownSend: "送信", takedownDone: "依頼を受け付けました。確認後すぐに削除します。",
+      quickPicks: { easy: "準備・片付けがかんたん", one: "1時間で完成", low: "低学年", appreciate: "鑑賞の授業", season: s => `今の季節: ${s}` },
+      filterLabels: { tpl: "図案", region: "国", area: "領域", type: "活動の種類", grade: "学年", periods: "時間", prep: "準備の手間", cleanup: "片付けの手間", season: "季節・行事" },
+      multiHint: "複数選択可", gradeHint: "全学年の授業を含む"
+    }
+  };
+  const ui = () => UI[currentLang] || UI.ko;
+
+  /* 분류 값(한국어 원문) → 표시 라벨 */
+  const TERMS = {
+    region: {
+      KR: { ko: "한국", en: "Korea", ja: "韓国" }, EN: { ko: "영어권", en: "English-speaking", ja: "英語圏" },
+      JP: { ko: "일본", en: "Japan", ja: "日本" }, FR: { ko: "프랑스", en: "France", ja: "フランス" },
+      DE: { ko: "독일", en: "Germany", ja: "ドイツ" }, ES: { ko: "스페인어권", en: "Spanish-speaking", ja: "スペイン語圏" },
+      IT: { ko: "이탈리아", en: "Italy", ja: "イタリア" }
+    },
+    area: {
+      "미적 체험": { ko: "미적 체험", en: "Aesthetic experience", ja: "美的体験" }, "표현": { ko: "표현", en: "Expression", ja: "表現" },
+      "감상": { ko: "감상", en: "Appreciation", ja: "鑑賞" }, "기타": { ko: "기타", en: "Other", ja: "その他" }
+    },
+    activityType: {
+      "그리기": { ko: "그리기", en: "Drawing", ja: "絵をかく" }, "채색": { ko: "채색", en: "Painting & coloring", ja: "彩色" },
+      "꾸미기·공예": { ko: "꾸미기·공예", en: "Decorating & crafts", ja: "飾り・工芸" }, "만들기·조소": { ko: "만들기·조소", en: "Making & sculpture", ja: "工作・立体" },
+      "판화": { ko: "판화", en: "Printmaking", ja: "版画" }, "감상 활동": { ko: "감상 활동", en: "Appreciation activity", ja: "鑑賞活動" },
+      "협동 작품": { ko: "협동 작품", en: "Group artwork", ja: "共同制作" }, "콜라주": { ko: "콜라주", en: "Collage", ja: "コラージュ" },
+      "디자인": { ko: "디자인", en: "Design", ja: "デザイン" }, "놀이형 미술": { ko: "놀이형 미술", en: "Art play", ja: "造形遊び" },
+      "종이접기·오리기": { ko: "종이접기·오리기", en: "Origami & paper cutting", ja: "折り紙・切り紙" }, "기타": { ko: "기타", en: "Other", ja: "その他" }
+    },
+    grade: {
+      "1-2": { ko: "1~2학년", en: "Grades 1–2", ja: "1・2年" }, "3-4": { ko: "3~4학년", en: "Grades 3–4", ja: "3・4年" },
+      "5-6": { ko: "5~6학년", en: "Grades 5–6", ja: "5・6年" }, "전학년": { ko: "전 학년", en: "All grades", ja: "全学年" },
+      "불명": { ko: "학년 미정", en: "Not specified", ja: "学年未定" }
+    },
+    periods: {
+      "1": { ko: "1차시", en: "1 period", ja: "1時間" }, "2": { ko: "2차시", en: "2 periods", ja: "2時間" },
+      "3+": { ko: "3차시 이상", en: "3+ periods", ja: "3時間以上" }, "불명": { ko: "차시 미정", en: "Not specified", ja: "未定" }
+    },
+    level: { "쉬움": { ko: "쉬움", en: "Easy", ja: "かんたん" }, "보통": { ko: "보통", en: "Moderate", ja: "ふつう" }, "어려움": { ko: "어려움", en: "Hard", ja: "大変" } },
+    templateStatus: {
+      "도안 있음(무료)": { ko: "무료 도안", en: "Free template", ja: "無料図案" },
+      "도안 있음(유료·회원가입)": { ko: "도안(유료·회원가입)", en: "Template (paid/sign-up)", ja: "図案（有料・登録）" },
+      "영상 속 도안만": { ko: "영상 속 도안만", en: "Template in video only", ja: "動画内の図案のみ" },
+      "도안 없음": { ko: "도안 없음", en: "No template", ja: "図案なし" }, "불명": { ko: "확인 안 됨", en: "Unknown", ja: "不明" }
+    },
+    safety: {
+      "없음": { ko: "특별히 없음", en: "None", ja: "特になし" }, "가위·칼": { ko: "가위·칼 사용", en: "Scissors / cutters", ja: "はさみ・カッター" },
+      "물감·잉크 오염": { ko: "물감·잉크 묻음", en: "Paint / ink mess", ja: "絵の具・インクの汚れ" }, "열(글루건 등)": { ko: "열 (글루건 등)", en: "Heat (glue gun etc.)", ja: "熱（グルーガン等）" },
+      "기타": { ko: "기타", en: "Other", ja: "その他" }
+    },
+    screen: { "예": { ko: "화면 보며 활동", en: "Students follow on screen", ja: "画面を見ながら活動" }, "아니오": { ko: "화면 없이 가능", en: "No screen needed", ja: "画面なしで可" } },
+    templateFormat: {
+      "인쇄용 시트": { ko: "인쇄용 시트", en: "Printable sheet", ja: "印刷用シート" }, "PDF": { ko: "PDF", en: "PDF", ja: "PDF" },
+      "이미지": { ko: "이미지", en: "Image", ja: "画像" }, "직접 그려야 함": { ko: "직접 그려야 함", en: "Draw it yourself", ja: "自分で描く" }, "불명": { ko: "확인 안 됨", en: "Unknown", ja: "不明" }
+    },
+    season: {
+      "봄": { ko: "봄", en: "Spring", ja: "春" }, "여름": { ko: "여름", en: "Summer", ja: "夏" }, "가을": { ko: "가을", en: "Autumn", ja: "秋" },
+      "겨울": { ko: "겨울", en: "Winter", ja: "冬" }, "새 학기": { ko: "새 학기", en: "New school year", ja: "新学期" }, "학년말": { ko: "학년말", en: "End of year", ja: "学年末" },
+      "명절·전통": { ko: "명절·전통", en: "Holidays & tradition", ja: "行事・伝統" }, "기념일·행사": { ko: "기념일·행사", en: "Special days & events", ja: "記念日・行事" }
+    },
+    reviewGrade: { "1~2학년": { ko: "1~2학년", en: "Grades 1–2", ja: "1・2年" }, "3~4학년": { ko: "3~4학년", en: "Grades 3–4", ja: "3・4年" }, "5~6학년": { ko: "5~6학년", en: "Grades 5–6", ja: "5・6年" } },
+    session: { "1차시": { ko: "1차시", en: "1 period", ja: "1時間" }, "2차시": { ko: "2차시", en: "2 periods", ja: "2時間" }, "3차시 이상": { ko: "3차시 이상", en: "3+ periods", ja: "3時間以上" } }
+  };
+  function tTerm(group, v) {
+    const m = TERMS[group] && TERMS[group][v];
+    return m ? (m[currentLang] || m.ko) : (v || "");
+  }
+
+  /* 필터 정의: 같은 필터 안에서는 OR, 다른 필터끼리는 AND */
+  const FILTERS = [
+    { key: "tpl", field: "templateStatus", group: "templateStatus", opts: ["도안 있음(무료)", "도안 있음(유료·회원가입)", "영상 속 도안만", "도안 없음", "불명"], cls: "tpl" },
+    { key: "region", field: "region", group: "region", opts: ["KR", "EN", "JP", "FR", "DE", "ES", "IT"] },
+    { key: "area", field: "area", group: "area", opts: ["표현", "감상", "미적 체험", "기타"] },
+    { key: "type", field: "activityType", group: "activityType", opts: Object.keys(TERMS.activityType) },
+    { key: "grade", field: "grade", group: "grade", opts: ["1-2", "3-4", "5-6", "전학년"], hint: "gradeHint",
+      test: (a, sel) => sel.has(a.grade) || (a.grade === "전학년" && ["1-2", "3-4", "5-6"].some(g => sel.has(g))) },
+    { key: "periods", field: "periods", group: "periods", opts: ["1", "2", "3+"] },
+    { key: "prep", field: "prepLevel", group: "level", opts: ["쉬움", "보통", "어려움"] },
+    { key: "cleanup", field: "cleanupLevel", group: "level", opts: ["쉬움", "보통", "어려움"] },
+    { key: "season", field: "seasonTags", group: "season", opts: Object.keys(TERMS.season), multi: true }
+  ];
+  const sel = {};
+  FILTERS.forEach(f => { sel[f.key] = new Set(); });
+  let templateOnly = false;
+
+  const POPULAR_KEYWORDS = {
+    "색종이": { ko: "색종이", en: "Origami", ja: "折り紙" }, "명화": { ko: "명화", en: "Masterpiece", ja: "名画" },
+    "판화": { ko: "판화", en: "Printmaking", ja: "版画" }, "협동": { ko: "협동 작품", en: "Group art", ja: "共同制作" },
+    "수채화": { ko: "수채화", en: "Watercolor", ja: "水彩" }, "자화상": { ko: "자화상", en: "Self-portrait", ja: "自画像" },
+    "재활용": { ko: "재활용", en: "Recycled", ja: "リサイクル" }, "착시": { ko: "착시", en: "Optical illusion", ja: "錯視" },
+    "크리스마스": { ko: "크리스마스", en: "Christmas", ja: "クリスマス" }
+  };
+  const INITIAL_POPULAR = { "색종이": 9, "명화": 8, "판화": 7, "협동": 6, "수채화": 5, "자화상": 4, "재활용": 3, "착시": 2, "크리스마스": 1 };
+
+  const SYNONYMS = [
+    ["도안", "템플릿", "활동지", "프린트", "template", "printable", "worksheet", "図案", "型紙", "ぬりえ", "プリント"],
+    ["색종이", "종이접기", "오리가미", "origami", "paper folding", "折り紙", "おりがみ"],
+    ["명화", "화가", "masterpiece", "famous painting", "artist", "名画", "画家"],
+    ["판화", "찍기", "스탬프", "print", "printmaking", "stamp", "版画", "スタンプ"],
+    ["협동", "협동화", "모둠", "collaborative", "group", "共同", "共同制作"],
+    ["수채화", "물감", "watercolor", "watercolour", "paint", "水彩", "絵の具"],
+    ["점토", "클레이", "찰흙", "clay", "粘土"],
+    ["콜라주", "collage", "コラージュ"],
+    ["재활용", "업사이클", "폐품", "recycle", "recycled", "upcycle", "リサイクル", "廃材"],
+    ["크리스마스", "성탄", "christmas", "クリスマス"],
+    ["추석", "한가위", "송편", "chuseok"],
+    ["핼러윈", "할로윈", "halloween", "ハロウィン"],
+    ["자화상", "얼굴", "self-portrait", "portrait", "自画像", "顔"],
+    ["저학년", "1학년", "2학년", "lower grade", "低学年"],
+    ["고학년", "5학년", "6학년", "upper grade", "高学年"]
+  ];
+
+  /* =========================================================================
+     2. 도우미
+     ========================================================================= */
+  function escapeHtml(v) {
+    return String(v === undefined || v === null ? "" : v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function showToast(msg, ms) {
+    const t = document.getElementById("toastBox");
+    t.textContent = msg; t.style.display = "block";
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => { t.style.display = "none"; }, ms || Math.max(3000, String(msg).length * 70));
+  }
+  function makeDeviceId() {
+    try { if (crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
+    return "d-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12);
+  }
+  function parseList(v) {
+    if (Array.isArray(v)) return v.map(x => String(x).trim()).filter(Boolean);
+    const s = String(v === undefined || v === null ? "" : v).trim();
+    if (!s) return [];
+    if (s[0] === "[") { try { const a = JSON.parse(s); if (Array.isArray(a)) return a.map(x => String(x).trim()).filter(Boolean); } catch (e) {} }
+    return s.split(/\n|,(?!\s*\d)/).map(x => x.trim()).filter(Boolean);
+  }
+  function safeUrl(u) { const s = String(u || "").trim(); return /^https?:\/\/[^\s"'<>]+$/i.test(s) ? s : ""; }
+  function hostOf(u) { try { return new URL(u).hostname.replace(/^www\./, ""); } catch (e) { return ""; } }
+  function extractYoutubeId(url) { const m = String(url || "").match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([A-Za-z0-9_-]{11})/); return m ? m[1] : ""; }
+  function fmtDur(sec) {
+    sec = Number(sec) || 0; if (!sec) return "";
+    const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+    return (h ? h + ":" + String(m).padStart(2, "0") : m) + ":" + String(s).padStart(2, "0");
+  }
+  const serverOn = () => !!gasWebAppUrl;
+
+  /* =========================================================================
+     3. 상태
+     ========================================================================= */
+  let activities = [];
+  let popularSearches = {};
+  let likedSet = new Set(), savedSet = new Set(), hiddenReviews = new Set();
+  let deviceId = "";
+  let showSavedOnly = false;
+  const reactPending = new Set();
+  let pendingProposals = [], pendingEdits = [], openReports = [];
+  let visibleLimit = PAGE;
+  let activeModalId = null;
+  let isAdminAuthenticated = false, adminPin = "";
+  let gasWebAppUrl = GAS_DEFAULT_URL;
+  let lastFiltered = [];
+  let lastSyncAt = "";
+
+  function loadLocal() {
+    gasWebAppUrl = safeGet(KEY.gas) || GAS_DEFAULT_URL;
+    try { likedSet = new Set(JSON.parse(safeGet(KEY.liked) || "[]")); } catch (e) {}
+    try { savedSet = new Set(JSON.parse(safeGet(KEY.saved) || "[]")); } catch (e) {}
+    try { hiddenReviews = new Set(JSON.parse(safeGet(KEY.hiddenRev) || "[]")); } catch (e) {}
+    deviceId = safeGet(KEY.device) || "";
+    if (!/^[A-Za-z0-9-]{8,64}$/.test(deviceId)) { deviceId = makeDeviceId(); safeSet(KEY.device, deviceId); }
+    try { popularSearches = JSON.parse(safeGet(KEY.popular) || "null") || Object.assign({}, INITIAL_POPULAR); } catch (e) { popularSearches = Object.assign({}, INITIAL_POPULAR); }
+    const saved = safeGet(KEY.lang);
+    const nav = (navigator.language || "ko").slice(0, 2);
+    currentLang = LANGS.includes(saved) ? saved : (nav === "ja" ? "ja" : nav === "ko" ? "ko" : "en");
+    try { const s = sessionStorage.getItem(KEY.admin); if (s) { adminPin = s; isAdminAuthenticated = true; } } catch (e) {}
+    applyServerMode();
+  }
+  function applyServerMode() {
+    document.body.classList.toggle("no-server", !serverOn());
+    let adminParam = false;
+    try { adminParam = new URL(location.href).searchParams.has("admin"); } catch (e) {}
+    document.getElementById("adminHeaderBtn").hidden = !(serverOn() || adminParam || isAdminAuthenticated);
+  }
+
+  /* =========================================================================
+     4. 데이터: data/meta.json → list-{lang}.json(목록) → detail/NN.json(상세, 64묶음)
+     ========================================================================= */
+  const STATIC_BASE = "data/";
+  let staticMeta = null, staticMode = false, dataReady = false, loadFailed = false;
+  const loadedLists = new Set();
+  const loadedDetail = new Map();
+  const DETAIL_LANG = ["objective", "matOpt", "prep", "outline", "tips", "linkNote"];
+  const DETAIL_COMMON = ["templateLinks", "relatedLinks", "templateFormat", "safety", "screenNeeded", "evidence", "videoTitle"];
+
+  async function fetchJson(url, opts) {
+    const res = await fetch(url, opts);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }
+  function staticUrl(path) { return STATIC_BASE + path + "?v=" + encodeURIComponent(staticMeta.v); }
+  // build-art-data.py 의 bucket_of 와 같아야 한다
+  function bucketOf(id) {
+    let h = 2166136261 >>> 0;
+    for (const ch of String(id)) { h ^= ch.charCodeAt(0) & 0xFFFF; h = Math.imul(h, 16777619) >>> 0; }
+    h ^= h >>> 15; h = Math.imul(h, 0x2C1B3C6D) >>> 0; h ^= h >>> 12;
+    return (h >>> 0) % ((staticMeta && staticMeta.buckets) || 64);
+  }
+  function tableToObjects(tbl) {
+    if (!tbl || !Array.isArray(tbl.h) || !Array.isArray(tbl.r)) return [];
+    return tbl.r.map(row => { const o = {}; tbl.h.forEach((h, i) => { if (h) o[h] = row[i]; }); return o; });
+  }
+
+  function rowToActivity(o) {
+    const i18n = {};
+    LANGS.forEach(l => {
+      i18n[l] = {
+        title: String(o["title_" + l] || o.title_ko || ""),
+        summary: String(o["summary_" + l] || o.summary_ko || ""),
+        matReq: String(o["matReq_" + l] || o.matReq_ko || "")
+      };
+    });
+    const ts = String(o.templateStatus || "불명");
+    const a = {
+      id: String(o.id), region: String(o.region || ""), area: String(o.area || ""), activityType: String(o.activityType || ""),
+      grade: String(o.grade || "불명"), periods: String(o.periods || "불명"), prepLevel: String(o.prepLevel || ""), cleanupLevel: String(o.cleanupLevel || ""),
+      templateStatus: ts, hasTemplate: /^도안 있음/.test(ts), season: String(o.season || ""), seasonTags: parseList(o.seasonTags),
+      videoId: String(o.videoId || ""), channel: String(o.channel || ""), channelUrl: String(o.channelUrl || ""),
+      seconds: Number(o.seconds) || 0, tags: parseList(o.tags), num: Number((String(o.id).match(/(\d+)$/) || [0, 0])[1]) || 0,
+      i18n, likes: 0, saves: 0, reviews: [], d: null
+    };
+    // 시트에서 바로 받은 경우: 상세 칸도 함께 들어 있다
+    if (o.objective_ko !== undefined || o.templateLinks !== undefined && o.prep_ko !== undefined) a.d = rowToDetail(o);
+    return a;
+  }
+  function rowToDetail(o) {
+    const d = {};
+    DETAIL_COMMON.forEach(c => { if (o[c] !== undefined && o[c] !== "") d[c] = o[c]; });
+    DETAIL_LANG.forEach(f => LANGS.forEach(l => { const v = o[f + "_" + l]; if (v !== undefined && v !== "" && !(Array.isArray(v) && !v.length)) d[f + "_" + l] = v; }));
+    d.templateLinks = parseList(d.templateLinks).map(safeUrl).filter(Boolean);
+    d.relatedLinks = parseList(d.relatedLinks).map(safeUrl).filter(Boolean);
+    LANGS.forEach(l => { if (d["outline_" + l] !== undefined) d["outline_" + l] = parseList(d["outline_" + l]); });
+    return d;
+  }
+  function loc(a, f) { const t = a.i18n[currentLang] || a.i18n.ko; return t[f] || a.i18n.ko[f] || ""; }
+  function dl(a, f) {
+    if (!a.d) return f === "outline" ? [] : "";
+    const v = a.d[f + "_" + currentLang];
+    const ko = a.d[f + "_ko"];
+    if (f === "outline") return (Array.isArray(v) && v.length ? v : (Array.isArray(ko) ? ko : []));
+    return v || ko || "";
+  }
+
+  async function loadStaticList(lang) {
+    if (loadedLists.has(lang)) return;
+    const rows = tableToObjects(await fetchJson(staticUrl(`list-${lang}.json`))).filter(o => o.id);
+    if (!staticMode) {
+      activities = rows.map(rowToActivity);
+      staticMode = true;
+    } else {
+      const byId = new Map(activities.map(a => [a.id, a]));
+      rows.forEach(o => {
+        const a = byId.get(String(o.id)); if (!a) return;
+        ["title", "summary", "matReq"].forEach(f => { if (o[f + "_" + lang]) a.i18n[lang][f] = String(o[f + "_" + lang]); });
+        delete a._searchIdx;
+      });
+    }
+    loadedLists.add(lang);
+  }
+
+  function ensureDetail(id) {
+    if (!staticMode) return Promise.resolve(false);
+    const b = bucketOf(id);
+    if (!loadedDetail.has(b)) {
+      const p = fetchJson(staticUrl(`detail/${String(b).padStart(2, "0")}.json`)).then(map => {
+        const byId = new Map(activities.map(a => [a.id, a]));
+        Object.entries(map).forEach(([aid, d]) => { const a = byId.get(aid); if (a) a.d = rowToDetail(d); });
+        return true;
+      }).catch(e => { loadedDetail.delete(b); throw e; });
+      loadedDetail.set(b, p);
+    }
+    return loadedDetail.get(b);
+  }
+
+  async function bootData() {
+    setSyncStatus("loading");
+    try {
+      staticMeta = await fetchJson(STATIC_BASE + "meta.json?t=" + Date.now(), { cache: "no-store" });
+      await loadStaticList(currentLang);
+      dataReady = true;
+      lastSyncAt = staticMeta.at || "";
+      setSyncStatus("ok");
+      renderAll();
+      handleUrlParams();
+      if (serverOn()) {
+        if (staticMeta.social && staticMeta.sv) {
+          try { applyStaticSocial(await fetchJson(STATIC_BASE + "social.json?v=" + encodeURIComponent(staticMeta.sv))); refreshReactViews(); loadRecentReviews(); return; }
+          catch (e2) { staticSocial = false; }
+        }
+        loadSocial();
+      }
+    } catch (e) {
+      // 정적 파일이 없으면 시트에서 바로 받는다(시트 주소가 있을 때만)
+      if (serverOn()) await syncFromSheet(true);
+      if (!dataReady) { loadFailed = true; dataReady = true; setSyncStatus("fail"); renderAll(); }
+      handleUrlParams();
+    }
+  }
+
+  async function syncFromSheet(silent) {
+    if (!serverOn()) return;
+    setSyncStatus("loading");
+    try {
+      const data = await apiGet("data");
+      if (!data || !data.ok) throw new Error("bad response");
+      const rows = tableToObjects(data.activities).filter(o => o.id && String(o.status || "") !== "숨김");
+      activities = rows.map(rowToActivity);
+      applySocial(data);
+      staticMode = false; dataReady = true; loadFailed = false;
+      lastSyncAt = data.at || "";
+      setSyncStatus("ok");
+      renderAll();
+      if (activeModalId) openDetailModal(activeModalId);
+    } catch (e) {
+      setSyncStatus("fail");
+      if (!silent) showToast(ui().toastSendFail);
+    }
+  }
+  function setSyncStatus(state) {
+    const el = document.getElementById("syncStatus");
+    el.dataset.state = state;
+    el.textContent = state === "ok" ? ui().syncOk(lastSyncAt) : state === "fail" ? ui().syncFail : "";
+  }
+
+  /* ---------- 서버(Apps Script) ---------- */
+  async function apiGet(action) {
+    if (!gasWebAppUrl) throw new Error("no server");
+    const res = await fetch(gasWebAppUrl + (gasWebAppUrl.includes("?") ? "&" : "?") + "action=" + action + "&t=" + Date.now());
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }
+  async function apiPost(payload) {
+    if (!gasWebAppUrl) throw new Error("no server");
+    const res = await fetch(gasWebAppUrl, { method: "POST", body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }
+
+  /* ---------- 추천·저장 수와 후기 ---------- */
+  let staticSocial = false;
+  let reviewShowFor = null, reviewShowN = 10;
+  const loadedReviewBuckets = new Map();
+  const GRADES3 = ["1~2학년", "3~4학년", "5~6학년"];
+
+  function rowToReview(o) {
+    const t = String(o.teacher || "익명");
+    return {
+      reviewId: String(o.reviewId), activityId: String(o.activityId), teacher: t,
+      grade: o.grade || "", rating: Number(o.rating) || 5, fitScore: Number(o.fitScore) || 5, duration: Number(o.duration) || 40,
+      sessionType: o.sessionType || "",
+      caution: { ko: o.caution_ko || "", en: o.caution_en || o.caution_ko || "", ja: o.caution_ja || o.caution_ko || "" },
+      tip: { ko: o.tip_ko || "", en: o.tip_en || o.tip_ko || "", ja: o.tip_ja || o.tip_ko || "" },
+      date: String(o.createdAt || "").slice(0, 10)
+    };
+  }
+  function applySocial(data) {
+    const byId = new Map(activities.map(a => [a.id, a]));
+    activities.forEach(a => { a.likes = Number((data.likes || {})[a.id]) || 0; a.saves = Number((data.saves || {})[a.id]) || 0; a.reviews = []; a._revLoaded = true; });
+    tableToObjects(data.reviews).forEach(o => {
+      const a = byId.get(String(o.activityId));
+      if (a && !hiddenReviews.has(String(o.reviewId))) a.reviews.push(rowToReview(o));
+    });
+    socialReady = true;
+  }
+  let socialReady = false;
+  async function loadSocial() {
+    try {
+      const data = await apiGet("social");
+      if (!data || !data.ok) throw new Error("bad");
+      applySocial(data);
+      refreshReactViews();
+    } catch (e) {}
+  }
+  function applyStaticSocial(data) {
+    staticSocial = true; socialReady = true;
+    activities.forEach(a => {
+      a.likes = Number((data.likes || {})[a.id]) || 0;
+      a.saves = Number((data.saves || {})[a.id]) || 0;
+      a.rs = (data.stats || {})[a.id] ? data.stats[a.id].slice() : null;
+      a.reviews = []; a._revLoaded = false; a._revSeen = new Set();
+    });
+  }
+  function addToSummary(a, rv) {
+    if (!a.rs) a.rs = [0, 0, 0, 0, 0, 0, 0];
+    a.rs[0]++; a.rs[1] += Number(rv.rating) || 5; a.rs[2] += Number(rv.fitScore) || 5; a.rs[3] += Number(rv.duration) || 40;
+    const gi = GRADES3.indexOf(String(rv.grade)); if (gi >= 0) a.rs[4 + gi]++;
+    if (a._revSeen && rv.reviewId) a._revSeen.add(String(rv.reviewId));
+  }
+  function reviewStats(a) {
+    if (a.rs && a.rs[0] > 0 && !a._revLoaded) return { n: a.rs[0], avg: a.rs[1] / a.rs[0] };
+    const r = a.reviews || [];
+    return { n: r.length, avg: r.length ? r.reduce((s, x) => s + (Number(x.rating) || 0), 0) / r.length : 0 };
+  }
+  async function loadRecentReviews() {
+    try {
+      const data = await apiGet("recent&since=" + encodeURIComponent(staticMeta.sAt || ""));
+      if (!data || !data.ok) return;
+      (data.hidden || []).forEach(id => hiddenReviews.add(String(id)));
+      const byId = new Map(activities.map(a => [a.id, a]));
+      let recent = tableToObjects(data.reviews);
+      const published = new Set(), need = new Set();
+      recent.forEach(o => { const a = byId.get(String(o.activityId)); if (a && a.rs && a.rs[0] > 0) need.add(bucketOf(a.id)); });
+      await Promise.all([...need].map(b => fetchJson(STATIC_BASE + `reviews/${String(b).padStart(2, "0")}.json?v=` + encodeURIComponent(staticMeta.sv))
+        .then(d => Object.values((d && d.acts) || {}).forEach(rows => rows.forEach(r => published.add(String(r[0]))))).catch(() => {})));
+      recent = recent.filter(o => !published.has(String(o.reviewId)));
+      recent.forEach(o => {
+        const a = byId.get(String(o.activityId));
+        if (!a || hiddenReviews.has(String(o.reviewId)) || (a._revSeen && a._revSeen.has(String(o.reviewId)))) return;
+        a._pendingRecent = (a._pendingRecent || []).concat([o]);
+        if (!a._revLoaded) addToSummary(a, o);
+        else if (!a.reviews.some(r => r.reviewId === String(o.reviewId))) { a.reviews.push(rowToReview(o)); addToSummary(a, o); }
+      });
+      refreshReactViews();
+    } catch (e) {}
+  }
+  function ensureReviews(id) {
+    const a0 = activities.find(a => a.id === id);
+    if (!a0 || !staticSocial) return Promise.resolve(false);
+    if (!a0.rs || a0.rs[0] === 0) { a0._revLoaded = true; a0.reviews = (a0._pendingRecent || []).map(rowToReview); return Promise.resolve(true); }
+    const b = bucketOf(id);
+    if (!loadedReviewBuckets.has(b)) {
+      const p = fetchJson(STATIC_BASE + `reviews/${String(b).padStart(2, "0")}.json?v=` + encodeURIComponent(staticMeta.sv)).then(data => {
+        const byId = new Map(activities.map(a => [a.id, a]));
+        Object.entries(data.acts || {}).forEach(([aid, rows]) => {
+          const a = byId.get(aid);
+          if (!a || a._revLoaded) return;
+          const list = rows.map(r => Object.fromEntries(data.h.map((k, i) => [k, r[i]]))).filter(o => !hiddenReviews.has(String(o.reviewId)));
+          const ids = new Set(list.map(o => String(o.reviewId)));
+          const extra = (a._pendingRecent || []).filter(o => !ids.has(String(o.reviewId)));
+          (a._pendingRecent || []).filter(o => ids.has(String(o.reviewId))).forEach(o => {
+            a.rs[0]--; a.rs[1] -= Number(o.rating) || 5; a.rs[2] -= Number(o.fitScore) || 5; a.rs[3] -= Number(o.duration) || 40;
+            const gi = GRADES3.indexOf(String(o.grade)); if (gi >= 0) a.rs[4 + gi]--;
+          });
+          a.reviews = list.concat(extra).map(rowToReview);
+          a._revLoaded = true;
+        });
+        activities.forEach(a => { if (bucketOf(a.id) === b && !a._revLoaded) { a.reviews = (a._pendingRecent || []).map(rowToReview); a._revLoaded = true; } });
+        return true;
+      }).catch(e => { loadedReviewBuckets.delete(b); throw e; });
+      loadedReviewBuckets.set(b, p);
+    }
+    return loadedReviewBuckets.get(b);
+  }
+
+  /* =========================================================================
+     5. 언어
+     ========================================================================= */
+  function setLanguage(lang) {
+    currentLang = LANGS.includes(lang) ? lang : "ko";
+    safeSet(KEY.lang, currentLang);
+    document.documentElement.lang = currentLang;
+    ["Ko", "En", "Ja"].forEach(k => document.getElementById("langBtn" + k).classList.toggle("active", k.toLowerCase() === currentLang));
+    const u = ui();
+    document.title = u.docTitle;
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set("siteTitleText", u.siteTitle);
+    document.getElementById("searchInput").placeholder = u.searchPh;
+    set("btnSearchExec", u.search); set("btnResetText", u.reset); set("btnOpenFiltersText", u.filter);
+    set("filterPanelTitle", u.filter); set("filterPanelReset", u.reset);
+    document.getElementById("filterPanelClose").setAttribute("aria-label", u.close);
+    document.getElementById("btnCloseDetail").setAttribute("aria-label", u.close);
+    set("popularLabelText", u.popular); set("adminHeaderBtn", u.admin);
+    set("btnDraw", u.draw); set("btnProposeText", u.propose); set("tplOnlyText", u.tplOnly);
+    set("footerCopyright", u.footerCopyright); set("footerHow", u.footerHow); set("footerTakedownText", u.footerTakedown);
+    set("btnTakedown", u.takedownBtn); set("takedownLabel", u.takedownLabel); set("btnTakedownSend", u.takedownSend);
+    // 상세 고정 글자
+    set("tSummary", u.tSummary); set("tObjective", u.tObjective); set("tOutline", u.tOutline); set("tMaterials", u.tMaterials);
+    set("tPrep", u.tPrep); set("tTips", u.tTips); set("tInfo", u.tInfo); set("modalCopyNote", u.copyNote); set("btnProposeEdit", u.editBtn);
+    set("modalWriteReviewTitle", u.writeReview);
+    ["lblRevTeacher", "lblRevGrade", "lblRevRating", "lblRevSession", "lblRevCaution", "lblRevTip", "btnSubmitReview",
+     "lblNewUrl", "lblNewTitle", "lblNewRegion", "lblNewArea", "lblNewType", "lblNewGrade", "lblNewPeriods", "lblNewTpl", "lblNewTplLink", "lblNewMat", "lblNewSummary", "lblNewTips", "btnSubmitPropose",
+     "lblEditProposer", "lblEditReason", "btnSubmitEdit"].forEach(id => set(id, u[id]));
+    set("proposeModalTitle", u.proposeTitle); set("proposeModalSub", u.proposeSub); set("editModalTitle", u.editTitle);
+    fillSelect("revGrade", GRADES3, "reviewGrade", "3~4학년");
+    fillSelect("revSessionType", Object.keys(TERMS.session), "session", "1차시");
+    fillSelect("newRegion", Object.keys(TERMS.region), "region", "KR");
+    fillSelect("newArea", ["표현", "감상", "미적 체험", "기타"], "area", "표현");
+    fillSelect("newType", Object.keys(TERMS.activityType), "activityType", "그리기");
+    fillSelect("newGrade", ["1-2", "3-4", "5-6", "전학년"], "grade", "전학년");
+    fillSelect("newPeriods", ["1", "2", "3+"], "periods", "1");
+    fillSelect("newTpl", ["도안 없음", "도안 있음(무료)", "도안 있음(유료·회원가입)", "영상 속 도안만"], "templateStatus", "도안 없음");
+    buildFilterPanel();
+    renderSortOptions();
+    setSyncStatus(document.getElementById("syncStatus").dataset.state || "");
+    renderAll();
+    if (activeModalId) openDetailModal(activeModalId);
+    if (staticMode && !loadedLists.has(currentLang)) {
+      loadStaticList(currentLang).then(() => { renderAll(); if (activeModalId) openDetailModal(activeModalId); }).catch(() => {});
+    }
+  }
+  function fillSelect(id, values, group, def) {
+    const el = document.getElementById(id); if (!el) return;
+    const cur = el.value || def;
+    el.innerHTML = values.map(v => `<option value="${escapeHtml(v)}"${v === cur ? " selected" : ""}>${escapeHtml(tTerm(group, v))}</option>`).join("");
+  }
+  function renderSortOptions() {
+    const s = document.getElementById("sortSelect"), u = ui();
+    const cur = s.value || "default";
+    const opts = [["default", u.sortDefault], ...(serverOn() ? [["popular", u.sortPopular]] : []), ["newest", u.sortNewest], ["short", u.sortShort], ["long", u.sortLong]];
+    s.innerHTML = opts.map(([v, l]) => `<option value="${v}"${v === cur ? " selected" : ""}>${l}</option>`).join("");
+    if (!opts.some(o => o[0] === cur)) s.value = "default";
+  }
+
+  /* =========================================================================
+     6. 필터
+     ========================================================================= */
+  function buildFilterPanel() {
+    const u = ui();
+    document.getElementById("filterBody").innerHTML = FILTERS.map(f => `
+      <div class="filter-line">
+        <div class="filter-label"><span>${u.filterLabels[f.key]}</span><span class="filter-hint">${f.hint ? u[f.hint] : ""}</span></div>
+        <div class="chip-group" id="chips-${f.key}" role="group" aria-label="${escapeHtml(u.filterLabels[f.key])}"></div>
+      </div>`).join("");
+    renderFilterChips();
+  }
+  let _countCache = { n: -1, c: null };
+  function filterCounts() {
+    if (_countCache.n === activities.length && _countCache.c) return _countCache.c;
+    const c = {};
+    FILTERS.forEach(f => { c[f.key] = {}; });
+    activities.forEach(a => FILTERS.forEach(f => {
+      const vals = Array.isArray(a[f.field]) ? a[f.field] : [a[f.field]];
+      vals.forEach(v => { c[f.key][v] = (c[f.key][v] || 0) + 1; });
+    }));
+    _countCache = { n: activities.length, c };
+    return c;
+  }
+  function renderFilterChips() {
+    const counts = filterCounts();
+    FILTERS.forEach(f => {
+      const el = document.getElementById("chips-" + f.key);
+      if (!el) return;
+      const s = sel[f.key];
+      el.innerHTML = f.opts.filter(v => (counts[f.key][v] || 0) > 0 || s.has(v) || !dataReady).map(v => {
+        const on = s.has(v);
+        return `<button type="button" class="chip ${f.cls || ""}${on ? " active" : ""}" aria-pressed="${on}" onclick="toggleFilter('${f.key}', '${escapeHtml(v)}')">${escapeHtml(tTerm(f.group, v))}<span class="chip-count">${(counts[f.key][v] || 0).toLocaleString()}</span></button>`;
+      }).join("");
+    });
+    const tplN = activities.filter(a => a.hasTemplate).length;
+    document.getElementById("tplOnlyCount").textContent = tplN.toLocaleString();
+    const b = document.getElementById("btnTplOnly");
+    b.setAttribute("aria-pressed", String(templateOnly));
+    document.getElementById("tplOnlyText").textContent = templateOnly ? ui().tplOnlyOn : ui().tplOnly;
+  }
+  function toggleFilter(key, v) {
+    const s = sel[key];
+    if (s.has(v)) s.delete(v); else s.add(v);
+    visibleLimit = PAGE;
+    renderFilterChips();
+    renderActivities();
+  }
+  function toggleTemplateOnly() {
+    templateOnly = !templateOnly;
+    visibleLimit = PAGE;
+    renderFilterChips();
+    renderActivities();
+  }
+  function passesFilters(a) {
+    if (templateOnly && !a.hasTemplate) return false;
+    for (const f of FILTERS) {
+      const s = sel[f.key];
+      if (!s.size) continue;
+      if (f.test) { if (!f.test(a, s)) return false; continue; }
+      const v = a[f.field];
+      if (Array.isArray(v) ? !v.some(x => s.has(x)) : !s.has(v)) return false;
+    }
+    return true;
+  }
+
+  /* 바로가기 */
+  function currentSeason() {
+    const m = new Date().getMonth() + 1;
+    return m >= 3 && m <= 5 ? "봄" : m >= 6 && m <= 8 ? "여름" : m >= 9 && m <= 11 ? "가을" : "겨울";
+  }
+  const QUICK = [
+    { k: "easy", apply: () => { sel.prep = new Set(["쉬움"]); sel.cleanup = new Set(["쉬움"]); }, test: () => sel.prep.size === 1 && sel.prep.has("쉬움") && sel.cleanup.size === 1 && sel.cleanup.has("쉬움") },
+    { k: "one", apply: () => { sel.periods = new Set(["1"]); }, test: () => sel.periods.size === 1 && sel.periods.has("1") },
+    { k: "low", apply: () => { sel.grade = new Set(["1-2"]); }, test: () => sel.grade.size === 1 && sel.grade.has("1-2") },
+    { k: "appreciate", apply: () => { sel.area = new Set(["감상"]); }, test: () => sel.area.size === 1 && sel.area.has("감상") },
+    { k: "season", apply: () => { sel.season = new Set([currentSeason()]); }, test: () => sel.season.size === 1 && sel.season.has(currentSeason()) }
+  ];
+  function renderQuick() {
+    const u = ui();
+    document.getElementById("quickRow").innerHTML = `<span class="quick-label">${u.quick}</span>` + QUICK.map(q => {
+      const on = q.test();
+      const label = q.k === "season" ? u.quickPicks.season(tTerm("season", currentSeason())) : u.quickPicks[q.k];
+      return `<button type="button" class="quick-chip${on ? " on" : ""}" aria-pressed="${on}" onclick="applyQuick('${q.k}')">${escapeHtml(label)}</button>`;
+    }).join("");
+  }
+  function applyQuick(k) {
+    const q = QUICK.find(x => x.k === k); if (!q) return;
+    const wasOn = q.test();
+    const keepQ = document.getElementById("searchInput").value, keepTpl = templateOnly;
+    resetFilters(true);
+    document.getElementById("searchInput").value = keepQ; templateOnly = keepTpl;
+    if (!wasOn) q.apply();
+    visibleLimit = PAGE;
+    renderFilterChips(); renderActivities();
+  }
+
+  /* 선택한 조건 칩 */
+  function getActiveFilterList() {
+    const list = [];
+    if (templateOnly) list.push({ k: "tplOnly", label: ui().tplOnly });
+    FILTERS.forEach(f => sel[f.key].forEach(v => list.push({ k: f.key, v, label: tTerm(f.group, v) })));
+    return list;
+  }
+  function renderActiveFilters(count) {
+    const u = ui();
+    const filters = getActiveFilterList();
+    const q = document.getElementById("searchInput").value.trim();
+    const chips = [];
+    if (q) chips.push({ k: "q", label: u.searchChip(q) });
+    if (showSavedOnly) chips.push({ k: "saved", label: u.savedOnly });
+    filters.forEach(f => chips.push(f));
+    window._activeChips = chips;
+    const box = document.getElementById("activeFilters");
+    box.hidden = !chips.length;
+    box.innerHTML = chips.map((c, i) => `<button type="button" class="af-chip" onclick="removeActiveFilter(${i})" aria-label="${escapeHtml(c.label)} ✕">${escapeHtml(c.label)}<span class="af-x" aria-hidden="true">✕</span></button>`).join("")
+      + (chips.length > 1 ? `<button type="button" class="af-clear" onclick="resetFilters()">${u.clearAll}</button>` : "");
+    const nf = filters.length;
+    const badge = document.getElementById("filterBadge");
+    badge.hidden = nf === 0; badge.textContent = nf;
+    document.getElementById("btnOpenFilters").classList.toggle("has-filters", nf > 0);
+    document.getElementById("btnShowResults").textContent = u.show(count);
+  }
+  function removeActiveFilter(i) {
+    const c = (window._activeChips || [])[i]; if (!c) return;
+    if (c.k === "q") { document.getElementById("searchInput").value = ""; resetPageAndRender(); }
+    else if (c.k === "saved") toggleSavedOnly();
+    else if (c.k === "tplOnly") toggleTemplateOnly();
+    else toggleFilter(c.k, c.v);
+  }
+  function resetFilters(silent) {
+    showSavedOnly = false; templateOnly = false;
+    FILTERS.forEach(f => sel[f.key].clear());
+    visibleLimit = PAGE;
+    document.getElementById("searchInput").value = "";
+    if (silent === true) return;
+    document.getElementById("sortSelect").value = "default";
+    renderFilterChips(); renderActivities();
+  }
+
+  /* =========================================================================
+     7. 검색
+     ========================================================================= */
+  let _searchTimer = null;
+  function onSearchInput() { clearTimeout(_searchTimer); _searchTimer = setTimeout(() => { visibleLimit = PAGE; renderActivities(); }, 250); }
+  function expandQueryTerm(term) {
+    const clean = term.toLowerCase().trim(), ns = clean.replace(/\s+/g, "");
+    if (!clean) return [];
+    const out = new Set([clean, ns]);
+    const stripped = ns.replace(/(만들기|그리기|수업|활동|미술)$/, "");
+    if (stripped.length >= 2) out.add(stripped);
+    SYNONYMS.forEach(g => {
+      if (g.some(x => { const xs = x.toLowerCase().replace(/\s+/g, ""); return xs === ns || xs === stripped || (ns.length >= 2 && xs.includes(ns)); }))
+        g.forEach(x => { out.add(x.toLowerCase()); out.add(x.toLowerCase().replace(/\s+/g, "")); });
+    });
+    return Array.from(out).filter(Boolean);
+  }
+  function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function highlightText(html, query) {
+    if (!query || !html) return html || "";
+    const cands = new Set();
+    query.trim().split(/\s+/).filter(Boolean).forEach(t => { cands.add(t); expandQueryTerm(t).forEach(x => { if (x.length >= 2) cands.add(x); }); });
+    const terms = Array.from(cands).map(escapeHtml).sort((a, b) => b.length - a.length);
+    if (!terms.length) return html;
+    try { return String(html).replace(new RegExp(`(${terms.map(escapeRegExp).join("|")})(?![^<]*>)`, "gi"), '<mark class="hl">$1</mark>'); } catch (e) { return html; }
+  }
+  function searchIndex(a) {
+    if (a._searchIdx) return a._searchIdx;
+    const titles = LANGS.map(l => a.i18n[l].title).join(" ");
+    const labels = [a.activityType, a.area, ...a.seasonTags, a.season].flatMap(v => {
+      for (const g of ["activityType", "area", "season"]) { const m = TERMS[g][v]; if (m) return [m.ko, m.en, m.ja]; }
+      return [v];
+    });
+    const body = [...LANGS.map(l => a.i18n[l].summary + " " + a.i18n[l].matReq), ...a.tags, ...labels].join(" ");
+    a._searchIdx = { title: titles.toLowerCase().replace(/\s+/g, ""), body: body.toLowerCase().replace(/\s+/g, ""), channel: a.channel.toLowerCase().replace(/\s+/g, "") };
+    return a._searchIdx;
+  }
+
+  /* =========================================================================
+     8. 목록 그리기
+     ========================================================================= */
+  function popularityScore(a) {
+    const r = reviewStats(a);
+    return (a.likes || 0) * 2 + (a.saves || 0) * 3 + r.n * 4 + (r.n ? (r.avg - 3) * 2 : 0);
+  }
+  function tplBadge(a, small) {
+    const ts = a.templateStatus;
+    const icon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>`;
+    if (ts === "도안 있음(무료)") return `<span class="tpl-badge free">${icon}${escapeHtml(tTerm("templateStatus", ts))}</span>`;
+    if (ts === "도안 있음(유료·회원가입)") return `<span class="tpl-badge paid">${icon}${escapeHtml(tTerm("templateStatus", ts))}</span>`;
+    if (ts === "영상 속 도안만" && !small) return `<span class="tpl-badge video">${escapeHtml(tTerm("templateStatus", ts))}</span>`;
+    return "";
+  }
+  function thumbUrl(v, size) { return /^[A-Za-z0-9_-]{11}$/.test(v || "") ? `https://i.ytimg.com/vi/${v}/${size || "mqdefault"}.jpg` : ""; }
+
+  function renderAll() {
+    renderFilterChips();
+    renderPopularKeywords();
+    renderActivities();
+  }
+  function renderActivities() {
+    const u = ui();
+    const grid = document.getElementById("cardsGrid"), more = document.getElementById("loadMoreWrap");
+    const total = activities.length, tplTotal = activities.filter(a => a.hasTemplate).length;
+    document.getElementById("introText").innerHTML = u.intro(total, tplTotal);
+    renderQuick();
+    updateSavedFilterButton();
+    if (!dataReady || loadFailed) {
+      grid.innerHTML = `<div class="loading-box" role="status">${loadFailed ? u.loadFail : u.loading}</div>`;
+      more.style.display = "none";
+      document.getElementById("resultsCountText").innerHTML = "";
+      return;
+    }
+    const rawQuery = document.getElementById("searchInput").value.trim();
+    const q = rawQuery.toLowerCase();
+    const stop = ["미술", "수업", "활동", "만들기", "art", "lesson", "図工", "授業"];
+    let terms = q ? q.split(/\s+/).filter(t => t && !stop.includes(t)) : [];
+    if (q && !terms.length) terms = q.split(/\s+/).filter(Boolean);
+    const cands = terms.map(t => { const p = t.replace(/\s+/g, ""); return Array.from(new Set(expandQueryTerm(t).map(c => c.replace(/\s+/g, "")).filter(Boolean))).map(text => ({ text, w: text === p ? 2 : 1 })); });
+    const score = {};
+    let list = activities.filter(a => {
+      if (showSavedOnly && !savedSet.has(a.id)) return false;
+      if (!passesFilters(a)) return false;
+      if (cands.length) {
+        const idx = searchIndex(a); let sc = 0;
+        for (const cs of cands) {
+          let hit = false;
+          for (const c of cs) {
+            if (idx.title.includes(c.text)) { sc += 100 * c.w; hit = true; }
+            else if (idx.channel.includes(c.text)) { sc += 70 * c.w; hit = true; }
+            else if (idx.body.includes(c.text)) { sc += 50 * c.w; hit = true; }
+          }
+          if (!hit) return false;
+        }
+        score[a.id] = sc;
+      }
+      return true;
+    });
+    const sortVal = document.getElementById("sortSelect").value || "default";
+    list.sort((a, b) => {
+      if (cands.length && (score[b.id] || 0) !== (score[a.id] || 0)) return (score[b.id] || 0) - (score[a.id] || 0);
+      if (sortVal === "popular") return popularityScore(b) - popularityScore(a) || b.num - a.num;
+      if (sortVal === "newest") return b.num - a.num;
+      if (sortVal === "short") return (a.seconds || 1e9) - (b.seconds || 1e9);
+      if (sortVal === "long") return (b.seconds || 0) - (a.seconds || 0);
+      // 기본순: 무료 도안 → 유료 도안 → 나머지, 같은 묶음 안에서는 인기 → 최근
+      const rank = x => x.templateStatus === "도안 있음(무료)" ? 2 : x.hasTemplate ? 1 : 0;
+      return rank(b) - rank(a) || popularityScore(b) - popularityScore(a) || b.num - a.num;
+    });
+    lastFiltered = list;
+    document.getElementById("resultsCountText").innerHTML = u.results(list.length);
+    renderActiveFilters(list.length);
+
+    if (!list.length) {
+      more.style.display = "none";
+      const savedEmpty = showSavedOnly && savedSet.size === 0;
+      grid.innerHTML = `<div class="empty-box"><p>${savedEmpty ? u.savedEmptyTitle : u.emptyTitle}</p><p>${savedEmpty ? u.savedEmptySub : u.emptySub}</p>
+        <button type="button" class="btn-reset" onclick="${savedEmpty ? "toggleSavedOnly()" : "resetFilters()"}">${savedEmpty ? u.showAll : u.reset}</button></div>`;
+      return;
+    }
+    const slice = list.slice(0, visibleLimit);
+    more.style.display = list.length > visibleLimit ? "flex" : "none";
+    if (list.length > visibleLimit) document.getElementById("btnLoadMore").textContent = u.more(list.length - visibleLimit, list.length);
+
+    grid.innerHTML = slice.map(a => {
+      const title = highlightText(escapeHtml(loc(a, "title")), rawQuery);
+      const desc = highlightText(escapeHtml(loc(a, "summary")), rawQuery);
+      const th = thumbUrl(a.videoId);
+      const rs = reviewStats(a);
+      const metaBits = [
+        a.grade && a.grade !== "불명" ? `<span><b>${escapeHtml(tTerm("grade", a.grade))}</b></span>` : "",
+        a.periods && a.periods !== "불명" ? `<span><b>${escapeHtml(tTerm("periods", a.periods))}</b></span>` : "",
+        a.prepLevel ? `<span>${u.prep} <b>${escapeHtml(tTerm("level", a.prepLevel))}</b></span>` : "",
+        a.cleanupLevel ? `<span>${u.cleanup} <b>${escapeHtml(tTerm("level", a.cleanupLevel))}</b></span>` : ""
+      ].join("");
+      return `
+        <article class="card" onclick="openDetailModal('${a.id}')" onkeydown="if(event.key==='Enter'&&event.target===this)openDetailModal('${a.id}')" tabindex="0" aria-label="${escapeHtml(loc(a, "title"))}">
+          <div class="card-thumb">
+            ${th ? `<img src="${th}" alt="" loading="lazy" decoding="async" width="320" height="180" onerror="this.style.display='none'">` : ""}
+            ${tplBadge(a, true)}
+            ${a.seconds ? `<span class="thumb-dur">${fmtDur(a.seconds)}</span>` : ""}
+          </div>
+          <div class="card-body">
+            <div class="card-cats">
+              <span class="region-tag">${escapeHtml(tTerm("region", a.region))}</span>
+              ${a.activityType ? `<span class="cat-tag">${escapeHtml(tTerm("activityType", a.activityType))}</span>` : ""}
+              ${a.area && a.area !== "표현" && a.area !== "기타" ? `<span class="cat-tag">${escapeHtml(tTerm("area", a.area))}</span>` : ""}
+            </div>
+            <h3 class="card-title">${title}</h3>
+            <p class="card-desc"${rawQuery ? ' style="-webkit-line-clamp:3"' : ""}>${desc}</p>
+            <div class="card-meta">${metaBits}</div>
+            <div class="card-foot">
+              ${rs.n ? `<span class="card-rating">★ ${rs.avg.toFixed(1)} · ${u.reviews} ${rs.n}</span>` : ""}
+              <div class="card-react">${reactButtonsHtml(a)}</div>
+            </div>
+          </div>
+        </article>`;
+    }).join("");
+  }
+  function resetPageAndRender() { visibleLimit = PAGE; renderActivities(); }
+  function loadMoreItems() { visibleLimit += PAGE; renderActivities(); }
+
+  function renderPopularKeywords() {
+    const wrap = document.getElementById("popularKeywordsWrap");
+    wrap.innerHTML = Object.entries(popularSearches).sort((a, b) => b[1] - a[1]).slice(0, 9).map(([kw]) => {
+      const label = (POPULAR_KEYWORDS[kw] && POPULAR_KEYWORDS[kw][currentLang]) || kw;
+      return `<button type="button" class="popular-tag" onclick="applySearchKeyword(this.dataset.kw)" data-kw="${escapeHtml(kw)}">${escapeHtml(label)}</button>`;
+    }).join("");
+  }
+  function recordSearchQuery(q) {
+    const c = (q || "").trim(); if (c.length < 2) return;
+    popularSearches[c] = (popularSearches[c] || 10) + 1;
+    safeSet(KEY.popular, JSON.stringify(popularSearches));
+    renderPopularKeywords();
+  }
+  function applySearchKeyword(kw) {
+    const label = (POPULAR_KEYWORDS[kw] && POPULAR_KEYWORDS[kw][currentLang]) || kw;
+    document.getElementById("searchInput").value = label;
+    popularSearches[kw] = (popularSearches[kw] || 10) + 1;
+    safeSet(KEY.popular, JSON.stringify(popularSearches));
+    renderPopularKeywords();
+    resetPageAndRender();
+  }
+
+  /* =========================================================================
+     9. 추천·저장 (기기당 1번, 다시 누르면 취소). 저장은 서버 없이도 이 기기에 남는다
+     ========================================================================= */
+  function reactButtonsHtml(a) {
+    const u = ui();
+    const liked = likedSet.has(a.id), saved = savedSet.has(a.id);
+    const showN = serverOn() && socialReady;
+    const likeBtn = serverOn() ? `<button type="button" class="btn-recommend${liked ? " liked" : ""}" aria-pressed="${liked}"${reactPending.has("like:" + a.id) ? ' aria-busy="true"' : ""} onclick="toggleReaction('like','${a.id}', event)">${liked ? "♥" : "♡"} ${u.like(showN ? a.likes || 0 : null)}</button>` : "";
+    return likeBtn + `<button type="button" class="btn-recommend${saved ? " saved" : ""}" aria-pressed="${saved}"${reactPending.has("save:" + a.id) ? ' aria-busy="true"' : ""} onclick="toggleReaction('save','${a.id}', event)">${saved ? "★" : "☆"} ${u.save(showN ? a.saves || 0 : null)}</button>`;
+  }
+  function refreshReactViews() {
+    renderActivities();
+    if (activeModalId) { const a = activities.find(x => x.id === activeModalId); if (a) { renderModalActions(a); renderReviews(a); } }
+  }
+  const REACT = {
+    like: { set: () => likedSet, key: KEY.liked, field: "likes", on: "toastLike", off: "toastUnlike" },
+    save: { set: () => savedSet, key: KEY.saved, field: "saves", on: "toastSave", off: "toastUnsave" }
+  };
+  function setLocalReaction(kind, id, on) {
+    const s = REACT[kind].set(); if (on) s.add(id); else s.delete(id);
+    safeSet(REACT[kind].key, JSON.stringify(Array.from(s)));
+  }
+  function toggleReaction(kind, id, ev) {
+    if (ev) ev.stopPropagation();
+    const pk = kind + ":" + id;
+    if (reactPending.has(pk)) return;
+    const cfg = REACT[kind], u = ui();
+    const a = activities.find(x => x.id === id); if (!a) return;
+    const wasOn = cfg.set().has(id), on = !wasOn, before = a[cfg.field] || 0;
+    setLocalReaction(kind, id, on);
+    showToast(u[on ? cfg.on : cfg.off]);
+    if (!serverOn()) { refreshReactViews(); return; } // 서버가 없으면 이 기기에만 저장
+    a[cfg.field] = Math.max(0, before + (on ? 1 : -1));
+    reactPending.add(pk);
+    refreshReactViews();
+    apiPost({ action: "react", kind, activityId: id, on, deviceId })
+      .then(res => { if (res && res.ok && typeof res.count === "number") a[cfg.field] = res.count; else throw new Error("bad"); })
+      .catch(() => {
+        if (kind === "like") setLocalReaction(kind, id, wasOn); // 저장 목록은 이 기기에 그대로 둔다
+        a[cfg.field] = before;
+        showToast(u.toastSendFail);
+      })
+      .finally(() => { reactPending.delete(pk); refreshReactViews(); });
+  }
+  function updateSavedFilterButton() {
+    const u = ui(), btn = document.getElementById("btnSavedFilter");
+    btn.textContent = u.saved(savedSet.size);
+    btn.classList.toggle("active", showSavedOnly);
+    btn.setAttribute("aria-pressed", String(showSavedOnly));
+    const tools = document.getElementById("savedTools");
+    tools.hidden = !(showSavedOnly && savedSet.size > 0);
+    document.getElementById("savedToolsNote").textContent = u.savedNote;
+    document.getElementById("btnSavedLink").textContent = u.savedLink;
+    document.getElementById("btnSavedFile").textContent = u.savedFile;
+  }
+  function toggleSavedOnly() { showSavedOnly = !showSavedOnly; visibleLimit = PAGE; renderActivities(); }
+  // art-00013 → 13 처럼 줄여서 주소에 담는다
+  function packSavedIds(ids) { return ids.map(id => /^art-0*(\d+)$/.test(id) ? id.replace(/^art-0*/, "") : "~" + id).join("."); }
+  function unpackSavedIds(s) { return String(s || "").split(".").filter(Boolean).map(t => t.startsWith("~") ? t.slice(1) : (/^\d+$/.test(t) ? "art-" + t.padStart(5, "0") : t)); }
+  function savedIdsInOrder() { const known = new Set(activities.map(a => a.id)); return Array.from(savedSet).filter(id => known.has(id)); }
+  function copySavedLink() {
+    const ids = savedIdsInOrder(); if (!ids.length) return;
+    shareLink(`${location.href.split(/[?#]/)[0]}?saved=${packSavedIds(ids)}`, ui().savedLinkTitle(ids.length));
+  }
+  function csvCell(v) { return `"${String(v === undefined || v === null ? "" : v).replace(/"/g, '""')}"`; }
+  async function downloadSavedList() {
+    const ids = savedIdsInOrder(); if (!ids.length) return;
+    const u = ui(), byId = new Map(activities.map(a => [a.id, a]));
+    await Promise.all(ids.map(id => ensureDetail(id).catch(() => {})));
+    const rows = [u.savedCsvHead.map(csvCell).join(",")].concat(ids.map(id => {
+      const a = byId.get(id);
+      return [loc(a, "title"), tTerm("region", a.region), tTerm("area", a.area), tTerm("activityType", a.activityType), tTerm("grade", a.grade), tTerm("periods", a.periods),
+        tTerm("templateStatus", a.templateStatus), ((a.d && a.d.templateLinks) || []).join(" "), shareUrlFor(id), `https://www.youtube.com/watch?v=${a.videoId}`, a.channel].map(csvCell).join(",");
+    }));
+    const blob = new Blob(["﻿" + rows.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${u.savedFileName}_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link); link.click();
+    setTimeout(() => { URL.revokeObjectURL(link.href); link.remove(); }, 1000);
+  }
+  function importSavedFromUrl(str) {
+    const known = new Set(activities.map(a => a.id)), u = ui();
+    const fresh = unpackSavedIds(str).filter(id => known.has(id) && !savedSet.has(id));
+    if (!fresh.length) { showToast(u.savedNothingNew); return; }
+    if (!confirm(u.savedImportAsk(fresh.length))) return;
+    fresh.forEach(id => savedSet.add(id));
+    safeSet(KEY.saved, JSON.stringify(Array.from(savedSet)));
+    showSavedOnly = true; visibleLimit = PAGE;
+    renderActivities();
+    showToast(u.savedImported(fresh.length));
+  }
+
+  /* =========================================================================
+     10. 주소·공유·뒤로가기
+     ========================================================================= */
+  let _ignorePop = 0;
+  function urlWith(params) {
+    const u = new URL(location.href);
+    Object.entries(params || {}).forEach(([k, v]) => { if (v === null || v === undefined || v === "") u.searchParams.delete(k); else u.searchParams.set(k, v); });
+    return u.pathname + (u.searchParams.toString() ? "?" + u.searchParams.toString() : "") + u.hash;
+  }
+  function pushOverlay(name, params) { try { history.pushState({ ov: name }, "", urlWith(params)); } catch (e) {} }
+  function replaceOverlay(name, params) { try { history.replaceState({ ov: name }, "", urlWith(params)); } catch (e) {} }
+  function popOverlayHistory(name) { if (history.state && history.state.ov === name) { _ignorePop++; history.back(); } }
+  function setUrlParam(key, val) { try { history.replaceState(history.state, "", urlWith({ [key]: val })); } catch (e) {} }
+  window.addEventListener("popstate", () => {
+    if (_ignorePop > 0) { _ignorePop--; return; }
+    const open = id => document.getElementById(id).classList.contains("open");
+    if (open("addActivityModal")) closeAddActivityModal(true);
+    else if (open("detailModal")) closeDetailModal(true);
+    else if (document.body.classList.contains("filters-open")) closeFilterPanel(true);
+    try { if (new URL(location.href).searchParams.has("id")) history.replaceState(history.state, "", urlWith({ id: null })); } catch (e) {}
+  });
+  let _urlHandled = false;
+  function handleUrlParams() {
+    if (_urlHandled) return;
+    _urlHandled = true;
+    let p; try { p = new URL(location.href).searchParams; } catch (e) { return; }
+    const s = p.get("saved");
+    if (s) { setUrlParam("saved", null); importSavedFromUrl(s); return; }
+    const id = p.get("id");
+    if (id && activities.some(a => a.id === id)) openDetailModal(id);
+  }
+  function shareUrlFor(id) {
+    const base = location.href.split(/[?#]/)[0].replace(/index\.html$/, "");
+    return staticMode ? `${base}a/${encodeURIComponent(id)}.html` : `${base}?id=${encodeURIComponent(id)}`;
+  }
+  async function shareLink(url, title) {
+    try { if (navigator.share && /Mobi|Android|iPhone|iPad/.test(navigator.userAgent)) { await navigator.share({ title, url }); return; } }
+    catch (e) { if (e && e.name === "AbortError") return; }
+    try { await navigator.clipboard.writeText(url); showToast(ui().shareCopied); } catch (e) { window.prompt(ui().share, url); }
+  }
+  function shareActivity(id) { const a = activities.find(x => x.id === id); if (a) shareLink(shareUrlFor(id), loc(a, "title")); }
+
+  /* 필터 서랍(휴대폰) */
+  const mqDesktop = window.matchMedia("(min-width: 1024px)");
+  function openFilterPanel() {
+    if (mqDesktop.matches) return;
+    if (!document.body.classList.contains("filters-open")) pushOverlay("filters");
+    document.body.classList.add("filters-open");
+    document.getElementById("btnOpenFilters").setAttribute("aria-expanded", "true");
+    setTimeout(() => document.getElementById("filterPanelTitle").focus({ preventScroll: true }), 50);
+  }
+  function closeFilterPanel(fromBack) {
+    if (!document.body.classList.contains("filters-open")) return;
+    document.body.classList.remove("filters-open");
+    if (fromBack !== true) popOverlayHistory("filters");
+    const btn = document.getElementById("btnOpenFilters");
+    btn.setAttribute("aria-expanded", "false");
+    if (!mqDesktop.matches) btn.focus({ preventScroll: true });
+  }
+  mqDesktop.addEventListener("change", e => { if (e.matches) document.body.classList.remove("filters-open"); });
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    const open = id => document.getElementById(id).classList.contains("open");
+    if (open("editModal")) closeEditModal();
+    else if (open("adminModal")) closeAdminModal();
+    else if (open("addActivityModal")) closeAddActivityModal();
+    else if (open("detailModal")) closeDetailModal();
+    else closeFilterPanel();
+  });
+
+  /* =========================================================================
+     11. 상세 화면
+     ========================================================================= */
+  let drawMode = false;
+  function drawActivity() {
+    const pool = lastFiltered;
+    if (!pool.length) { showToast(ui().drawNone); return; }
+    let pick = pool[Math.floor(Math.random() * pool.length)];
+    if (pool.length > 1 && pick.id === activeModalId) pick = pool[(pool.indexOf(pick) + 1 + Math.floor(Math.random() * (pool.length - 1))) % pool.length];
+    drawMode = true;
+    openDetailModal(pick.id);
+    document.querySelector("#detailModal .modal-box").scrollTop = 0;
+  }
+  function renderModalActions(a) {
+    document.getElementById("modalActions").innerHTML = reactButtonsHtml(a)
+      + `<button type="button" class="tool-btn" onclick="shareActivity('${a.id}')">${ui().share}</button>`
+      + (drawMode ? `<button type="button" class="tool-btn draw" onclick="drawActivity()">${ui().drawAgain}</button>` : "");
+  }
+
+  function openDetailModal(id) {
+    const a = activities.find(x => x.id === id);
+    if (!a) return;
+    const prevId = activeModalId;
+    activeModalId = id;
+    const u = ui();
+    if (staticMode && !a.d) ensureDetail(id).then(() => { if (activeModalId === id) renderDetailBody(a); }).catch(() => {});
+    if (staticSocial && !a._revLoaded) ensureReviews(id).then(() => { if (activeModalId === id) renderReviews(a); }).catch(() => {});
+
+    document.getElementById("modalCategoryLine").innerHTML =
+      `<span class="region-tag">${escapeHtml(tTerm("region", a.region))}</span>`
+      + [a.area, a.activityType].filter(Boolean).map((v, i) => `<span class="cat-tag">${escapeHtml(tTerm(i ? "activityType" : "area", v))}</span>`).join("")
+      + tplBadge(a, false);
+    document.getElementById("modalTitle").textContent = loc(a, "title");
+    renderModalActions(a);
+
+    const vb = document.getElementById("modalVideoBox");
+    if (/^[A-Za-z0-9_-]{11}$/.test(a.videoId)) {
+      if (prevId !== id || !vb.querySelector("iframe")) {
+        vb.style.display = "block";
+        vb.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${a.videoId}?rel=0" title="${escapeHtml(loc(a, "title"))}" loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+      }
+    } else { vb.style.display = "none"; vb.innerHTML = ""; }
+
+    const ch = a.channel ? (/^https:\/\/www\.youtube\.com\//.test(a.channelUrl)
+      ? `<a class="channel-link" href="${escapeHtml(a.channelUrl)}" target="_blank" rel="noopener">${escapeHtml(a.channel)}</a>` : escapeHtml(a.channel)) : "YouTube";
+    document.getElementById("modalSourceBar").innerHTML = `<span>${u.sourceLabel}: ${ch}</span>
+      <span><a href="https://www.youtube.com/watch?v=${encodeURIComponent(a.videoId)}" target="_blank" rel="noopener">${u.openYoutube}</a>${serverOn() ? ` <button type="button" class="video-report-btn" onclick="reportVideo('${a.id}', this)">${u.videoReport}</button>` : ""}</span>`;
+    document.getElementById("modalSummary").textContent = loc(a, "summary");
+    renderDetailBody(a);
+    renderReviews(a);
+    renderSimilar(a);
+
+    const m = document.getElementById("detailModal");
+    const wasOpen = m.classList.contains("open");
+    m.classList.add("open");
+    if (!wasOpen) pushOverlay("detail", { id: a.id });
+    else if (history.state && history.state.ov === "detail") replaceOverlay("detail", { id: a.id });
+    else setUrlParam("id", a.id);
+  }
+
+  function renderDetailBody(a) {
+    const u = ui(), d = a.d, wait = `<span class="skeleton">${u.detailLoading}</span>`;
+    const txt = (id, v) => { const el = document.getElementById(id); if (!d) el.innerHTML = wait; else el.textContent = v || u.none; };
+    txt("modalObjective", dl(a, "objective"));
+    txt("modalPrep", dl(a, "prep"));
+    txt("modalTips", dl(a, "tips"));
+    const steps = dl(a, "outline");
+    document.getElementById("modalOutline").innerHTML = !d ? wait : steps.length
+      ? steps.map((s, i) => `${i ? '<span class="arrow" aria-hidden="true">→</span>' : ""}<span class="step"><i>${i + 1}</i>${escapeHtml(s)}</span>`).join("")
+      : `<span class="skeleton">${u.none}</span>`;
+    const mo = dl(a, "matOpt");
+    document.getElementById("modalMaterials").innerHTML = `<div><dt>${u.matReq}</dt><dd>${escapeHtml(loc(a, "matReq") || u.none)}</dd></div>`
+      + (!d ? `<div>${wait}</div>` : mo ? `<div><dt>${u.matOpt}</dt><dd>${escapeHtml(mo)}</dd></div>` : "");
+
+    // 도안·관련 링크
+    const box = document.getElementById("modalTemplateBox");
+    const tl = (d && d.templateLinks) || [], rl = (d && d.relatedLinks) || [];
+    const note = d ? dl(a, "linkNote") : "";
+    const linkBtn = (url, cls, label) => `<a class="link-btn ${cls}" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(label)}<small>${escapeHtml(hostOf(url))}</small></span><span class="arr" aria-hidden="true">↗</span></a>`;
+    const ts = a.templateStatus;
+    const hasLinks = tl.length || rl.length;
+    const statusMsg = ts === "도안 있음(유료·회원가입)" ? u.tplPaid : ts === "영상 속 도안만" ? u.tplVideoOnly : ts === "도안 없음" ? u.tplNone : ts === "불명" ? u.tplUnknown : "";
+    if (!d && a.hasTemplate) box.innerHTML = `<div class="panel-block tpl-box"><div class="panel-title">${u.tTemplate}</div>${wait}</div>`;
+    else if (a.hasTemplate || hasLinks) {
+      box.innerHTML = `<div class="panel-block tpl-box${a.hasTemplate || tl.length ? "" : " none"}">
+        <div class="panel-title">${a.hasTemplate || tl.length ? u.tTemplate : u.tTemplateNone} ${a.hasTemplate ? tplBadge(a, true) : ""}</div>
+        ${note ? `<p class="link-note">${escapeHtml(note)}</p>` : ""}
+        ${statusMsg && (a.hasTemplate ? ts !== "도안 있음(무료)" : !tl.length) ? `<p class="link-note">${escapeHtml(statusMsg)}</p>` : ""}
+        <div class="link-list">${tl.map(x => linkBtn(x, "tpl", u.tplBtn)).join("")}${rl.map(x => linkBtn(x, "rel", u.relBtn)).join("")}</div>
+        ${hasLinks ? `<p class="link-warn">${u.tplLinkWarn}</p>` : ""}
+      </div>`;
+    } else {
+      box.innerHTML = d ? `<div class="panel-block tpl-box none"><div class="panel-title">${u.tTemplateNone}</div><p class="link-note" style="margin:0;">${escapeHtml(statusMsg || u.tplNone)}</p></div>` : "";
+    }
+
+    // 수업 정보
+    const rows = [
+      [u.infoRegion, tTerm("region", a.region)], [u.infoArea, tTerm("area", a.area)], [u.infoType, tTerm("activityType", a.activityType)],
+      [u.infoGrade, tTerm("grade", a.grade)], [u.infoPeriods, tTerm("periods", a.periods)],
+      [u.infoPrep, tTerm("level", a.prepLevel)], [u.infoCleanup, tTerm("level", a.cleanupLevel)],
+      [u.infoSafety, d && d.safety ? tTerm("safety", d.safety) : ""], [u.infoScreen, d && d.screenNeeded ? tTerm("screen", d.screenNeeded) : ""],
+      [u.infoSeason, currentLang === "ko" ? a.season : a.seasonTags.map(s => tTerm("season", s)).join(", ")],
+      [u.infoFormat, a.hasTemplate && d && d.templateFormat ? tTerm("templateFormat", d.templateFormat) : ""],
+      [u.infoLength, fmtDur(a.seconds)]
+    ].filter(r => r[1]);
+    document.getElementById("modalInfo").innerHTML = rows.map(r => `<tr><th scope="row">${escapeHtml(r[0])}</th><td>${escapeHtml(r[1])}</td></tr>`).join("");
+    document.getElementById("modalTags").innerHTML = currentLang === "ko" || a.region === "KR"
+      ? a.tags.map(t => `<button type="button" class="tag" onclick="searchTag(this.textContent)">#${escapeHtml(t)}</button>`).join("") : "";
+  }
+  function searchTag(t) {
+    closeDetailModal();
+    document.getElementById("searchInput").value = String(t).replace(/^#/, "");
+    resetPageAndRender();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function renderReviews(a) {
+    if (!serverOn()) return;
+    const u = ui();
+    const all = (a.reviews || []).slice().reverse();
+    if (reviewShowFor !== a.id) { reviewShowFor = a.id; reviewShowN = 10; }
+    const revs = all.slice(0, reviewShowN);
+    const rs = reviewStats(a);
+    document.getElementById("modalReviewCountTitle").textContent = u.reviewTitle(rs.n) + (rs.n ? ` · ★ ${rs.avg.toFixed(1)}` : "");
+    const loading = staticSocial && !a._revLoaded && a.rs && a.rs[0] > 0;
+    const more = all.length > revs.length ? `<button type="button" class="btn-load-more" style="margin-top:8px; width:100%;" onclick="reviewShowN += 20; renderReviews(activities.find(x => x.id === '${a.id}'))">${u.moreReviews(all.length - revs.length)}</button>` : "";
+    document.getElementById("modalReviewsList").innerHTML = loading ? `<p class="skeleton">${u.loadingReviews}</p>`
+      : !revs.length ? `<p class="skeleton">${u.noReviews}</p>`
+      : revs.map(r => {
+        const c = r.caution[currentLang] || r.caution.ko, t = r.tip[currentLang] || r.tip.ko;
+        return `<div class="review-card">
+          <div class="review-meta"><span>${u.revMeta(escapeHtml(r.teacher), escapeHtml(tTerm("reviewGrade", r.grade)), escapeHtml(tTerm("session", r.sessionType)))} · ★${r.rating}</span>
+          <span>${escapeHtml(r.date)}${isAdminAuthenticated ? ` <button type="button" class="review-del-btn" onclick="deleteReview('${escapeHtml(r.reviewId)}')">삭제</button>` : ` <button type="button" class="review-report-btn" onclick="reportReview('${escapeHtml(r.reviewId)}', this)">${u.report}</button>`}</span></div>
+          ${c ? `<div style="margin-bottom:4px; white-space:pre-line;"><strong>${u.revCaution}</strong> ${escapeHtml(c)}</div>` : ""}
+          ${t ? `<div style="white-space:pre-line;"><strong>${u.revTip}</strong> ${escapeHtml(t)}</div>` : ""}
+        </div>`;
+      }).join("") + more;
+  }
+
+  function bigrams(text) {
+    const t = String(text || "").toLowerCase().replace(/[^0-9a-z가-힣ぁ-んァ-ン一-龥]+/g, "");
+    const s = new Set(); for (let i = 0; i < t.length - 1; i++) s.add(t.slice(i, i + 2)); return s;
+  }
+  function jaccard(a, b) { if (!a.size || !b.size) return 0; let n = 0; a.forEach(x => { if (b.has(x)) n++; }); return n / (a.size + b.size - n); }
+  function renderSimilar(act) {
+    const panel = document.getElementById("modalSimilarPanel"), list = document.getElementById("modalSimilarList");
+    const key = "_bg_" + currentLang;
+    const bg = a => a[key] || (a[key] = bigrams(loc(a, "title")));
+    const mine = bg(act), myTags = new Set(act.tags);
+    const scored = [];
+    for (const a of activities) {
+      if (a.id === act.id || a.videoId === act.videoId) continue;
+      let sc = 3 * jaccard(mine, bg(a)) + 2 * jaccard(myTags, new Set(a.tags)) + (a.activityType === act.activityType ? 0.6 : 0)
+        + (a.seasonTags.some(s => act.seasonTags.includes(s)) ? 0.3 : 0) + (a.grade === act.grade ? 0.1 : 0);
+      if (sc < 0.9) continue;
+      if (a.hasTemplate) sc += 0.05;
+      scored.push([sc, a]);
+    }
+    scored.sort((p, q) => q[0] - p[0]);
+    const top = scored.slice(0, 4).map(p => p[1]);
+    panel.hidden = !top.length;
+    document.getElementById("modalSimilarTitle").textContent = ui().similar;
+    list.innerHTML = top.map(a => `<button type="button" class="similar-item" onclick="openDetailModal('${a.id}'); document.querySelector('#detailModal .modal-box').scrollTop = 0;">
+      ${thumbUrl(a.videoId) ? `<img src="${thumbUrl(a.videoId)}" alt="" loading="lazy" width="96" height="54">` : "<span></span>"}
+      <span><span class="similar-meta">${escapeHtml(tTerm("region", a.region))} · ${escapeHtml(tTerm("activityType", a.activityType))}${a.hasTemplate ? " · " + escapeHtml(tTerm("templateStatus", a.templateStatus)) : ""}</span>
+      <span class="similar-title">${escapeHtml(loc(a, "title"))}</span></span></button>`).join("");
+  }
+
+  function closeDetailModal(fromBack) {
+    const m = document.getElementById("detailModal");
+    if (!m.classList.contains("open")) return;
+    document.getElementById("modalVideoBox").innerHTML = "";
+    m.classList.remove("open");
+    activeModalId = null; drawMode = false;
+    if (fromBack !== true) { if (history.state && history.state.ov === "detail") popOverlayHistory("detail"); else setUrlParam("id", null); }
+  }
+
+  /* =========================================================================
+     12. 후기·신고·삭제 요청 (서버가 있을 때만)
+     ========================================================================= */
+  async function submitReview(ev) {
+    ev.preventDefault();
+    const a = activities.find(x => x.id === activeModalId); if (!a) return;
+    const u = ui(), btn = document.getElementById("btnSubmitReview");
+    const caution = document.getElementById("revCaution").value.trim(), tip = document.getElementById("revUpgradeTip").value.trim();
+    if (!caution && !tip) { showToast(u.reviewNeedText); return; }
+    const payload = { action: "addReview", activityId: a.id, deviceId, title: loc(a, "title"), review: {
+      teacher: document.getElementById("revTeacher").value.trim(), grade: document.getElementById("revGrade").value,
+      rating: Number(document.getElementById("revRating").value), fitScore: Number(document.getElementById("revRating").value),
+      duration: { "1차시": 40, "2차시": 80, "3차시 이상": 120 }[document.getElementById("revSessionType").value] || 40,
+      sessionType: document.getElementById("revSessionType").value, caution, upgradeTip: tip, lang: currentLang } };
+    btn.disabled = true; btn.textContent = u.submitting;
+    try {
+      const res = await apiPost(payload);
+      if (!res || !res.ok) throw new Error((res && res.error) || "fail");
+      a.reviews.push(rowToReview(res.review));
+      if (a.rs) addToSummary(a, res.review);
+      document.getElementById("reviewForm").reset();
+      renderReviews(a); renderActivities();
+      showToast(u.toastReview);
+    } catch (e) { showToast(e.message && e.message !== "fail" && !/HTTP|fetch/i.test(e.message) ? e.message : u.toastSendFail); }
+    finally { btn.disabled = false; btn.textContent = u.btnSubmitReview; }
+  }
+  async function deleteReview(reviewId) {
+    if (!isAdminAuthenticated || !confirm("이 후기를 삭제할까요? 시트 「후기」 탭에서 deleted 칸을 비우면 되살릴 수 있습니다.")) return;
+    try {
+      const res = await apiPost({ action: "deleteReview", pin: adminPin, reviewId });
+      if (!res || !res.ok) throw new Error((res && res.error) || "fail");
+      activities.forEach(a => { a.reviews = a.reviews.filter(r => r.reviewId !== reviewId); });
+      const a = activities.find(x => x.id === activeModalId); if (a) renderReviews(a);
+      showToast("후기를 삭제했습니다.");
+    } catch (e) { showToast(e.message === "auth" ? "관리자 인증이 만료되었습니다." : "삭제하지 못했습니다."); }
+  }
+  const _armed = new WeakSet();
+  async function sendReport(payload, btn) {
+    if (btn && !_armed.has(btn)) { _armed.add(btn); btn.dataset.label = btn.textContent; btn.textContent = ui().reportAsk; btn.classList.add("armed"); return false; }
+    try {
+      const res = await apiPost(Object.assign({ action: "report", deviceId }, payload));
+      if (!res || !res.ok) throw new Error("fail");
+      showToast(ui().reportDone); return true;
+    } catch (e) {
+      showToast(ui().reportFail);
+      if (btn) { _armed.delete(btn); btn.textContent = btn.dataset.label; btn.classList.remove("armed"); }
+      return false;
+    }
+  }
+  async function reportVideo(id, btn) {
+    const a = activities.find(x => x.id === id); if (!a) return;
+    if (await sendReport({ kind: "video", targetId: a.videoId, activityId: a.id }, btn)) { btn.disabled = true; btn.textContent = "✓"; }
+  }
+  async function reportReview(reviewId, btn) {
+    if (!(await sendReport({ kind: "review", targetId: reviewId, activityId: activeModalId || "" }, btn))) return;
+    hiddenReviews.add(reviewId);
+    safeSet(KEY.hiddenRev, JSON.stringify(Array.from(hiddenReviews)));
+    activities.forEach(a => { a.reviews = (a.reviews || []).filter(r => r.reviewId !== reviewId); });
+    const a = activities.find(x => x.id === activeModalId); if (a) renderReviews(a);
+  }
+  function openTakedown() { const f = document.getElementById("takedownForm"); f.hidden = !f.hidden; if (!f.hidden) document.getElementById("takedownText").focus(); }
+  async function submitTakedown(ev) {
+    ev.preventDefault();
+    const text = document.getElementById("takedownText").value.trim(); if (!text) return;
+    const btn = document.getElementById("btnTakedownSend"); btn.disabled = true;
+    try {
+      const res = await apiPost({ action: "report", kind: "takedown", targetId: (extractYoutubeId(text) || "site") + "-" + Date.now().toString(36), activityId: "", deviceId, reason: text });
+      if (!res || !res.ok) throw new Error("fail");
+      document.getElementById("takedownText").value = ""; document.getElementById("takedownForm").hidden = true;
+      showToast(ui().takedownDone);
+    } catch (e) { showToast(ui().reportFail); }
+    btn.disabled = false;
+  }
+
+  /* =========================================================================
+     13. 새 수업 제안 · 설명 수정 제안
+     ========================================================================= */
+  function openAddActivityModal() {
+    if (!serverOn()) return;
+    const el = document.getElementById("addActivityModal");
+    if (!el.classList.contains("open")) pushOverlay("propose");
+    el.classList.add("open");
+  }
+  function closeAddActivityModal(fromBack) {
+    const el = document.getElementById("addActivityModal");
+    if (!el.classList.contains("open")) return;
+    el.classList.remove("open");
+    if (fromBack !== true) popOverlayHistory("propose");
+  }
+  async function submitNewActivity(ev) {
+    ev.preventDefault();
+    const u = ui(), v = id => document.getElementById(id).value.trim();
+    if (!extractYoutubeId(v("newYoutubeUrl"))) { showToast(u.lblNewUrl + " ?"); return; }
+    const activity = { region: v("newRegion"), title: v("newTitle"), youtubeUrl: v("newYoutubeUrl"), area: v("newArea"), activityType: v("newType"),
+      grade: v("newGrade"), periods: v("newPeriods"), templateStatus: v("newTpl"), templateLinks: safeUrl(v("newTplLink")),
+      matReq: v("newMat"), summary: v("newSummary"), tips: v("newTips"), lang: currentLang };
+    const btn = document.getElementById("btnSubmitPropose"); btn.disabled = true; btn.textContent = u.submitting;
+    try {
+      const res = await apiPost({ action: "proposeActivity", activity });
+      if (!res || !res.ok) throw new Error("fail");
+      ev.target.reset(); closeAddActivityModal(); showToast(u.toastProposed);
+    } catch (e) { showToast(u.toastSendFail); }
+    finally { btn.disabled = false; btn.textContent = u.btnSubmitPropose; }
+  }
+  const EDIT_KEYS = ["title", "summary", "objective", "matReq", "prep", "tips"];
+  function editValue(a, k) { return ["title", "summary", "matReq"].includes(k) ? loc(a, k) : dl(a, k); }
+  async function openEditModal() {
+    const a = activities.find(x => x.id === activeModalId); if (!a) return;
+    if (staticMode && !a.d) { try { await ensureDetail(a.id); } catch (e) {} }
+    const u = ui();
+    document.getElementById("editModalSub").textContent = u.editSub(loc(a, "title"));
+    document.getElementById("editFields").innerHTML = EDIT_KEYS.map(k => `<div class="form-field"><label for="edit_${k}">${escapeHtml(u.editFields[k])}</label>
+      ${k === "title" || k === "matReq" ? `<input type="text" id="edit_${k}" class="input-box" maxlength="300">` : `<textarea id="edit_${k}" class="input-box" rows="${k === "summary" || k === "tips" ? 4 : 2}"></textarea>`}</div>`).join("");
+    EDIT_KEYS.forEach(k => { document.getElementById("edit_" + k).value = editValue(a, k); });
+    document.getElementById("editReason").value = "";
+    document.getElementById("editModal").classList.add("open");
+  }
+  function closeEditModal() { document.getElementById("editModal").classList.remove("open"); }
+  async function submitEditProposal(ev) {
+    ev.preventDefault();
+    const a = activities.find(x => x.id === activeModalId); if (!a) return;
+    const u = ui();
+    const edit = { activityId: a.id, activityTitle: loc(a, "title"), lang: currentLang,
+      proposer: document.getElementById("editProposer").value.trim(), reason: document.getElementById("editReason").value.trim() };
+    let changed = 0;
+    EDIT_KEYS.forEach(k => { const val = document.getElementById("edit_" + k).value.trim(); if (val && val !== String(editValue(a, k)).trim()) { edit[k] = val; changed++; } });
+    if (!changed) { showToast(u.toastNoChange); return; }
+    const btn = document.getElementById("btnSubmitEdit"); btn.disabled = true; btn.textContent = u.submitting;
+    try {
+      const res = await apiPost({ action: "proposeEdit", edit });
+      if (!res || !res.ok) throw new Error("fail");
+      closeEditModal(); showToast(u.toastEditProposed);
+    } catch (e) { showToast(u.toastSendFail); }
+    finally { btn.disabled = false; btn.textContent = u.btnSubmitEdit; }
+  }
+
+  /* =========================================================================
+     14. 관리자 (Apps Script가 비밀번호를 확인. 이 페이지에는 저장하지 않음)
+     ========================================================================= */
+  function openAdminModal() {
+    document.getElementById("gasWebAppUrlInput").value = gasWebAppUrl;
+    document.getElementById("adminModal").classList.add("open");
+    document.getElementById("adminAuthBox").style.display = isAdminAuthenticated ? "none" : "";
+    document.getElementById("adminPanelContent").style.display = isAdminAuthenticated && serverOn() ? "block" : "none";
+    if (isAdminAuthenticated && serverOn()) loadAdminData();
+  }
+  function closeAdminModal() { document.getElementById("adminModal").classList.remove("open"); }
+  function updateAdminHeaderButton() {
+    const n = pendingProposals.length + pendingEdits.length + openReports.length;
+    document.getElementById("adminHeaderBtn").textContent = ui().admin + (isAdminAuthenticated && n ? ` (${n})` : "");
+  }
+  async function verifyAdminPin() {
+    const val = document.getElementById("adminPinInput").value.trim(), err = document.getElementById("adminAuthError");
+    if (!val) return;
+    err.textContent = "확인 중…";
+    try {
+      const res = await apiPost({ action: "checkPin", pin: val });
+      if (!res || !res.ok) { err.textContent = "비밀번호가 맞지 않습니다."; return; }
+      adminPin = val; isAdminAuthenticated = true;
+      try { sessionStorage.setItem(KEY.admin, val); } catch (e) {}
+      err.textContent = ""; document.getElementById("adminPinInput").value = "";
+      openAdminModal();
+      const a = activities.find(x => x.id === activeModalId); if (a) renderReviews(a);
+    } catch (e) { err.textContent = "시트에 연결하지 못했습니다. 웹 앱 주소와 배포 상태를 확인해 주세요."; }
+  }
+  function adminLogout() {
+    isAdminAuthenticated = false; adminPin = ""; pendingProposals = []; pendingEdits = []; openReports = [];
+    try { sessionStorage.removeItem(KEY.admin); } catch (e) {}
+    updateAdminHeaderButton(); closeAdminModal(); applyServerMode();
+  }
+  function switchAdminTab(tab) {
+    ["pending", "edits", "reports", "security"].forEach(t => {
+      const cap = t[0].toUpperCase() + t.slice(1);
+      document.getElementById("tabBtn" + cap).classList.toggle("active", t === tab);
+      document.getElementById("adminTab" + cap).style.display = t === tab ? "block" : "none";
+    });
+    if (tab === "security") loadArchives();
+  }
+  async function loadAdminData() {
+    const loading = `<p class="skeleton" style="padding:16px;">불러오는 중…</p>`;
+    document.getElementById("pendingListContainer").innerHTML = loading;
+    document.getElementById("editListContainer").innerHTML = loading;
+    try {
+      const res = await apiPost({ action: "adminData", pin: adminPin });
+      if (!res || !res.ok) { if (res && res.error === "auth") { adminLogout(); showToast("관리자 인증이 만료되었습니다."); return; } throw new Error("fail"); }
+      pendingProposals = res.proposals || []; pendingEdits = res.edits || []; openReports = res.reports || [];
+    } catch (e) { pendingProposals = []; pendingEdits = []; openReports = []; showToast("관리 목록을 불러오지 못했습니다."); }
+    renderPendingList(); renderEditList(); renderReportList(); updateAdminHeaderButton();
+  }
+  const emptyAdmin = t => `<p class="skeleton" style="padding:24px; text-align:center;">${t}</p>`;
+  function renderPendingList() {
+    document.getElementById("tabBtnPending").textContent = `새 수업 승인 (${pendingProposals.length})`;
+    const wrap = document.getElementById("pendingListContainer");
+    if (!pendingProposals.length) { wrap.innerHTML = emptyAdmin("대기 중인 수업 제안이 없습니다."); return; }
+    wrap.innerHTML = pendingProposals.map(p => `<div class="panel-block">
+      <div class="panel-sub">${escapeHtml(tTerm("region", p.region))} · ${escapeHtml(p.area)} · ${escapeHtml(p.activityType)} · ${escapeHtml(tTerm("grade", p.grade))} · ${escapeHtml(tTerm("periods", p.periods))} · ${escapeHtml(p.templateStatus)} · ${escapeHtml(p.createdAt)}</div>
+      <h4 style="font-size:15.5px; margin:4px 0 6px;">${escapeHtml(p.title)}</h4>
+      <div style="font-size:13px; color:var(--text-secondary); line-height:1.65;">
+        <div style="white-space:pre-line;">${escapeHtml(p.summary)}</div>
+        <div>준비물: ${escapeHtml(p.matReq)}</div>${p.tips ? `<div>팁: ${escapeHtml(p.tips)}</div>` : ""}
+        <div>영상: <a href="${escapeHtml(safeUrl(p.youtubeUrl))}" target="_blank" rel="noopener">${escapeHtml(p.youtubeUrl)}</a></div>
+        ${p.templateLinks ? `<div>도안: <a href="${escapeHtml(safeUrl(p.templateLinks))}" target="_blank" rel="noopener">${escapeHtml(p.templateLinks)}</a></div>` : ""}
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
+        <button type="button" class="btn-admin" onclick="decide('Proposal', '${escapeHtml(p.proposalId)}', false, this)">반려</button>
+        <button type="button" class="btn-propose solid" onclick="decide('Proposal', '${escapeHtml(p.proposalId)}', true, this)">승인 (번역 후 시트에 추가)</button>
+      </div></div>`).join("");
+  }
+  function renderEditList() {
+    document.getElementById("tabBtnEdits").textContent = `수정 제안 승인 (${pendingEdits.length})`;
+    const wrap = document.getElementById("editListContainer");
+    if (!pendingEdits.length) { wrap.innerHTML = emptyAdmin("대기 중인 수정 제안이 없습니다."); return; }
+    const labels = UI.ko.editFields;
+    wrap.innerHTML = pendingEdits.map(ed => {
+      const a = activities.find(x => x.id === String(ed.activityId));
+      const lang = LANGS.includes(ed.lang) ? ed.lang : "ko";
+      const prevLang = currentLang; currentLang = lang;
+      const rows = EDIT_KEYS.filter(k => ed[k]).map(k => `<div style="margin-top:8px;"><div style="font-size:12px; font-weight:700;">${labels[k]}</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; font-size:12.5px; line-height:1.55;">
+          <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:6px; padding:7px 9px; white-space:pre-line;"><strong style="color:#b91c1c;">현재</strong><br>${escapeHtml((a && editValue(a, k)) || "(없음)")}</div>
+          <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:7px 9px; white-space:pre-line;"><strong style="color:#15803d;">수정안</strong><br>${escapeHtml(ed[k])}</div>
+        </div></div>`).join("");
+      currentLang = prevLang;
+      return `<div class="panel-block"><div class="panel-sub">${escapeHtml(ed.activityId)} · 제안 언어 ${escapeHtml(lang)} · ${escapeHtml(ed.proposer)} · ${escapeHtml(ed.createdAt)}</div>
+        <h4 style="font-size:15px; margin-top:2px;">${escapeHtml(ed.activityTitle)}</h4>
+        ${ed.reason ? `<div style="font-size:12.5px; margin-top:6px;"><strong>이유:</strong> ${escapeHtml(ed.reason)}</div>` : ""}${rows}
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+          <button type="button" class="btn-admin" onclick="decide('Edit', '${escapeHtml(ed.editId)}', false, this)">반려</button>
+          <button type="button" class="btn-propose solid" onclick="decide('Edit', '${escapeHtml(ed.editId)}', true, this)">승인 및 반영</button>
+        </div></div>`;
+    }).join("");
+  }
+  function renderReportList() {
+    const wrap = document.getElementById("reportListContainer");
+    document.getElementById("tabBtnReports").textContent = `신고·삭제 요청 (${openReports.length})`;
+    const groups = {};
+    openReports.forEach(r => { const k = r.kind + ":" + r.targetId; (groups[k] = groups[k] || []).push(r); });
+    const rows = Object.values(groups).sort((a, b) => b.length - a.length).map(g => {
+      const r0 = g[0];
+      if (r0.kind === "takedown") return `<div class="panel-block" style="border-color:#fca5a5;"><div style="font-size:12px; color:#b91c1c; font-weight:700;">원작자 삭제 요청 · ${escapeHtml(r0.createdAt || "")}</div>
+        <div style="font-size:13px; margin:6px 0; white-space:pre-line;">${escapeHtml(r0.reason || r0.targetId)}</div>
+        <button type="button" class="btn-recommend" onclick="resolveReport('${escapeHtml(r0.targetId)}','takedown', false)">처리함 (시트 status를 「숨김」으로 바꾼 뒤)</button></div>`;
+      if (r0.kind === "review") {
+        let rv = null, act = null;
+        for (const a of activities) { const x = (a.reviews || []).find(y => y.reviewId === r0.targetId); if (x) { rv = x; act = a; break; } }
+        return `<div class="panel-block"><div class="panel-sub">후기 신고 ${g.length}건 · ${escapeHtml(act ? loc(act, "title") : r0.activityId)}</div>
+          <div style="font-size:13px; margin:6px 0;">${escapeHtml(rv ? [rv.caution.ko, rv.tip.ko].filter(Boolean).join(" / ") : "(이미 숨겨졌거나 삭제된 후기)")}</div>
+          <div style="display:flex; gap:6px;"><button type="button" class="review-del-btn" onclick="resolveReport('${escapeHtml(r0.targetId)}','review', true)">후기 삭제</button>
+          <button type="button" class="btn-recommend" onclick="resolveReport('${escapeHtml(r0.targetId)}','review', false)">문제없음</button></div></div>`;
+      }
+      const a = activities.find(x => x.id === r0.activityId) || activities.find(x => x.videoId === r0.targetId);
+      return `<div class="panel-block"><div class="panel-sub">영상 신고 ${g.length}건</div>
+        <div style="font-size:13px; margin:6px 0;">${escapeHtml(a ? loc(a, "title") : r0.activityId)} · <a href="https://www.youtube.com/watch?v=${encodeURIComponent(r0.targetId)}" target="_blank" rel="noopener">유튜브에서 열기</a></div>
+        <button type="button" class="btn-recommend" onclick="resolveReport('${escapeHtml(r0.targetId)}','video', false)">확인함</button></div>`;
+    });
+    const hidden = (staticMeta && staticMeta.hidden) || [];
+    wrap.innerHTML = (rows.length ? rows.join("") : emptyAdmin("처리할 신고가 없습니다."))
+      + (hidden.length ? `<details class="panel-block"><summary style="cursor:pointer; font-weight:700; font-size:13px;">영상이 안 나와 자동으로 숨긴 수업 ${hidden.length}건</summary>
+        <div style="font-size:12.5px; margin-top:8px; line-height:1.7;">${hidden.map(h => `${escapeHtml(h.id)} · ${escapeHtml(h.videoId)} (${h.s === "gone" ? "삭제·비공개" : "퍼가기 막힘"})`).join("<br>")}</div></details>` : "");
+  }
+  async function resolveReport(targetId, kind, deleteIt) {
+    try {
+      if (deleteIt) { const d = await apiPost({ action: "deleteReview", pin: adminPin, reviewId: targetId }); if (!d || !d.ok) throw new Error("fail"); }
+      const res = await apiPost({ action: "resolveReport", pin: adminPin, targetId, kind });
+      if (!res || !res.ok) throw new Error("fail");
+      openReports = openReports.filter(r => !(r.targetId === targetId && r.kind === kind));
+      renderReportList(); updateAdminHeaderButton(); showToast("처리했습니다.");
+    } catch (e) { showToast("처리하지 못했습니다."); }
+  }
+  async function decide(kind, id, approve, btn) {
+    if (btn) btn.disabled = true;
+    try {
+      const body = kind === "Proposal" ? { action: approve ? "approveProposal" : "rejectProposal", proposalId: id } : { action: approve ? "approveEdit" : "rejectEdit", editId: id };
+      const res = await apiPost(Object.assign({ pin: adminPin }, body));
+      if (!res || !res.ok) throw new Error((res && res.error) || "처리하지 못했습니다.");
+      showToast(approve ? "반영했습니다. 사이트에는 다음 데이터 발행 때 보입니다." : "반려했습니다.");
+      await loadAdminData();
+    } catch (e) { showToast(e.message); if (btn) btn.disabled = false; }
+  }
+  async function changeAdminPassword() {
+    const msg = document.getElementById("pinChangeStatusMsg"), np = document.getElementById("newAdminPinInput").value.trim();
+    if (np.length < 4) { msg.textContent = "4글자 이상 입력해 주세요."; return; }
+    msg.textContent = "변경 중…";
+    try {
+      const res = await apiPost({ action: "changePin", pin: adminPin, newPin: np });
+      if (!res || !res.ok) throw new Error((res && res.error) || "fail");
+      adminPin = np; try { sessionStorage.setItem(KEY.admin, np); } catch (e) {}
+      document.getElementById("newAdminPinInput").value = ""; msg.textContent = "비밀번호를 바꿨습니다.";
+    } catch (e) { msg.textContent = "변경하지 못했습니다: " + e.message; }
+  }
+  async function loadArchives() {
+    const y = new Date().getFullYear() - 1, btn = document.getElementById("btnArchiveYear"), el = document.getElementById("archiveList");
+    btn.textContent = `${y}년 기록 보관하기`;
+    try {
+      const res = await apiPost({ action: "archives", pin: adminPin });
+      el.textContent = res && res.ok && res.archives.length ? "보관된 연도: " + res.archives.map(a => a.year).join(", ") : "아직 보관한 연도가 없습니다.";
+    } catch (e) { el.textContent = ""; }
+  }
+  async function archiveLastYear() {
+    const y = new Date().getFullYear() - 1;
+    if (!confirm(`${y}년 이전 후기와 추천·저장 기록을 새 시트 파일로 옮길까요?`)) return;
+    const btn = document.getElementById("btnArchiveYear"); btn.disabled = true;
+    try {
+      const res = await apiPost({ action: "archiveYear", pin: adminPin, year: y });
+      if (!res || !res.ok) throw new Error((res && res.error) || "fail");
+      showToast(`후기 ${res.reviews}개, 추천·저장 기록 ${res.reactions}개를 옮겼습니다.`); loadArchives();
+    } catch (e) { showToast("보관하지 못했습니다: " + e.message); }
+    btn.disabled = false;
+  }
+  function saveGasWebAppUrl() {
+    const v = document.getElementById("gasWebAppUrlInput").value.trim();
+    if (v && !/^https:\/\/script\.google\.com\/.+\/exec$/.test(v)) { document.getElementById("gasSyncStatusMsg").textContent = "https://script.google.com/…/exec 형식의 주소를 넣어 주세요."; return; }
+    gasWebAppUrl = v || GAS_DEFAULT_URL;
+    safeSet(KEY.gas, v);
+    document.getElementById("gasSyncStatusMsg").textContent = v ? "저장했습니다. 새로고침하면 후기·추천 기능이 켜집니다." : "지웠습니다. 새로고침하면 서버 기능이 꺼집니다.";
+    applyServerMode();
+  }
+  function exportCurrentDbToCsv() {
+    const h = ["id", "region", "area", "activityType", "grade", "periods", "prepLevel", "cleanupLevel", "templateStatus", "season", "videoId", "channel", "title_ko", "title_en", "title_ja", "likes", "saves"];
+    const rows = activities.map(a => [a.id, a.region, a.area, a.activityType, a.grade, a.periods, a.prepLevel, a.cleanupLevel, a.templateStatus, a.season, a.videoId, a.channel,
+      a.i18n.ko.title, a.i18n.en.title, a.i18n.ja.title, a.likes || 0, a.saves || 0].map(csvCell).join(","));
+    const blob = new Blob(["﻿" + h.join(",") + "\n" + rows.join("\n")], { type: "text/csv;charset=utf-8" });
+    const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = "오늘미술_목록.csv"; link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  }
+
+  /* =========================================================================
+     15. 시작
+     ========================================================================= */
+  (function initFooterMail() {
+    const a = document.getElementById("footerMail");
+    a.textContent = CONTACT_EMAIL;
+    a.href = "mailto:" + CONTACT_EMAIL;
+  })();
+  loadLocal();
+  setLanguage(currentLang);
+  bootData();
+</script>
+</body>
+</html>

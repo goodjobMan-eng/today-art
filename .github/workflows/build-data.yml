@@ -1,0 +1,48 @@
+name: 사이트 데이터 발행 (구글 시트 → data/)
+
+# 지금은 art.db에서 로컬로 발행하므로 수동 실행만 켜 둔다.
+# 구글 시트로 옮긴 뒤에는 저장소 Settings → Secrets and variables → Actions 에
+#   GAS_URL  (Apps Script 웹 앱 주소)
+#   SITE_URL (예: https://새도메인/)
+# 를 넣고, 아래 schedule 줄의 주석을 풀면 매시간 자동 발행된다.
+on:
+  workflow_dispatch: {}
+  # schedule:
+  #   - cron: "23 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 시트에서 받아 나누기 (영상 점검은 6시간마다·수동 실행 때)
+        env:
+          GAS_URL: ${{ secrets.GAS_URL }}
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: |
+          if [ -z "$GAS_URL" ]; then echo "GAS_URL 비밀값이 없어 건너뜁니다."; exit 0; fi
+          H=$(date -u +%H)
+          if [ $((10#$H % 6)) -eq 0 ] || [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then export CHECK_VIDEOS=1; else export CHECK_VIDEOS=0; fi
+          python scripts/build-art-data.py --source sheet
+      - name: 바뀐 데이터만 커밋
+        run: |
+          if [ -n "$(git status --porcelain data a sitemap.xml robots.txt)" ]; then
+            git config user.name "today-art-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A data a sitemap.xml robots.txt
+            git commit -m "데이터 발행 $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          else
+            echo "변경 없음"
+          fi

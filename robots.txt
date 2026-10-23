@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /a/
+Sitemap: https://goodjobman-eng.github.io/today-art/sitemap.xml
