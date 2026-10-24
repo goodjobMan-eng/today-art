@@ -1,3 +1,3 @@
-# 원작자가 삭제를 요청하면 영상 ID 또는 채널 ID를 한 줄씩 적고 다시 발행합니다.
-# (today-art/optout.txt 에 적힌 것도 함께 반영됩니다)
-# 예) UCxxxxxxxxxxxxxxxxxxxxxx  # 2026-12-01 이메일 요청
+# 원작자가 삭제·수집 거부를 요청하면 채널ID 또는 영상ID를 한 줄씩 적습니다.
+# 예) UCxxxxxxxxxxxxxxxxxxxxxx  # 2026-11-01 이메일 요청
+Vv8U2Iwf8uo  # 2026-10-24 설명란에 '수업자료 외부 공개 금지' 표기 — 원작자 뜻 존중해 제외
