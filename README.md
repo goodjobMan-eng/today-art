@@ -18,6 +18,7 @@
 |---|---|
 | `index.html` | 사이트 전체(한 파일). 목록·필터·검색·상세·저장·공유·뽑기·3개 국어 |
 | `scripts/build-art-data.py` | 데이터 발행 스크립트 (art.db 또는 구글 시트 → `data/`, `a/`, `sitemap.xml`, `robots.txt`) |
+| `scripts/check-links.py` | 도안·관련 링크 점검 → `data/link-status.json` (하루 1번) |
 | `data/meta.json` | 버전, 건수, 도안 있는 수업 수 |
 | `data/list-{ko,en,ja}.json` | 목록·검색용 (제목·요약·필수 준비물 + 분류) |
 | `data/detail/00~63.json` | 상세 화면용 64묶음 (학습목표·준비물·사전 준비·활동 흐름·팁·도안/관련 링크) |
@@ -48,6 +49,8 @@ SITE_URL=https://새도메인/ python scripts/build-art-data.py
 - 계절·행사(자유 문자열)는 필터용으로 봄·여름·가을·겨울·새 학기·학년말·명절·전통·기념일·행사로 묶어 `seasonTags`에 넣습니다. 상세 화면(한국어)에는 원문을 그대로 보여 줍니다.
 - `optout.txt`(이 폴더 또는 art.db 옆)에 적힌 영상·채널 ID는 발행에서 빠집니다.
 - `CHECK_VIDEOS=1`을 붙이면 유튜브 oEmbed로 영상이 살아 있는지 점검하고, 두 번 연속 안 나오는 영상은 목록에서 뺍니다.
+- Apps Script 주소는 `GAS_URL` 환경변수, 없으면 `index.html`의 `GAS_DEFAULT_URL`을 씁니다(`GAS_URL=`로 끌 수 있음). 이때 관리자가 사이트에서 누른 조치(시트 「관리조치」 탭)를 받아 **숨긴 수업은 발행에서 빼고, 「도안 링크만 지우기」 한 수업은 도안·관련 링크를 비우고 '도안 없음'으로** 냅니다. 받지 못하면 경고만 하고 계속합니다.
+- 죽은 도안 링크 점검: `python scripts/check-links.py`(하루 1번). 결과는 `data/link-status.json`. 서로 다른 날 **연속 2번** 죽은 링크는 다음 발행에서 빠지고, 남은 도안 링크가 없으면 '도안 없음'이 됩니다. 네이버 블로그는 삭제된 글도 200을 주므로 본문의 "게시물이 삭제되었거나…" 알림으로 판정합니다. 몇 개만 시험: `python scripts/check-links.py --url 주소 …`
 
 발행 후 바뀐 파일을 커밋·푸시하면 GitHub Pages에 반영됩니다.
 

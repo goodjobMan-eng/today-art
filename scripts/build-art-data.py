@@ -9,6 +9,7 @@
   data/detail/NN.json       : 상세 화면용 (학습목표·준비물·사전 준비·활동 흐름·팁·도안 링크…), 수업 id로 64묶음
   data/social.json, data/reviews/NN.json : 추천·저장 수와 후기 (Apps Script 주소가 있을 때만)
   data/video-status.json    : 영상 점검 기록(유튜브 oEmbed, CHECK_VIDEOS=1 일 때). 두 번 연속 안 나오면 목록에서 뺀다
+  data/link-status.json     : 도안·관련 링크 점검 기록(scripts/check-links.py 가 씀). 두 번 연속 죽은 링크는 발행에서 뺀다
   a/{id}.html               : 수업별 공유 미리보기(카톡용). 검색엔진에는 안 나오게(noindex)
   sitemap.xml, robots.txt   : 첫 화면만
 
@@ -20,7 +21,8 @@
 
 환경변수
   SITE_URL      사이트 주소 (기본: https://today-art.example/ 자리표시자)
-  GAS_URL       Apps Script 웹 앱 주소. 비어 있으면 후기·추천 파일은 만들지 않음
+  GAS_URL       Apps Script 웹 앱 주소. 없으면 index.html 의 GAS_DEFAULT_URL 을 쓴다. GAS_URL= 처럼 빈 값을 주면 끈다
+                (끄면 후기·추천 파일과 관리자 조치(숨김·도안 링크 지움) 반영을 건너뜀)
   ART_DB        art.db 경로 (--db 와 같음)
   CHECK_VIDEOS  1 이면 유튜브 oEmbed로 영상이 살아 있는지 점검 (기본 0)
   CHECK_PER_RUN 한 번에 점검할 영상 수 (기본 1000)
@@ -49,7 +51,18 @@ OUT = ROOT / "data"
 BUCKETS = 64
 LANGS = ["ko", "en", "ja"]
 SITE_URL = (os.environ.get("SITE_URL") or "https://today-art.example/").rstrip("/") + "/"
-GAS_URL = (os.environ.get("GAS_URL") or "").strip()
+
+
+def default_gas_url():
+    """index.html 의 GAS_DEFAULT_URL 값 (사이트와 같은 Apps Script 를 쓰도록)"""
+    try:
+        m = re.search(r'const\s+GAS_DEFAULT_URL\s*=\s*"([^"]*)"', (ROOT / "index.html").read_text(encoding="utf-8"))
+        return m.group(1).strip() if m else ""
+    except Exception:
+        return ""
+
+
+GAS_URL = (os.environ["GAS_URL"] if "GAS_URL" in os.environ else default_gas_url()).strip()
 CHECK_VIDEOS = os.environ.get("CHECK_VIDEOS", "0") == "1"
 CHECK_PER_RUN = int(os.environ.get("CHECK_PER_RUN") or 1000)
 SITE_NAME = "오늘 미술 뭐 하지?"
@@ -343,6 +356,59 @@ def video_status(rows):
     return status
 
 
+# ----------------------------- 관리자 조치(사이트에서 누른 숨기기·도안 링크 지우기) -----------------------------
+def fetch_admin_acts():
+    """Apps Script 「관리조치」 → (숨길 id 집합, 링크 지울 id 집합). 실패하면 경고만 하고 빈 집합"""
+    if not GAS_URL:
+        return set(), set()
+    try:
+        j = get_json(gas("action=adminActs"), tries=2)
+        if not j.get("ok"):
+            raise RuntimeError(j.get("error") or "응답 오류")
+        x = j.get("adminActs") or {}
+        hidden, drop = {s(i) for i in x.get("hidden") or [] if s(i)}, {s(i) for i in x.get("dropLinks") or [] if s(i)}
+        print(f"관리자 조치: 숨김 {len(hidden)}개, 도안 링크 지움 {len(drop)}개")
+        return hidden, drop
+    except Exception as e:
+        print(f"경고: 관리자 조치를 받지 못해 건너뜀 (Code.gs 재배포 전이면 정상) — {e}")
+        return set(), set()
+
+
+def drop_links(o):
+    o["templateLinks"], o["relatedLinks"] = [], []
+    o["templateStatus"], o["templateFormat"] = "도안 없음", ""
+    for l in LANGS:
+        o[f"linkNote_{l}"] = ""
+
+
+# ----------------------------- 죽은 링크(scripts/check-links.py 결과) -----------------------------
+LINK_DEAD_AFTER = 2  # 연속 몇 번(서로 다른 날) 죽어야 발행에서 빼는지
+
+
+def dead_links():
+    try:
+        st = json.loads((OUT / "link-status.json").read_text(encoding="utf-8"))
+    except Exception:
+        return set()
+    return {u for u, v in st.items() if isinstance(v, dict) and v.get("ok") is False and int(v.get("fails") or 0) >= LINK_DEAD_AFTER}
+
+
+def remove_dead_links(o, dead):
+    """죽은 링크를 빼고, 도안 링크가 모두 빠졌으면 '도안 없음'으로. 뺀 개수를 돌려준다"""
+    tl, rl = o["templateLinks"], o["relatedLinks"]
+    ntl, nrl = [u for u in tl if u not in dead], [u for u in rl if u not in dead]
+    n = len(tl) - len(ntl) + len(rl) - len(nrl)
+    if not n:
+        return 0
+    o["templateLinks"], o["relatedLinks"] = ntl, nrl
+    if tl and not ntl and o["templateStatus"].startswith("도안 있음"):
+        o["templateStatus"], o["templateFormat"] = "도안 없음", ""
+    if not ntl and not nrl:
+        for l in LANGS:
+            o[f"linkNote_{l}"] = ""
+    return n
+
+
 # ----------------------------- 후기·추천(Apps Script 있을 때만) -----------------------------
 REVIEW_H = ["reviewId", "activityId", "teacher", "grade", "fitScore", "rating", "duration", "sessionType",
             "caution_ko", "caution_en", "caution_ja", "tip_ko", "tip_en", "tip_ja", "createdAt"]
@@ -503,6 +569,22 @@ def main():
     if a.export_tsv:
         export_tsv(rows, a.export_tsv)
 
+    # 관리자가 사이트에서 숨긴 수업은 빼고, 도안 링크만 지운 수업은 링크를 비운다
+    act_hidden, act_drop = fetch_admin_acts()
+    admin_hidden = [{"id": o["id"], "title": o["title_ko"]} for o in rows if o["id"] in act_hidden]
+    rows = [o for o in rows if o["id"] not in act_hidden]
+    for o in rows:
+        if o["id"] in act_drop:
+            drop_links(o)
+    # 연속으로 죽은 도안·관련 링크는 뺀다
+    dead = dead_links()
+    if dead:
+        removed = sum(remove_dead_links(o, dead) for o in rows)
+        if removed:
+            print(f"죽은 링크 {removed}개를 발행에서 뺌")
+    if len(rows) < 1:
+        sys.exit("발행할 수업이 없습니다.")
+
     status = video_status(rows)
     is_hidden = lambda v: (status.get(v) or {}).get("s", "ok") != "ok" and (status.get(v) or {}).get("c", 0) >= 2
     hidden = [{"id": o["id"], "videoId": o["videoId"], "s": status[o["videoId"]]["s"]} for o in rows if is_hidden(o["videoId"])]
@@ -555,7 +637,7 @@ def main():
     at = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=9)).strftime("%Y-%m-%d %H:%M")
     meta = {
         "v": prev["v"] if list_same else stamp, "n": len(visible), "at": prev.get("at", at) if list_same else at,
-        "buckets": BUCKETS, "sig": sig, "hidden": hidden, "site": SITE_URL, "gas": GAS_URL,
+        "buckets": BUCKETS, "sig": sig, "hidden": hidden, "adminHidden": admin_hidden, "site": SITE_URL, "gas": GAS_URL,
         "templates": sum(1 for o in visible if o["templateStatus"].startswith("도안 있음")),
         "social": bool(social), "sv": (prev.get("sv") if (social_same and prev) else stamp) if social else "",
         "sAt": (prev.get("sAt") if (social_same and prev) else social["since"]) if social else "",

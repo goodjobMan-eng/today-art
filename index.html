@@ -70,6 +70,10 @@
     .btn-admin { padding: 7px 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: var(--radius-sm); cursor: pointer; white-space: nowrap; text-decoration: none; display: inline-flex; align-items: center; }
     .btn-admin:hover { color: var(--text-primary); background: var(--surface-subtle); }
     .btn-admin[hidden] { display: none; }
+    .admin-act-box { border: 1.5px dashed #f59e0b; background: #fffbeb; }
+    .admin-act-box .panel-title { color: #92400e; }
+    .admin-act-box .act-state { font-size: 12.5px; font-weight: 700; color: #92400e; margin: 0 0 8px; }
+    .admin-act-box .act-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
 
     .search-bar-wrap { display: flex; gap: 8px; max-width: 640px; width: 100%; align-items: center; }
     .search-field { position: relative; flex: 1; min-width: 0; }
@@ -453,6 +457,7 @@
         <div class="source-bar" id="modalSourceBar"></div>
         <p class="copy-note" id="modalCopyNote"></p>
         <div id="modalTemplateBox"></div>
+        <div id="modalAdminActBox"></div>
         <div class="panel-block">
           <div class="panel-title" id="tSummary"></div>
           <p class="panel-text" id="modalSummary"></p>
@@ -604,13 +609,14 @@
     </div>
     <div id="adminPanelContent" style="display:none;">
       <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:6px;">
-        <p class="panel-sub">로그인한 동안 수업 상세의 후기마다 <strong>삭제</strong> 버튼이 보입니다.</p>
+        <p class="panel-sub">로그인한 동안 수업 상세의 후기마다 <strong>삭제</strong> 버튼과, 수업을 숨기거나 도안 링크만 지우는 <strong>관리자 조치</strong> 칸이 보입니다.</p>
         <button type="button" class="btn-admin" onclick="adminLogout()">로그아웃</button>
       </div>
       <div class="admin-tabs">
         <button class="admin-tab active" id="tabBtnPending" onclick="switchAdminTab('pending')">새 수업 승인</button>
         <button class="admin-tab" id="tabBtnEdits" onclick="switchAdminTab('edits')">수정 제안 승인</button>
         <button class="admin-tab" id="tabBtnReports" onclick="switchAdminTab('reports')">신고·삭제 요청</button>
+        <button class="admin-tab" id="tabBtnHidden" onclick="switchAdminTab('hidden')">숨긴 수업 목록</button>
         <button class="admin-tab" id="tabBtnSecurity" onclick="switchAdminTab('security')">비밀번호·보관</button>
       </div>
       <div id="adminTabPending"><div id="pendingListContainer"></div></div>
@@ -619,8 +625,12 @@
         <div id="editListContainer"></div>
       </div>
       <div id="adminTabReports" style="display:none;">
-        <p class="panel-sub" style="margin-bottom:10px;">후기는 서로 다른 기기 3곳에서 신고되면 처리 전까지 자동으로 숨겨집니다. 원작자 삭제 요청은 시트에서 해당 수업의 status를 「숨김」으로 바꾸거나 optout.txt에 영상·채널 ID를 적은 뒤 데이터를 다시 발행하세요.</p>
+        <p class="panel-sub" style="margin-bottom:10px;">후기는 서로 다른 기기 3곳에서 신고되면 처리 전까지 자동으로 숨겨집니다. 원작자 삭제 요청은 수업 상세의 「이 수업 숨기기」(바로 반영)를 누르거나, 시트에서 해당 수업의 status를 「숨김」으로 바꾸거나 optout.txt에 영상·채널 ID를 적은 뒤 데이터를 다시 발행하세요.</p>
         <div id="reportListContainer"></div>
+      </div>
+      <div id="adminTabHidden" style="display:none;">
+        <p class="panel-sub" style="margin-bottom:10px;">수업 상세에서 「이 수업 숨기기」「도안 링크만 지우기」를 누른 수업입니다. 사이트에는 바로 반영되고, 다음 데이터 발행 때 숨긴 수업은 데이터에서 빠지고 도안 링크도 지워집니다. 해제하면 다음 발행 때 되돌아옵니다.</p>
+        <div id="hiddenActListContainer"></div>
       </div>
       <div id="adminTabSecurity" style="display:none;">
         <div class="panel-block">
@@ -705,6 +715,11 @@
       infoSafety: "안전 유의", infoScreen: "화면", infoSeason: "계절·행사", infoFormat: "도안 형식", infoLength: "영상 길이",
       videoReport: "영상이 안 나와요", reportAsk: "신고할까요? 한 번 더 누르세요", report: "신고", reportDone: "알려 주셔서 고마워요. 확인 후 정리할게요.", reportFail: "지금은 신고를 받을 수 없어요.",
       similar: "비슷한 수업",
+      // 관리자 조치 (관리자로 로그인했을 때만 보임)
+      actTitle: "관리자 조치", actNotePh: "사유 (선택, 예: 원작자 블로그 글 삭제됨)", actHide: "이 수업 숨기기", actDrop: "도안 링크만 지우기", actUnhide: "숨김 해제",
+      actStateHidden: "숨긴 수업이에요.", actStateDrop: "도안·관련 링크를 지운 수업이에요.",
+      actHideAsk: "이 수업을 모든 방문자에게서 숨길까요?", actDropAsk: "이 수업의 도안·관련 링크를 모든 방문자에게서 지울까요?",
+      actHidden: "숨겼어요.", actDropped: "도안 링크를 지웠어요.", actRestored: "숨김을 해제했어요.", actFail: "처리하지 못했어요. 시트 연결(Code.gs 재배포)을 확인해 주세요.",
       // 후기
       reviewTitle: c => `선생님 후기 (${c})`, noReviews: "아직 후기가 없어요. 수업해 보셨다면 첫 후기를 남겨 주세요.", loadingReviews: "후기를 불러오는 중…",
       moreReviews: n => `후기 더 보기 (${n}개 남음)`,
@@ -775,6 +790,10 @@
       infoSafety: "Safety", infoScreen: "Screen", infoSeason: "Season / event", infoFormat: "Template format", infoLength: "Video length",
       videoReport: "Video not playing", reportAsk: "Report it? Tap again", report: "Report", reportDone: "Thanks for letting us know. We'll check it.", reportFail: "Reports can't be sent right now.",
       similar: "Similar lessons",
+      actTitle: "Admin actions", actNotePh: "Reason (optional, e.g. creator's blog post deleted)", actHide: "Hide this lesson", actDrop: "Remove template links only", actUnhide: "Unhide",
+      actStateHidden: "This lesson is hidden.", actStateDrop: "Template and related links were removed from this lesson.",
+      actHideAsk: "Hide this lesson from all visitors?", actDropAsk: "Remove this lesson's template and related links for all visitors?",
+      actHidden: "Hidden.", actDropped: "Template links removed.", actRestored: "Restored.", actFail: "Couldn't do that. Please check the sheet connection (redeploy Code.gs).",
       reviewTitle: c => `Teacher reviews (${c})`, noReviews: "No reviews yet. If you've taught this, share the first one.", loadingReviews: "Loading reviews…",
       moreReviews: n => `Show more reviews (${n} left)`,
       writeReview: "Write a review", lblRevTeacher: "Your name (nickname)", lblRevGrade: "Grade taught", lblRevRating: "Recommendation", lblRevSession: "Time it took",
@@ -840,6 +859,10 @@
       infoSafety: "安全の注意", infoScreen: "画面", infoSeason: "季節・行事", infoFormat: "図案の形式", infoLength: "動画の長さ",
       videoReport: "動画が再生されない", reportAsk: "報告しますか？もう一度押してください", report: "報告", reportDone: "お知らせありがとうございます。確認して対応します。", reportFail: "今は報告を送れません。",
       similar: "似ている授業",
+      actTitle: "管理者の操作", actNotePh: "理由（任意。例：作者のブログ記事が削除された）", actHide: "この授業を非表示にする", actDrop: "図案リンクだけ消す", actUnhide: "非表示を解除",
+      actStateHidden: "非表示にした授業です。", actStateDrop: "図案・関連リンクを消した授業です。",
+      actHideAsk: "この授業をすべての訪問者に対して非表示にしますか？", actDropAsk: "この授業の図案・関連リンクをすべての訪問者に対して消しますか？",
+      actHidden: "非表示にしました。", actDropped: "図案リンクを消しました。", actRestored: "非表示を解除しました。", actFail: "処理できませんでした。シートの接続（Code.gs の再デプロイ）を確認してください。",
       reviewTitle: c => `先生のレビュー (${c})`, noReviews: "まだレビューがありません。授業をされた方は最初のレビューをお願いします。", loadingReviews: "レビューを読み込み中…",
       moreReviews: n => `レビューをもっと見る（残り${n}件）`,
       writeReview: "授業レビューを書く", lblRevTeacher: "名前（ニックネーム）", lblRevGrade: "指導学年", lblRevRating: "おすすめ度", lblRevSession: "実際にかかった時間",
@@ -1010,7 +1033,10 @@
   /* =========================================================================
      3. 상태
      ========================================================================= */
-  let activities = [];
+  let activities = [];      // 방문자에게 보이는 수업 (관리자가 숨긴 수업은 뺀 것)
+  let allActs = [];         // 받은 수업 전체
+  // 관리자 조치(Apps Script 「관리조치」 탭): 숨긴 수업·도안 링크를 지운 수업. 서버가 아직 모르면(재배포 전) 비어 있다
+  let adminHidden = new Set(), adminDrop = new Set(), adminActList = [];
   let popularSearches = {};
   let likedSet = new Set(), savedSet = new Set(), hiddenReviews = new Set();
   let deviceId = "";
@@ -1117,10 +1143,11 @@
     if (loadedLists.has(lang)) return;
     const rows = tableToObjects(await fetchJson(staticUrl(`list-${lang}.json`))).filter(o => o.id);
     if (!staticMode) {
-      activities = rows.map(rowToActivity);
+      allActs = rows.map(rowToActivity);
+      applyAdminActs();
       staticMode = true;
     } else {
-      const byId = new Map(activities.map(a => [a.id, a]));
+      const byId = new Map(allActs.map(a => [a.id, a]));
       rows.forEach(o => {
         const a = byId.get(String(o.id)); if (!a) return;
         ["title", "summary", "matReq"].forEach(f => { if (o[f + "_" + lang]) a.i18n[lang][f] = String(o[f + "_" + lang]); });
@@ -1135,7 +1162,7 @@
     const b = bucketOf(id);
     if (!loadedDetail.has(b)) {
       const p = fetchJson(staticUrl(`detail/${String(b).padStart(2, "0")}.json`)).then(map => {
-        const byId = new Map(activities.map(a => [a.id, a]));
+        const byId = new Map(allActs.map(a => [a.id, a]));
         Object.entries(map).forEach(([aid, d]) => { const a = byId.get(aid); if (a) a.d = rowToDetail(d); });
         return true;
       }).catch(e => { loadedDetail.delete(b); throw e; });
@@ -1176,7 +1203,9 @@
       const data = await apiGet("data");
       if (!data || !data.ok) throw new Error("bad response");
       const rows = tableToObjects(data.activities).filter(o => o.id && String(o.status || "") !== "숨김");
-      activities = rows.map(rowToActivity);
+      allActs = rows.map(rowToActivity);
+      readAdminActs(data);
+      applyAdminActs();
       applySocial(data);
       staticMode = false; dataReady = true; loadFailed = false;
       lastSyncAt = data.at || "";
@@ -1193,6 +1222,42 @@
     el.dataset.state = state;
     el.textContent = state === "ok" ? ui().syncOk(lastSyncAt) : state === "fail" ? ui().syncFail : "";
   }
+
+  /* ---------- 관리자 조치: 숨긴 수업은 목록·검색·상세에서 빼고, 링크 지운 수업은 '도안 없음'으로 ---------- */
+  // 응답에 adminActs 가 있으면 읽고, 바뀌었으면 true. 없으면(Code.gs 재배포 전) 그대로 둔다
+  function readAdminActs(data) {
+    const x = data && data.adminActs;
+    if (!x || typeof x !== "object") return false;
+    const h = new Set((Array.isArray(x.hidden) ? x.hidden : []).map(String));
+    const d = new Set((Array.isArray(x.dropLinks) ? x.dropLinks : []).map(String));
+    const same = (p, q) => p.size === q.size && [...p].every(v => q.has(v));
+    if (same(h, adminHidden) && same(d, adminDrop)) return false;
+    adminHidden = h; adminDrop = d;
+    return true;
+  }
+  function applyAdminActs() {
+    allActs.forEach(a => {
+      if (a._ts0 === undefined) a._ts0 = a.templateStatus;
+      a.dropLinks = adminDrop.has(a.id);
+      a.templateStatus = a.dropLinks ? "도안 없음" : a._ts0;
+      a.hasTemplate = /^도안 있음/.test(a.templateStatus);
+    });
+    activities = allActs.filter(a => !adminHidden.has(a.id));
+    _countCache = { n: -1, c: null };
+  }
+  function adminActsChanged() {
+    applyAdminActs();
+    if (!dataReady) return;
+    renderAll();
+    if (activeModalId) {
+      const a = activities.find(x => x.id === activeModalId);
+      if (!a) closeDetailModal(); else openDetailModal(a.id);
+    }
+    if (document.getElementById("adminModal").classList.contains("open") && isAdminAuthenticated) renderAdminActList();
+  }
+  // 도안·관련 링크 (관리자가 지운 수업은 빈 목록)
+  const tplLinksOf = a => (a.dropLinks || !a.d) ? [] : (a.d.templateLinks || []);
+  const relLinksOf = a => (a.dropLinks || !a.d) ? [] : (a.d.relatedLinks || []);
 
   /* ---------- 서버(Apps Script) ---------- */
   async function apiGet(action) {
@@ -1240,6 +1305,7 @@
       const data = await apiGet("social");
       if (!data || !data.ok) throw new Error("bad");
       applySocial(data);
+      if (readAdminActs(data)) adminActsChanged();
       refreshReactViews();
     } catch (e) {}
   }
@@ -1267,6 +1333,7 @@
     try {
       const data = await apiGet("recent&since=" + encodeURIComponent(staticMeta.sAt || ""));
       if (!data || !data.ok) return;
+      if (readAdminActs(data)) adminActsChanged();
       (data.hidden || []).forEach(id => hiddenReviews.add(String(id)));
       const byId = new Map(activities.map(a => [a.id, a]));
       let recent = tableToObjects(data.reviews);
@@ -1769,7 +1836,7 @@
     const rows = [u.savedCsvHead.map(csvCell).join(",")].concat(ids.map(id => {
       const a = byId.get(id);
       return [loc(a, "title"), tTerm("region", a.region), tTerm("area", a.area), tTerm("activityType", a.activityType), tTerm("grade", a.grade), tTerm("periods", a.periods),
-        tTerm("templateStatus", a.templateStatus), ((a.d && a.d.templateLinks) || []).join(" "), shareUrlFor(id), `https://www.youtube.com/watch?v=${a.videoId}`, a.channel].map(csvCell).join(",");
+        tTerm("templateStatus", a.templateStatus), tplLinksOf(a).join(" "), shareUrlFor(id), `https://www.youtube.com/watch?v=${a.videoId}`, a.channel].map(csvCell).join(",");
     }));
     const blob = new Blob(["﻿" + rows.join("\r\n")], { type: "text/csv;charset=utf-8" });
     const link = document.createElement("a");
@@ -1937,8 +2004,8 @@
 
     // 도안·관련 링크
     const box = document.getElementById("modalTemplateBox");
-    const tl = (d && d.templateLinks) || [], rl = (d && d.relatedLinks) || [];
-    const note = d ? dl(a, "linkNote") : "";
+    const tl = tplLinksOf(a), rl = relLinksOf(a);
+    const note = d && !a.dropLinks ? dl(a, "linkNote") : "";
     const linkBtn = (url, cls, label) => `<a class="link-btn ${cls}" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(label)}<small>${escapeHtml(hostOf(url))}</small></span><span class="arr" aria-hidden="true">↗</span></a>`;
     const ts = a.templateStatus;
     const hasLinks = tl.length || rl.length;
@@ -1969,6 +2036,52 @@
     document.getElementById("modalInfo").innerHTML = rows.map(r => `<tr><th scope="row">${escapeHtml(r[0])}</th><td>${escapeHtml(r[1])}</td></tr>`).join("");
     document.getElementById("modalTags").innerHTML = currentLang === "ko" || a.region === "KR"
       ? a.tags.map(t => `<button type="button" class="tag" onclick="searchTag(this.textContent)">#${escapeHtml(t)}</button>`).join("") : "";
+    renderAdminActBox(a);
+  }
+  // 관리자로 로그인했을 때만: 이 수업 숨기기 · 도안 링크만 지우기 · 숨김 해제
+  function renderAdminActBox(a) {
+    const box = document.getElementById("modalAdminActBox");
+    if (!isAdminAuthenticated || !serverOn()) { box.innerHTML = ""; return; }
+    const u = ui(), hid = adminHidden.has(a.id), drop = adminDrop.has(a.id), id = escapeHtml(a.id);
+    const state = hid ? u.actStateHidden : drop ? u.actStateDrop : "";
+    box.innerHTML = `<div class="panel-block admin-act-box">
+      <div class="panel-title">${escapeHtml(u.actTitle)}</div>
+      ${state ? `<p class="act-state">${escapeHtml(state)}</p>` : ""}
+      <input type="text" id="adminActNote" class="input-box" maxlength="300" placeholder="${escapeHtml(u.actNotePh)}" />
+      <div class="act-row">
+        ${hid ? "" : `<button type="button" class="review-del-btn" id="btnActHide" onclick="adminActOn('${id}','hide',this)">${escapeHtml(u.actHide)}</button>`}
+        ${hid || drop ? "" : `<button type="button" class="btn-admin" id="btnActDrop" onclick="adminActOn('${id}','dropLinks',this)">${escapeHtml(u.actDrop)}</button>`}
+        ${hid || drop ? `<button type="button" class="btn-admin" id="btnActUnhide" onclick="adminActOn('${id}','unhide',this)">${escapeHtml(u.actUnhide)}</button>` : ""}
+      </div></div>`;
+  }
+  async function adminActOn(id, kind, btn) {
+    if (!isAdminAuthenticated) return;
+    const u = ui();
+    if (kind === "hide" && !confirm(u.actHideAsk)) return;
+    if (kind === "dropLinks" && !confirm(u.actDropAsk)) return;
+    const noteEl = document.getElementById("adminActNote");
+    const note = noteEl && activeModalId === id ? noteEl.value.trim() : "";
+    if (btn) btn.disabled = true;
+    try {
+      const res = await apiPost({ action: "adminAct", pin: adminPin, activityId: id, kind, note });
+      if (!res || !res.ok) {
+        if (res && res.error === "auth") { adminLogout(); showToast("관리자 인증이 만료되었습니다."); return; }
+        throw new Error((res && res.error) || "fail");
+      }
+      // 서버가 돌려준 최신 상태를 쓰고, 없으면 누른 대로 반영
+      if (!readAdminActs(res)) {
+        if (kind === "hide") adminHidden.add(id);
+        else if (kind === "dropLinks") adminDrop.add(id);
+        else { adminHidden.delete(id); adminDrop.delete(id); }
+      }
+      adminActList = adminActList.filter(x => x.activityId !== id);
+      if (kind !== "unhide") adminActList.push({ activityId: id, hidden: adminHidden.has(id), dropLinks: adminDrop.has(id), note, createdAt: "" });
+      adminActsChanged();
+      showToast(kind === "hide" ? u.actHidden : kind === "dropLinks" ? u.actDropped : u.actRestored);
+    } catch (e) {
+      showToast(u.actFail);
+      if (btn) btn.disabled = false;
+    }
   }
   function searchTag(t) {
     closeDetailModal();
@@ -2200,16 +2313,17 @@
       try { sessionStorage.setItem(KEY.admin, val); } catch (e) {}
       err.textContent = ""; document.getElementById("adminPinInput").value = "";
       openAdminModal();
-      const a = activities.find(x => x.id === activeModalId); if (a) renderReviews(a);
+      const a = activities.find(x => x.id === activeModalId); if (a) { renderReviews(a); renderAdminActBox(a); }
     } catch (e) { err.textContent = "시트에 연결하지 못했습니다. 웹 앱 주소와 배포 상태를 확인해 주세요."; }
   }
   function adminLogout() {
-    isAdminAuthenticated = false; adminPin = ""; pendingProposals = []; pendingEdits = []; openReports = [];
+    isAdminAuthenticated = false; adminPin = ""; pendingProposals = []; pendingEdits = []; openReports = []; adminActList = [];
     try { sessionStorage.removeItem(KEY.admin); } catch (e) {}
+    document.getElementById("modalAdminActBox").innerHTML = "";
     updateAdminHeaderButton(); closeAdminModal(); applyServerMode();
   }
   function switchAdminTab(tab) {
-    ["pending", "edits", "reports", "security"].forEach(t => {
+    ["pending", "edits", "reports", "hidden", "security"].forEach(t => {
       const cap = t[0].toUpperCase() + t.slice(1);
       document.getElementById("tabBtn" + cap).classList.toggle("active", t === tab);
       document.getElementById("adminTab" + cap).style.display = t === tab ? "block" : "none";
@@ -2224,8 +2338,14 @@
       const res = await apiPost({ action: "adminData", pin: adminPin });
       if (!res || !res.ok) { if (res && res.error === "auth") { adminLogout(); showToast("관리자 인증이 만료되었습니다."); return; } throw new Error("fail"); }
       pendingProposals = res.proposals || []; pendingEdits = res.edits || []; openReports = res.reports || [];
+      if (Array.isArray(res.adminActList)) {
+        adminActList = res.adminActList;
+        const h = new Set(adminActList.filter(x => x.hidden).map(x => String(x.activityId)));
+        const d = new Set(adminActList.filter(x => x.dropLinks).map(x => String(x.activityId)));
+        if (readAdminActs({ adminActs: { hidden: [...h], dropLinks: [...d] } })) adminActsChanged();
+      }
     } catch (e) { pendingProposals = []; pendingEdits = []; openReports = []; showToast("관리 목록을 불러오지 못했습니다."); }
-    renderPendingList(); renderEditList(); renderReportList(); updateAdminHeaderButton();
+    renderPendingList(); renderEditList(); renderReportList(); renderAdminActList(); updateAdminHeaderButton();
   }
   const emptyAdmin = t => `<p class="skeleton" style="padding:24px; text-align:center;">${t}</p>`;
   function renderPendingList() {
@@ -2297,6 +2417,28 @@
     wrap.innerHTML = (rows.length ? rows.join("") : emptyAdmin("처리할 신고가 없습니다."))
       + (hidden.length ? `<details class="panel-block"><summary style="cursor:pointer; font-weight:700; font-size:13px;">영상이 안 나와 자동으로 숨긴 수업 ${hidden.length}건</summary>
         <div style="font-size:12.5px; margin-top:8px; line-height:1.7;">${hidden.map(h => `${escapeHtml(h.id)} · ${escapeHtml(h.videoId)} (${h.s === "gone" ? "삭제·비공개" : "퍼가기 막힘"})`).join("<br>")}</div></details>` : "");
+  }
+  function renderAdminActList() {
+    const wrap = document.getElementById("hiddenActListContainer");
+    // 서버 목록(사유 포함) + 서버 목록에 없지만 지금 숨김·링크 지움 상태인 것
+    const map = new Map(adminActList.map(x => [String(x.activityId), x]));
+    [...adminHidden, ...adminDrop].forEach(id => { if (!map.has(id)) map.set(id, { activityId: id, note: "", createdAt: "" }); });
+    // 이미 발행에서 빠진 수업은 meta.json 의 adminHidden 에 제목이 남아 있다
+    const baked = new Map(((staticMeta && staticMeta.adminHidden) || []).map(x => [String(x.id), x]));
+    const items = [...map.values()].map(x => Object.assign({}, x, { hidden: adminHidden.has(String(x.activityId)), dropLinks: adminDrop.has(String(x.activityId)) }))
+      .filter(x => x.hidden || x.dropLinks);
+    document.getElementById("tabBtnHidden").textContent = `숨긴 수업 목록 (${items.length})`;
+    if (!items.length) { wrap.innerHTML = emptyAdmin("숨기거나 도안 링크를 지운 수업이 없습니다."); return; }
+    wrap.innerHTML = items.map(x => {
+      const id = String(x.activityId), a = allActs.find(y => y.id === id), b = baked.get(id);
+      const title = a ? loc(a, "title") : (b && b.title) || id;
+      const tag = x.hidden ? `<span style="color:#b91c1c; font-weight:700;">숨김</span>` : `<span style="color:#92400e; font-weight:700;">도안 링크 지움</span>`;
+      return `<div class="panel-block hidden-act-item" data-id="${escapeHtml(id)}" style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div style="min-width:0;"><div class="panel-sub">${tag} · ${escapeHtml(id)}${x.createdAt ? " · " + escapeHtml(x.createdAt) : ""}${!a ? " · 이미 발행에서 빠짐" : ""}</div>
+          <div style="font-size:14px; font-weight:700; margin-top:2px;">${escapeHtml(title)}</div>
+          <div style="font-size:12.5px; color:var(--text-secondary); margin-top:2px;">사유: ${escapeHtml(x.note || "(없음)")}</div></div>
+        <button type="button" class="btn-admin" onclick="adminActOn('${escapeHtml(id)}','unhide',this)">숨김 해제</button></div>`;
+    }).join("");
   }
   async function resolveReport(targetId, kind, deleteIt) {
     try {

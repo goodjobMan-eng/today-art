@@ -15,6 +15,9 @@
  *   새수업제안  : 새 수업 제안 (관리자 승인 후 수업 탭으로 이동)
  *   수정제안    : 설명 수정 제안 (관리자 승인 후 수업 탭에 반영)
  *   신고        : 영상·후기 신고, 원작자 삭제 요청
+ *   관리조치    : 관리자가 사이트에서 누른 「수업 숨기기」「도안 링크만 지우기」「숨김 해제」 기록 (아래로 쌓임)
+ *                 kind = hide | unhide | dropLinks. 같은 수업은 위에서부터 차례로 적용(unhide면 둘 다 해제).
+ *                 사이트는 바로 반영하고, 데이터 발행 때 숨긴 수업은 빠지고 도안 링크는 지워진다.
  *
  * 관리자 비밀번호는 스크립트 속성(ADMIN_PIN)에만 저장되고 사이트 소스에는 없다.
  */
@@ -62,7 +65,8 @@ const TABS = {
     name: '수정제안',
     headers: ['editId', 'status', 'createdAt', 'activityId', 'activityTitle', 'lang', 'proposer', 'reason',
       'title', 'summary', 'objective', 'matReq', 'prep', 'tips']
-  }
+  },
+  adminActs: { name: '관리조치', headers: ['actionId', 'createdAt', 'activityId', 'kind', 'note'] }
 };
 
 // 수정 제안으로 고칠 수 있는 칸(시트에는 칸_ko / 칸_en / 칸_ja 로 있음)
@@ -82,6 +86,7 @@ function doGet(e) {
     if (action === 'reviewSources') return json_(reviewSources_());       // 데이터 발행용: 지금 파일 + 연도별 보관 파일 목록
     if (action === 'counts') return json_({ ok: true, at: now_(), likes: countMap_('likes'), saves: countMap_('saves') });
     if (action === 'recent') return json_(recentReviews_(e.parameter)); // 사이트용: 마지막 발행 이후 새 후기만
+    if (action === 'adminActs') return json_({ ok: true, at: now_(), adminActs: adminActs_() }); // 데이터 발행용: 숨긴 수업·도안 링크 지운 수업
     return json_({ ok: false, error: 'unknown action' });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
@@ -113,6 +118,7 @@ function doPost(e) {
     if (a === 'changePin') return json_(changePin_(body.newPin));
     if (a === 'archiveYear') return json_(withLock_(() => archiveYear_(Number(body.year))));
     if (a === 'archives') return json_({ ok: true, archives: getArchives_() });
+    if (a === 'adminAct') return json_(withLock_(() => adminAct_(body)));
 
     return json_({ ok: false, error: 'unknown action' });
   } catch (err) {
@@ -221,7 +227,7 @@ function recentReviews_(p) {
   const t = readLastRows_('reviews', 500);
   const hidden = hiddenReviewIds_();
   const rows = t.rows.filter(r => visibleReview_(t, r, hidden) && (!since || String(r[t.col.createdAt] || '') >= since));
-  return { ok: true, at: now_(), hidden: Object.keys(hidden), reviews: publicTable_(t.headers, rows, ['deviceId']) };
+  return { ok: true, at: now_(), hidden: Object.keys(hidden), reviews: publicTable_(t.headers, rows, ['deviceId']), adminActs: adminActs_() };
 }
 
 function appendAct_(obj) {
@@ -263,7 +269,8 @@ function publicData_() {
     activities: { h: acts.headers, r: actRows },
     reviews: publicTable_(revs.headers, revRows, ['deviceId']),
     likes: countMap_('likes'),
-    saves: countMap_('saves')
+    saves: countMap_('saves'),
+    adminActs: adminActs_()
   };
 }
 
@@ -277,7 +284,8 @@ function socialData_() {
     at: now_(),
     reviews: publicTable_(revs.headers, revRows, ['deviceId']),
     likes: countMap_('likes'),
-    saves: countMap_('saves')
+    saves: countMap_('saves'),
+    adminActs: adminActs_()
   };
 }
 
@@ -702,8 +710,58 @@ function adminData_() {
     ok: true,
     proposals: p.rows.map(r => rowToObj_(p, r)).filter(o => o.status === '대기'),
     edits: e.rows.map(r => rowToObj_(e, r)).filter(o => o.status === '대기'),
-    reports: openReports_().map(o => { delete o.deviceId; return o; })
+    reports: openReports_().map(o => { delete o.deviceId; return o; }),
+    adminActList: adminActList_()
   };
+}
+
+/* ---------- 관리 조치: 수업 숨기기 · 도안 링크만 지우기 · 숨김 해제 ---------- */
+const ADMIN_ACT_KINDS = ['hide', 'unhide', 'dropLinks'];
+
+function adminAct_(b) {
+  const activityId = clean_(b.activityId, 40);
+  const kind = String(b.kind || '');
+  if (!activityId || ADMIN_ACT_KINDS.indexOf(kind) < 0) return { ok: false, error: 'bad request' };
+  appendObj_('adminActs', {
+    actionId: 'ac-' + new Date().getTime() + '-' + Math.floor(Math.random() * 1000),
+    createdAt: now_(),
+    activityId: activityId,
+    kind: kind,
+    note: clean_(b.note, 300)
+  });
+  return { ok: true, adminActs: adminActs_() };
+}
+
+// 수업마다 지금 상태: 기록을 위에서부터(시간순) 차례로 적용한다. unhide 는 숨김·링크 지움을 모두 푼다
+function adminActState_() {
+  const st = {};
+  // 읽을 때는 탭을 만들지 않는다(첫 조치 때 appendObj_ 가 만든다). 탭이 없으면 조치도 없다
+  if (!ss_().getSheetByName(TABS.adminActs.name)) return st;
+  const t = readTab_('adminActs');
+  t.rows.forEach(r => {
+    const id = String(r[t.col.activityId] || '').trim(), kind = String(r[t.col.kind] || '').trim();
+    if (!id || ADMIN_ACT_KINDS.indexOf(kind) < 0) return;
+    const s = st[id] || (st[id] = { activityId: id, hidden: false, dropLinks: false, note: '', createdAt: '' });
+    if (kind === 'hide') s.hidden = true;
+    else if (kind === 'dropLinks') s.dropLinks = true;
+    else { s.hidden = false; s.dropLinks = false; }
+    s.note = String(r[t.col.note] || '');
+    s.createdAt = String(r[t.col.createdAt] || '');
+  });
+  return st;
+}
+
+// 공개용: 수업 번호만
+function adminActs_() {
+  const st = adminActState_();
+  const ids = Object.keys(st);
+  return { hidden: ids.filter(id => st[id].hidden), dropLinks: ids.filter(id => st[id].dropLinks) };
+}
+
+// 관리자용: 사유·시각까지
+function adminActList_() {
+  const st = adminActState_();
+  return Object.keys(st).map(id => st[id]).filter(s => s.hidden || s.dropLinks);
 }
 
 function setStatus_(key, idField, idVal, status) {
