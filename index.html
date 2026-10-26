@@ -120,6 +120,9 @@
     .quick-label { font-size: 12.5px; color: var(--text-muted); font-weight: 600; margin-right: 2px; white-space: nowrap; }
     .quick-chip { padding: 6px 12px; font-size: 13px; font-weight: 600; color: var(--text-primary); background: var(--surface); border: 1px solid var(--border-strong); border-radius: 999px; cursor: pointer; white-space: nowrap; }
     .quick-chip.on { background: var(--ink); border-color: var(--ink); color: #fff; }
+    .quick-chip.seasonal { border-color: var(--accent); }
+    .quick-chip .pv { font-size: 11px; font-weight: 700; opacity: .75; margin-left: 4px; }
+    .seasonal-note { font-size: 12.5px; color: var(--text-secondary); margin: 0 0 12px; }
     .popular-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 12.5px; flex-wrap: nowrap; }
     .popular-label { color: var(--text-muted); font-weight: 600; margin-right: 2px; flex-shrink: 0; }
     .popular-wrap { display: flex; gap: 6px; flex-wrap: wrap; min-width: 0; }
@@ -618,6 +621,7 @@
         <button class="admin-tab" id="tabBtnReports" onclick="switchAdminTab('reports')">신고·삭제 요청</button>
         <button class="admin-tab" id="tabBtnHidden" onclick="switchAdminTab('hidden')">숨긴 수업 목록</button>
         <button class="admin-tab" id="tabBtnSecurity" onclick="switchAdminTab('security')">비밀번호·보관</button>
+        <button class="admin-tab" id="tabBtnSeasonal" onclick="switchAdminTab('seasonal')">이맘때 추천</button>
       </div>
       <div id="adminTabPending"><div id="pendingListContainer"></div></div>
       <div id="adminTabEdits" style="display:none;">
@@ -632,6 +636,7 @@
         <p class="panel-sub" style="margin-bottom:10px;">수업 상세에서 「이 수업 숨기기」「도안 링크만 지우기」를 누른 수업입니다. 사이트에는 바로 반영되고, 다음 데이터 발행 때 숨긴 수업은 데이터에서 빠지고 도안 링크도 지워집니다. 해제하면 다음 발행 때 되돌아옵니다.</p>
         <div id="hiddenActListContainer"></div>
       </div>
+      <div id="adminTabSeasonal" style="display:none;"><div id="seasonalAdminBox"></div></div>
       <div id="adminTabSecurity" style="display:none;">
         <div class="panel-block">
           <div class="panel-title">관리자 비밀번호 변경</div>
@@ -664,6 +669,9 @@
   const GAS_DEFAULT_URL = "https://script.google.com/macros/s/AKfycbzjig0D9A-2crPr5ZWTAo92Ka2yNfPklaDxOAse0XXgxfEZwA9yLKGR3kHyxTQrzNukwA/exec";
   // 원작자 삭제 요청을 받을 이메일 (배포 전에 바꾸기)
   const CONTACT_EMAIL = "abujangi@korea.kr";
+  // 「이맘때 많이 한 수업」 바로가기. false 면 첫 화면에 전혀 나오지 않고 data/seasonal.json 도 읽지 않는다.
+  // 작년 같은 시기 기록이 쌓이면(2027년 가을쯤) true 로 바꿔 배포. 관리자 화면 「이맘때 추천」 탭에서 미리 볼 수 있다
+  const SEASONAL_ENABLED = false;
   const LANGS = ["ko", "en", "ja"];
   const PAGE = 36;
   const KEY = { lang: "art_lang_v1", liked: "art_liked_v1", saved: "art_saved_v1", device: "art_device_v1",
@@ -749,6 +757,17 @@
       takedownBtn: "사이트에서 바로 요청하기", takedownLabel: "영상 주소(또는 채널 이름)와 연락받을 방법을 적어 주세요.", takedownSend: "보내기", takedownDone: "요청을 받았어요. 확인하는 대로 내리겠습니다.",
       quickPicks: { easy: "준비·정리 쉬운 수업", one: "1차시에 끝내기", low: "저학년", appreciate: "감상 수업", season: s => `지금 계절: ${s}` },
       filterLabels: { tpl: "도안", region: "나라", area: "영역", type: "활동 유형", grade: "학년", periods: "차시", prep: "준비 난이도", cleanup: "정리 난이도", season: "계절·행사" },
+      seasonalQuick: "이맘때 많이 한 수업", seasonalPreviewTag: "미리보기",
+      seasonalNote: m => m.includes("A") ? "작년 이맘때 선생님들이 많이 저장하고 후기를 남긴 수업부터 보여 드려요." : m.includes("B") ? "요즘 선생님들이 많이 저장한 수업과 이맘때 계절·행사에 맞는 수업이에요." : "이맘때 계절·행사에 맞는 수업이에요. 기록이 쌓이면 선생님들이 많이 한 수업 순서로 바뀌어요.",
+      seasonalAdmin: {
+        title: "「이맘때 많이 한 수업」", stateOn: "켜져 있음 — 모든 방문자의 첫 화면 바로가기에 보입니다.", stateOff: "꺼져 있음 — 방문자에게는 보이지 않습니다. (기록 수집은 계속됩니다)",
+        how: "켜는 방법: index.html 의 <code>SEASONAL_ENABLED</code> 를 <code>true</code> 로 바꿔 배포하세요. 순위는 데이터 발행(build-art-data.py) 때 data/seasonal.json 으로 미리 계산됩니다.",
+        preview: "첫 화면에서 미리보기", previewOff: "미리보기 끄기", previewOn: "미리보기 중입니다. 이 브라우저에서만 보이고 새로고침하면 꺼집니다.",
+        none: "data/seasonal.json 이 없거나 비어 있습니다. 데이터를 다시 발행해 주세요.", loading: "불러오는 중…",
+        mode: m => ({ ABC: "작년 같은 시기 + 요즘 뜨는 + 계절", AC: "작년 같은 시기 + 계절", BC: "요즘 뜨는 + 계절", C: "계절·행사 정보만" })[m] || m,
+        summary: d => `기준일 ${d.date} · 방식: ${d.mode} · 후보 ${d.candidates}개<br>작년 창 ${d.windowA[0]}~${d.windowA[1]}: 후기 ${d.countA.r} · 저장 ${d.countA.s} · 추천 ${d.countA.l} (후기+저장 ${d.minA}건 이상이면 A 사용)<br>최근 28일: 후기 ${d.countB.r} · 저장 ${d.countB.s} · 추천 ${d.countB.l} (후기+저장 ${d.minB}건 이상이면 B 사용) · 출처: ${d.source}`,
+        group: { all: "전체", "1-2": "1~2학년", "3-4": "3~4학년", "5-6": "5~6학년" }, why: { a: "작년", b: "요즘", c: "계절" }
+      },
       multiHint: "여러 개 선택 가능", gradeHint: "전 학년 수업 포함"
     },
     en: {
@@ -818,6 +837,17 @@
       takedownBtn: "Request on this site", takedownLabel: "Enter the video link (or channel name) and how we can reach you.", takedownSend: "Send", takedownDone: "Request received. We'll remove it as soon as we check.",
       quickPicks: { easy: "Easy prep & cleanup", one: "Done in one period", low: "Grades 1–2", appreciate: "Art appreciation", season: s => `Now: ${s}` },
       filterLabels: { tpl: "Template", region: "Country", area: "Area", type: "Activity type", grade: "Grade", periods: "Periods", prep: "Prep difficulty", cleanup: "Cleanup difficulty", season: "Season / event" },
+      seasonalQuick: "Popular this time of year", seasonalPreviewTag: "Preview",
+      seasonalNote: m => m.includes("A") ? "Lessons teachers saved and reviewed most at this time last year come first." : m.includes("B") ? "Lessons teachers are saving lately, plus lessons that fit this season and its events." : "Lessons that fit this season and its events. As records build up, this will follow what teachers actually taught.",
+      seasonalAdmin: {
+        title: "“Popular this time of year”", stateOn: "On — shown in Quick picks for every visitor.", stateOff: "Off — hidden from visitors. (Records are still being collected.)",
+        how: "To turn it on: set <code>SEASONAL_ENABLED</code> in index.html to <code>true</code> and deploy. Rankings are precomputed into data/seasonal.json when data is published (build-art-data.py).",
+        preview: "Preview on the home screen", previewOff: "Stop preview", previewOn: "Previewing. Only this browser sees it; reloading turns it off.",
+        none: "data/seasonal.json is missing or empty. Please publish the data again.", loading: "Loading…",
+        mode: m => ({ ABC: "Last year + trending + season", AC: "Last year + season", BC: "Trending + season", C: "Season/event info only" })[m] || m,
+        summary: d => `Date ${d.date} · Mode: ${d.mode} · ${d.candidates} candidates<br>Last-year window ${d.windowA[0]}–${d.windowA[1]}: reviews ${d.countA.r} · saves ${d.countA.s} · likes ${d.countA.l} (A used at ${d.minA}+ reviews+saves)<br>Last 28 days: reviews ${d.countB.r} · saves ${d.countB.s} · likes ${d.countB.l} (B used at ${d.minB}+) · Source: ${d.source}`,
+        group: { all: "All", "1-2": "Grades 1–2", "3-4": "Grades 3–4", "5-6": "Grades 5–6" }, why: { a: "last year", b: "trending", c: "season" }
+      },
       multiHint: "Multi-select", gradeHint: "incl. all-grade lessons"
     },
     ja: {
@@ -887,6 +917,17 @@
       takedownBtn: "サイトから依頼する", takedownLabel: "動画のURL（またはチャンネル名）と連絡先をご記入ください。", takedownSend: "送信", takedownDone: "依頼を受け付けました。確認後すぐに削除します。",
       quickPicks: { easy: "準備・片付けがかんたん", one: "1時間で完成", low: "低学年", appreciate: "鑑賞の授業", season: s => `今の季節: ${s}` },
       filterLabels: { tpl: "図案", region: "国", area: "領域", type: "活動の種類", grade: "学年", periods: "時間", prep: "準備の手間", cleanup: "片付けの手間", season: "季節・行事" },
+      seasonalQuick: "この時期によく行われた授業", seasonalPreviewTag: "プレビュー",
+      seasonalNote: m => m.includes("A") ? "昨年の今ごろ先生たちがよく保存し、感想を残した授業から表示します。" : m.includes("B") ? "最近よく保存されている授業と、今の季節・行事に合う授業です。" : "今の季節・行事に合う授業です。記録がたまると、先生たちがよく行った順に変わります。",
+      seasonalAdmin: {
+        title: "「この時期によく行われた授業」", stateOn: "オン — すべての訪問者のショートカットに表示されます。", stateOff: "オフ — 訪問者には表示されません。（記録の収集は続いています）",
+        how: "オンにする方法: index.html の <code>SEASONAL_ENABLED</code> を <code>true</code> にして公開してください。順位はデータ発行時（build-art-data.py）に data/seasonal.json として事前に計算されます。",
+        preview: "トップ画面でプレビュー", previewOff: "プレビューを終了", previewOn: "プレビュー中です。このブラウザだけに表示され、再読み込みすると終了します。",
+        none: "data/seasonal.json がないか空です。データを再発行してください。", loading: "読み込み中…",
+        mode: m => ({ ABC: "昨年同時期 + 最近の人気 + 季節", AC: "昨年同時期 + 季節", BC: "最近の人気 + 季節", C: "季節・行事の情報のみ" })[m] || m,
+        summary: d => `基準日 ${d.date} · 方式: ${d.mode} · 候補 ${d.candidates}件<br>昨年の期間 ${d.windowA[0]}〜${d.windowA[1]}: 感想 ${d.countA.r} · 保存 ${d.countA.s} · おすすめ ${d.countA.l}（感想+保存 ${d.minA}件以上で A を使用）<br>最近28日: 感想 ${d.countB.r} · 保存 ${d.countB.s} · おすすめ ${d.countB.l}（${d.minB}件以上で B を使用） · 出典: ${d.source}`,
+        group: { all: "全体", "1-2": "1〜2年", "3-4": "3〜4年", "5-6": "5〜6年" }, why: { a: "昨年", b: "最近", c: "季節" }
+      },
       multiHint: "複数選択可", gradeHint: "全学年の授業を含む"
     }
   };
@@ -1037,6 +1078,8 @@
   let allActs = [];         // 받은 수업 전체
   // 관리자 조치(Apps Script 「관리조치」 탭): 숨긴 수업·도안 링크를 지운 수업. 서버가 아직 모르면(재배포 전) 비어 있다
   let adminHidden = new Set(), adminDrop = new Set(), adminActList = [];
+  // 이맘때 추천: SEASONAL_ENABLED 이거나 관리자가 미리보기를 켰을 때만 쓴다
+  let seasonalData = null, seasonalOn = false, seasonalPreview = false, _seasonalLoad = null, _seasonalRank = null;
   let popularSearches = {};
   let likedSet = new Set(), savedSet = new Set(), hiddenReviews = new Set();
   let deviceId = "";
@@ -1181,6 +1224,7 @@
       setSyncStatus("ok");
       renderAll();
       handleUrlParams();
+      if (SEASONAL_ENABLED) loadSeasonal().then(d => { if (d) renderQuick(); });
       if (serverOn()) {
         if (staticMeta.social && staticMeta.sv) {
           try { applyStaticSocial(await fetchJson(STATIC_BASE + "social.json?v=" + encodeURIComponent(staticMeta.sv))); refreshReactViews(); loadRecentReviews(); return; }
@@ -1496,6 +1540,7 @@
   }
   function passesFilters(a) {
     if (templateOnly && !a.hasTemplate) return false;
+    if (_seasonalRank && !_seasonalRank.has(a.id)) return false;
     for (const f of FILTERS) {
       const s = sel[f.key];
       if (!s.size) continue;
@@ -1512,6 +1557,7 @@
     return m >= 3 && m <= 5 ? "봄" : m >= 6 && m <= 8 ? "여름" : m >= 9 && m <= 11 ? "가을" : "겨울";
   }
   const QUICK = [
+    { k: "seasonal", apply: () => { seasonalOn = true; }, test: () => seasonalOn },
     { k: "easy", apply: () => { sel.prep = new Set(["쉬움"]); sel.cleanup = new Set(["쉬움"]); }, test: () => sel.prep.size === 1 && sel.prep.has("쉬움") && sel.cleanup.size === 1 && sel.cleanup.has("쉬움") },
     { k: "one", apply: () => { sel.periods = new Set(["1"]); }, test: () => sel.periods.size === 1 && sel.periods.has("1") },
     { k: "low", apply: () => { sel.grade = new Set(["1-2"]); }, test: () => sel.grade.size === 1 && sel.grade.has("1-2") },
@@ -1520,8 +1566,12 @@
   ];
   function renderQuick() {
     const u = ui();
-    document.getElementById("quickRow").innerHTML = `<span class="quick-label">${u.quick}</span>` + QUICK.map(q => {
+    document.getElementById("quickRow").innerHTML = `<span class="quick-label">${u.quick}</span>` + QUICK.filter(q => q.k !== "seasonal" || seasonalVisible()).map(q => {
       const on = q.test();
+      if (q.k === "seasonal") {
+        const pv = !SEASONAL_ENABLED ? `<span class="pv">${escapeHtml(u.seasonalPreviewTag)}</span>` : "";
+        return `<button type="button" class="quick-chip seasonal${on ? " on" : ""}" aria-pressed="${on}" onclick="applyQuick('seasonal')">${escapeHtml(u.seasonalQuick)}${pv}</button>`;
+      }
       const label = q.k === "season" ? u.quickPicks.season(tTerm("season", currentSeason())) : u.quickPicks[q.k];
       return `<button type="button" class="quick-chip${on ? " on" : ""}" aria-pressed="${on}" onclick="applyQuick('${q.k}')">${escapeHtml(label)}</button>`;
     }).join("");
@@ -1537,10 +1587,30 @@
     renderFilterChips(); renderActivities();
   }
 
+  /* 이맘때 많이 한 수업 (data/seasonal.json: build-art-data.py 가 미리 계산) */
+  function seasonalVisible() { return (SEASONAL_ENABLED || seasonalPreview) && !!(seasonalData && Array.isArray(seasonalData.top) && seasonalData.top.length); }
+  function loadSeasonal() {
+    if (!_seasonalLoad) {
+      const d = new Date(), day = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+      _seasonalLoad = fetchJson(STATIC_BASE + "seasonal.json?d=" + day)
+        .then(j => { seasonalData = j && Array.isArray(j.top) ? j : null; return seasonalData; })
+        .catch(() => { _seasonalLoad = null; return null; });
+    }
+    return _seasonalLoad;
+  }
+  // 학년을 하나만 골랐으면 그 학년군 목록, 아니면 전체 목록 (순서 = 순위)
+  function seasonalIds() {
+    if (!seasonalData) return [];
+    const g = sel.grade.size === 1 ? [...sel.grade][0] : "";
+    const by = seasonalData.byGrade || {};
+    return g && Array.isArray(by[g]) ? by[g] : seasonalData.top.map(x => x.id);
+  }
+
   /* 선택한 조건 칩 */
   function getActiveFilterList() {
     const list = [];
     if (templateOnly) list.push({ k: "tplOnly", label: ui().tplOnly });
+    if (seasonalOn && seasonalVisible()) list.push({ k: "seasonal", label: ui().seasonalQuick });
     FILTERS.forEach(f => sel[f.key].forEach(v => list.push({ k: f.key, v, label: tTerm(f.group, v) })));
     return list;
   }
@@ -1568,10 +1638,11 @@
     if (c.k === "q") { document.getElementById("searchInput").value = ""; resetPageAndRender(); }
     else if (c.k === "saved") toggleSavedOnly();
     else if (c.k === "tplOnly") toggleTemplateOnly();
+    else if (c.k === "seasonal") { seasonalOn = false; resetPageAndRender(); }
     else toggleFilter(c.k, c.v);
   }
   function resetFilters(silent) {
-    showSavedOnly = false; templateOnly = false;
+    showSavedOnly = false; templateOnly = false; seasonalOn = false;
     FILTERS.forEach(f => sel[f.key].clear());
     visibleLimit = PAGE;
     document.getElementById("searchInput").value = "";
@@ -1660,6 +1731,7 @@
     if (q && !terms.length) terms = q.split(/\s+/).filter(Boolean);
     const cands = terms.map(t => { const p = t.replace(/\s+/g, ""); return Array.from(new Set(expandQueryTerm(t).map(c => c.replace(/\s+/g, "")).filter(Boolean))).map(text => ({ text, w: text === p ? 2 : 1 })); });
     const score = {};
+    _seasonalRank = seasonalOn && seasonalVisible() ? new Map(seasonalIds().map((id, i) => [id, i])) : null;
     let list = activities.filter(a => {
       if (showSavedOnly && !savedSet.has(a.id)) return false;
       if (!passesFilters(a)) return false;
@@ -1681,6 +1753,7 @@
     const sortVal = document.getElementById("sortSelect").value || "default";
     list.sort((a, b) => {
       if (cands.length && (score[b.id] || 0) !== (score[a.id] || 0)) return (score[b.id] || 0) - (score[a.id] || 0);
+      if (_seasonalRank && sortVal === "default") return _seasonalRank.get(a.id) - _seasonalRank.get(b.id);
       if (sortVal === "popular") return popularityScore(b) - popularityScore(a) || b.num - a.num;
       if (sortVal === "newest") return b.num - a.num;
       if (sortVal === "short") return (a.seconds || 1e9) - (b.seconds || 1e9);
@@ -1692,6 +1765,7 @@
     lastFiltered = list;
     document.getElementById("resultsCountText").innerHTML = u.results(list.length);
     renderActiveFilters(list.length);
+    renderSeasonalNote();
 
     if (!list.length) {
       more.style.display = "none";
@@ -1738,6 +1812,16 @@
           </div>
         </article>`;
     }).join("");
+  }
+  // 이맘때 추천을 보는 중일 때만 설명 한 줄을 만든다(꺼져 있으면 화면에 아무것도 더하지 않음)
+  function renderSeasonalNote() {
+    let note = document.getElementById("seasonalNote");
+    if (!_seasonalRank) { if (note) note.remove(); return; }
+    if (!note) {
+      note = document.createElement("p"); note.id = "seasonalNote"; note.className = "seasonal-note";
+      document.getElementById("activeFilters").after(note);
+    }
+    note.textContent = ui().seasonalNote(String(seasonalData.mode || ""));
   }
   function resetPageAndRender() { visibleLimit = PAGE; renderActivities(); }
   function loadMoreItems() { visibleLimit += PAGE; renderActivities(); }
@@ -2318,17 +2402,59 @@
   }
   function adminLogout() {
     isAdminAuthenticated = false; adminPin = ""; pendingProposals = []; pendingEdits = []; openReports = []; adminActList = [];
+    if (seasonalPreview) { seasonalPreview = false; seasonalOn = false; renderActivities(); }
     try { sessionStorage.removeItem(KEY.admin); } catch (e) {}
     document.getElementById("modalAdminActBox").innerHTML = "";
     updateAdminHeaderButton(); closeAdminModal(); applyServerMode();
   }
   function switchAdminTab(tab) {
-    ["pending", "edits", "reports", "hidden", "security"].forEach(t => {
+    ["pending", "edits", "reports", "hidden", "security", "seasonal"].forEach(t => {
       const cap = t[0].toUpperCase() + t.slice(1);
       document.getElementById("tabBtn" + cap).classList.toggle("active", t === tab);
       document.getElementById("adminTab" + cap).style.display = t === tab ? "block" : "none";
     });
     if (tab === "security") loadArchives();
+    if (tab === "seasonal") renderSeasonalAdmin();
+  }
+  // 관리자 「이맘때 추천」 탭: 켜짐/꺼짐 안내, 계산 요약, 학년군별 상위 목록, 첫 화면 미리보기
+  async function renderSeasonalAdmin() {
+    const box = document.getElementById("seasonalAdminBox"), sa = ui().seasonalAdmin;
+    box.innerHTML = `<p class="skeleton" style="padding:16px;">${escapeHtml(sa.loading)}</p>`;
+    const d = await loadSeasonal();
+    const state = `<div class="panel-block"><div class="panel-title">${escapeHtml(sa.title)}</div>
+      <p class="panel-sub" style="font-weight:700; color:${SEASONAL_ENABLED ? "var(--blue)" : "var(--text-secondary)"};">${escapeHtml(SEASONAL_ENABLED ? sa.stateOn : sa.stateOff)}</p>
+      <p class="panel-sub" style="margin-top:6px;">${sa.how}</p></div>`;
+    if (!d || !Array.isArray(d.top) || !d.top.length) { box.innerHTML = state + emptyAdmin(escapeHtml(sa.none)); return; }
+    const byId = new Map(allActs.map(a => [a.id, a]));
+    const why = new Map(d.top.map(x => [x.id, x]));
+    const item = (id, i) => {
+      const a = byId.get(id), x = why.get(id);
+      const tags = x ? String(x.r || "").split("").map(k => sa.why[k] || k).join("·") + (x.c ? ` (${escapeHtml(x.c)})` : "") : "";
+      return `<li style="margin:2px 0;"><a href="#" onclick="event.preventDefault(); closeAdminModal(); openDetailModal('${escapeHtml(id)}')">${escapeHtml(a ? loc(a, "title") : id)}</a>
+        <span class="panel-sub">${escapeHtml(a ? tTerm("grade", a.grade) : "")}${tags ? " · " + tags : ""}</span></li>`;
+    };
+    const groups = [["all", d.top.map(x => x.id)], ...["1-2", "3-4", "5-6"].map(g => [g, (d.byGrade || {})[g] || []])];
+    box.innerHTML = state + `<div class="panel-block">
+        <p class="panel-sub" style="line-height:1.7;">${escapeHtml(sa.mode(d.mode))}<br>${sa.summary(Object.fromEntries(Object.entries(d).map(([k, v]) => [k, typeof v === "string" ? escapeHtml(v) : v])))}</p>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+          <button type="button" class="btn-admin" id="btnSeasonalPreview" onclick="toggleSeasonalPreview()">${escapeHtml(seasonalPreview ? sa.previewOff : sa.preview)}</button>
+          ${seasonalPreview ? `<span class="panel-sub">${escapeHtml(sa.previewOn)}</span>` : ""}
+        </div></div>`
+      + groups.map(([g, ids]) => `<details class="panel-block"${g === "all" ? " open" : ""}><summary style="cursor:pointer; font-weight:700; font-size:13px;">${escapeHtml(sa.group[g])} (${ids.length})</summary>
+        <ol style="font-size:13px; margin:8px 0 0 18px; line-height:1.6;">${ids.slice(0, 12).map(item).join("")}</ol></details>`).join("");
+  }
+  async function toggleSeasonalPreview() {
+    if (seasonalPreview) {
+      seasonalPreview = false; seasonalOn = false;
+      renderActivities(); renderSeasonalAdmin();
+      return;
+    }
+    const d = await loadSeasonal();
+    if (!d || !d.top || !d.top.length) { showToast(ui().seasonalAdmin.none); return; }
+    seasonalPreview = true;
+    closeAdminModal();
+    applyQuick("seasonal");
+    window.scrollTo({ top: 0 });
   }
   async function loadAdminData() {
     const loading = `<p class="skeleton" style="padding:16px;">불러오는 중…</p>`;

@@ -12,6 +12,9 @@
  *   후기        : 선생님 후기. 등록 즉시 공개. deleted 칸이 Y면 숨김(관리자 삭제)
  *   추천 / 저장 : 수업별 추천·저장 수
  *   반응기록    : 기기별 추천·저장 기록 (한 기기당 수업마다 1번. 취소하면 줄이 지워짐)
+ *   반응로그    : 추천·저장을 누르거나 취소한 날짜만 아래로 쌓는 기록 (date, activityId, kind, delta=+1/-1).
+ *                 기기 번호는 남기지 않고 지우지도 않는다. 「이맘때 많이 한 수업」(작년 같은 시기) 계산용.
+ *                 연도별 보관(archiveYear_) 때도 옮기지 않는다(한 줄이 작아서 몇 년 쌓여도 가볍다).
  *   새수업제안  : 새 수업 제안 (관리자 승인 후 수업 탭으로 이동)
  *   수정제안    : 설명 수정 제안 (관리자 승인 후 수업 탭에 반영)
  *   신고        : 영상·후기 신고, 원작자 삭제 요청
@@ -55,6 +58,7 @@ const TABS = {
   likes: { name: '추천', headers: ['activityId', 'count', 'updatedAt'] },
   saves: { name: '저장', headers: ['activityId', 'count', 'updatedAt'] },
   reactions: { name: '반응기록', headers: ['deviceId', 'activityId', 'kind', 'createdAt'] },
+  reactLog: { name: '반응로그', headers: ['date', 'activityId', 'kind', 'delta'] },
   proposals: {
     name: '새수업제안',
     headers: ['proposalId', 'status', 'createdAt', 'lang', 'region', 'title', 'youtubeUrl', 'area', 'activityType', 'grade',
@@ -87,6 +91,7 @@ function doGet(e) {
     if (action === 'counts') return json_({ ok: true, at: now_(), likes: countMap_('likes'), saves: countMap_('saves') });
     if (action === 'recent') return json_(recentReviews_(e.parameter)); // 사이트용: 마지막 발행 이후 새 후기만
     if (action === 'adminActs') return json_({ ok: true, at: now_(), adminActs: adminActs_() }); // 데이터 발행용: 숨긴 수업·도안 링크 지운 수업
+    if (action === 'seasonalStats') return json_(seasonalStats_(e.parameter)); // 데이터 발행용: 수업별·날짜별 후기·저장·추천 수 (개인정보 없음)
     return json_({ ok: false, error: 'unknown action' });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
@@ -512,6 +517,7 @@ function react_(b) {
   if (on) {
     if (rowNum > 0) return { ok: true, on: true, count: getCount_(countKey, activityId) };
     appendObj_('reactions', { deviceId: deviceId, activityId: activityId, kind: kind, createdAt: now_() });
+    logReact_(activityId, kind, 1);
     return { ok: true, on: true, count: addCount_(countKey, activityId, 1) };
   }
 
@@ -524,15 +530,83 @@ function react_(b) {
       const hits = ash.getRange(2, ah.indexOf('deviceId') + 1, ash.getLastRow() - 1, 1).createTextFinder(deviceId).matchEntireCell(true).findAll();
       const hit = hits.find(h => String(ash.getRange(h.getRow(), ah.indexOf('activityId') + 1).getValue()) === activityId &&
         String(ash.getRange(h.getRow(), ah.indexOf('kind') + 1).getValue()) === kind);
-      if (hit) { ash.deleteRow(hit.getRow()); return { ok: true, on: false, count: addCount_(countKey, activityId, -1) }; }
+      if (hit) { ash.deleteRow(hit.getRow()); logReact_(activityId, kind, -1); return { ok: true, on: false, count: addCount_(countKey, activityId, -1) }; }
     }
   }
 
   if (rowNum > 0) {
     sh.deleteRow(rowNum);
+    logReact_(activityId, kind, -1);
     return { ok: true, on: false, count: addCount_(countKey, activityId, -1) };
   }
   return { ok: true, on: false, count: getCount_(countKey, activityId) };
+}
+
+/* ----------------------------- 「이맘때 많이 한 수업」용 날짜 기록 -----------------------------
+   반응기록 탭은 취소하면 줄이 지워지므로, 날짜만 남는 반응로그 탭에 따로 쌓는다(지우지 않음, 기기 번호 없음).
+   기록이 실패해도 추천·저장은 그대로 되도록 오류는 삼킨다. */
+function logReact_(activityId, kind, delta) {
+  try {
+    appendObj_('reactLog', { date: "'" + Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd'), activityId: activityId, kind: kind, delta: delta });
+  } catch (e) {}
+}
+
+// 데이터 발행용: 수업별·날짜별 집계만. h = [d(날짜), a(수업), k(r 후기·s 저장·l 추천), n(건수)]
+//   후기: 지금 파일 + 연도별 보관 파일의 공개 후기(createdAt 날짜)
+//   저장·추천: 반응로그의 +1 기록. 반응로그가 생기기 전 날짜는 반응기록(+보관 파일)에 남아 있는 줄로 채운다
+//   since=yyyy-MM-dd 를 주면 그 날짜부터만
+function seasonalStats_(p) {
+  const since = /^\d{4}-\d{2}-\d{2}$/.test(String((p && p.since) || '')) ? String(p.since) : '';
+  const day = v => String(cellOut_(v) || '').replace(/^'/, '').slice(0, 10);
+  const ok = d => /^\d{4}-\d{2}-\d{2}$/.test(d) && (!since || d >= since);
+  const agg = {};
+  const add = (d, a, k, n) => { if (!a || !ok(d)) return; const key = d + '|' + a + '|' + k; agg[key] = (agg[key] || 0) + n; };
+  const rowsOf = sh => {
+    if (!sh || sh.getLastRow() < 2) return null;
+    const lastCol = Math.max(sh.getLastColumn(), 1);
+    const v = sh.getRange(1, 1, sh.getLastRow(), lastCol).getValues();
+    const col = {};
+    v[0].map(String).forEach((h, i) => { if (h) col[h] = i; });
+    return { col: col, rows: v.slice(1) };
+  };
+
+  // 후기
+  const hidden = hiddenReviewIds_();
+  [getTab_('reviews')].concat(getArchives_().map(a => archiveSheet_(a, 'reviews'))).forEach(sh => {
+    const t = rowsOf(sh);
+    if (!t || t.col.activityId === undefined || t.col.createdAt === undefined) return;
+    t.rows.forEach(r => {
+      if (String(r[t.col.deleted] || '').trim().toUpperCase() === 'Y' || hidden[String(r[t.col.reviewId])]) return;
+      add(day(r[t.col.createdAt]), String(r[t.col.activityId] || '').trim(), 'r', 1);
+    });
+  });
+
+  // 저장·추천: 반응로그(+1만)
+  const K = { like: 'l', save: 's' };
+  let logStart = '';
+  const logSh = ss_().getSheetByName(TABS.reactLog.name); // 읽을 때는 탭을 만들지 않는다
+  const lt = rowsOf(logSh);
+  if (lt) {
+    lt.rows.forEach(r => {
+      const d = day(r[lt.col.date]), k = K[String(r[lt.col.kind] || '')];
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(d) || !k) return;
+      if (!logStart || d < logStart) logStart = d;
+      if (Number(r[lt.col.delta]) > 0) add(d, String(r[lt.col.activityId] || '').trim(), k, 1);
+    });
+  }
+  // 반응로그가 생기기 전 기록: 반응기록에 남아 있는(취소하지 않은) 줄
+  [getTab_('reactions')].concat(getArchives_().map(a => archiveSheet_(a, 'reactions'))).forEach(sh => {
+    const t = rowsOf(sh);
+    if (!t || t.col.createdAt === undefined) return;
+    t.rows.forEach(r => {
+      const d = day(r[t.col.createdAt]), k = K[String(r[t.col.kind] || '')];
+      if (!k || (logStart && d >= logStart)) return;
+      add(d, String(r[t.col.activityId] || '').trim(), k, 1);
+    });
+  });
+
+  const out = Object.keys(agg).sort().map(key => { const x = key.split('|'); return [x[0], x[1], x[2], agg[key]]; });
+  return { ok: true, at: now_(), since: since, logStart: logStart, h: ['d', 'a', 'k', 'n'], r: out };
 }
 
 function countMap_(key) {

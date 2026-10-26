@@ -10,6 +10,7 @@
   data/social.json, data/reviews/NN.json : 추천·저장 수와 후기 (Apps Script 주소가 있을 때만)
   data/video-status.json    : 영상 점검 기록(유튜브 oEmbed, CHECK_VIDEOS=1 일 때). 두 번 연속 안 나오면 목록에서 뺀다
   data/link-status.json     : 도안·관련 링크 점검 기록(scripts/check-links.py 가 씀). 두 번 연속 죽은 링크는 발행에서 뺀다
+  data/seasonal.json        : 「이맘때 많이 한 수업」 미리 계산한 순위 (사이트에서는 SEASONAL_ENABLED=true 일 때만 읽음)
   a/{id}.html               : 수업별 공유 미리보기(카톡용). 검색엔진에는 안 나오게(noindex)
   sitemap.xml, robots.txt   : 첫 화면만
 
@@ -26,6 +27,7 @@
   ART_DB        art.db 경로 (--db 와 같음)
   CHECK_VIDEOS  1 이면 유튜브 oEmbed로 영상이 살아 있는지 점검 (기본 0)
   CHECK_PER_RUN 한 번에 점검할 영상 수 (기본 1000)
+  SEASONAL_DATE 「이맘때」 계산 기준 날짜 yyyy-mm-dd (기본: 오늘, 한국 시각). 시험용
 
 art.db 는 수집기가 매일 쓰는 파일이므로 절대 쓰지 않는다: 읽기 전용으로 연 뒤 메모리로 통째 복사해서 읽는다.
 """
@@ -414,6 +416,9 @@ REVIEW_H = ["reviewId", "activityId", "teacher", "grade", "fitScore", "rating", 
             "caution_ko", "caution_en", "caution_ja", "tip_ko", "tip_en", "tip_ja", "createdAt"]
 
 
+_SOCIAL_CACHE = {}  # build_social 이 받은 후기·추천·저장 수 (이맘때 계산에서 다시 씀)
+
+
 def build_social(ids):
     if not GAS_URL:
         return None
@@ -465,8 +470,166 @@ def build_social(ids):
         txt = json.dumps({"h": REVIEW_H, "acts": b}, ensure_ascii=False, separators=(",", ":"))
         bsig += simple_hash(txt)
         (OUT / "reviews" / f"{i:02d}.json").write_text(txt, encoding="utf-8")
+    _SOCIAL_CACHE.update({"reviews": allr, "likes": likes, "saves": saves})
     print(f"후기 {len(allr)}개, 추천 {len(likes)}·저장 {len(saves)}개 수업")
     return {"sig": simple_hash(social_json + bsig), "since": kst}
+
+
+# ----------------------------- 「이맘때 많이 한 수업」 -----------------------------
+# 사이트 부담을 줄이려고 여기서 미리 계산해 data/seasonal.json 으로 낸다.
+#   A 작년 같은 시기: 기준일 1년 전 ±14일 안의 후기(가중 3)·저장(2)·추천(1)
+#   B 요즘 뜨는:      최근 28일 같은 가중 합
+#   C 계절 정보:      수업의 계절·행사(season)가 이번 달·다음 달과 맞으면 가점
+# 점수 = 각 항목을 최댓값으로 나눠 0~1로 맞춘 뒤 가중 합.
+#   작년 창의 후기+저장이 SEASONAL_A_MIN 건 이상이면 A 0.6 · B 0.25 · C 0.15
+#   아니면 A 를 빼고 B 0.6 · C 0.4 (최근 28일 후기+저장이 SEASONAL_B_MIN 건 미만이면 B 도 빼고 C 만)
+SEASONAL_WIN = 14
+SEASONAL_RECENT = 28
+SEASONAL_A_MIN = 30
+SEASONAL_B_MIN = 10
+SEASONAL_W = {"r": 3, "s": 2, "l": 1}
+SEASONAL_TOP, SEASONAL_TOP_GRADE = 48, 24
+SEASONAL_GRADES = ["1-2", "3-4", "5-6"]
+# 달마다 (그 달 행사·기념일, 그 달 계절). 계절·행사 원문(season)에 정규식으로 맞춘다
+SEASONAL_MONTHS = {
+    1: (r"설날|설\b|새해|1월|눈사람", r"겨울"),
+    2: (r"설날|설\b|정월|대보름|발렌타인|밸런타인|졸업|학년\s?말|2월", r"겨울"),
+    3: (r"새\s?학기|학기\s?초|학년\s?초|입학|3월|삼일절|3\.1|첫", r"봄"),
+    4: (r"식목|과학의\s?(날|달)|지구의\s?날|부활절|4월", r"봄"),
+    5: (r"어린이날|어버이|스승의|가정의\s?달|가족|5월|소풍", r"봄"),
+    6: (r"현충일|호국|보훈|장마|환경의\s?날|6월|단오", r"여름"),
+    7: (r"장마|바다|물놀이|여름\s?방학|7월", r"여름"),
+    8: (r"광복|나라\s?사랑|여름\s?방학|8월", r"여름"),
+    9: (r"추석|한가위|9월", r"가을"),
+    10: (r"추석|한가위|한글날|핼러윈|할로윈|독도|개천절|단풍|10월", r"가을"),
+    11: (r"단풍|추수감사|독서|11월|빼빼로", r"가을"),
+    12: (r"크리스마스|성탄|연말|눈사람|12월", r"겨울"),
+}
+
+
+def kst_today():
+    v = os.environ.get("SEASONAL_DATE", "").strip()
+    if v:
+        return dt.date.fromisoformat(v)
+    return (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=9)).date()
+
+
+def year_ago(d):
+    try:
+        return d.replace(year=d.year - 1)
+    except ValueError:  # 2월 29일
+        return d.replace(year=d.year - 1, day=28)
+
+
+def fetch_seasonal_events(since):
+    """[(날짜, 수업 id, 'r'|'s'|'l', 건수)] 와 출처 설명. Code.gs seasonalStats 가 없으면 후기 날짜만 쓴다"""
+    if not GAS_URL:
+        return [], "없음(GAS 주소 없음)"
+    try:
+        j = get_json(gas("action=seasonalStats&since=" + since.isoformat()), tries=2)
+        if not j.get("ok"):
+            raise RuntimeError(j.get("error") or "응답 오류")
+        h = j.get("h") or ["d", "a", "k", "n"]
+        ix = {k: h.index(k) for k in ("d", "a", "k", "n")}
+        ev = [(s(r[ix["d"]])[:10], s(r[ix["a"]]), s(r[ix["k"]]), int(r[ix["n"]] or 0)) for r in j.get("r") or []]
+        return ev, f"seasonalStats (반응로그 시작 {j.get('logStart') or '아직 없음'})"
+    except Exception as e:
+        # 재배포 전: build_social 이 받은 후기의 createdAt 만 쓴다 (저장·추천 날짜는 없음)
+        ev = [(s(r.get("createdAt"))[:10], s(r.get("activityId")), "r", 1) for r in _SOCIAL_CACHE.get("reviews") or []]
+        print(f"경고: 날짜별 기록(seasonalStats)을 받지 못해 후기 날짜만 씀 (Code.gs 재배포 전이면 정상) — {e}")
+        return ev, "후기 날짜만 (seasonalStats 없음)"
+
+
+def season_score(raw, today):
+    """C: 이번 달 행사 3, 다음 달 행사 2, 이번 달 계절 1.5, 다음 달 계절 1 (가장 높은 것 하나)"""
+    t = s(raw)
+    if not t:
+        return 0.0, ""
+    this_m, next_m = today.month, today.month % 12 + 1
+    best, why = 0.0, ""
+    for m, ev_w, se_w in ((this_m, 3.0, 1.5), (next_m, 2.0, 1.0)):
+        ev, se = SEASONAL_MONTHS[m]
+        if re.search(ev, t) and ev_w > best:
+            best, why = ev_w, f"{m}월 행사"
+        elif re.search(se, t) and se_w > best:
+            best, why = se_w, f"{m}월 계절"
+    return best, why
+
+
+def build_seasonal(rows):
+    today = kst_today()
+    ago = year_ago(today)
+    a_from, a_to = ago - dt.timedelta(days=SEASONAL_WIN), ago + dt.timedelta(days=SEASONAL_WIN)
+    b_from = today - dt.timedelta(days=SEASONAL_RECENT - 1)
+    ids = {o["id"] for o in rows}
+    events, src = fetch_seasonal_events(a_from)
+    A, B = {}, {}
+    a_cnt = {"r": 0, "s": 0, "l": 0}
+    b_cnt = {"r": 0, "s": 0, "l": 0}
+    for d, a, k, n in events:
+        if a not in ids or k not in SEASONAL_W or n <= 0:
+            continue
+        try:
+            day = dt.date.fromisoformat(d)
+        except ValueError:
+            continue
+        if a_from <= day <= a_to:
+            A[a] = A.get(a, 0) + SEASONAL_W[k] * n
+            a_cnt[k] += n
+        if b_from <= day <= today:
+            B[a] = B.get(a, 0) + SEASONAL_W[k] * n
+            b_cnt[k] += n
+    use_a = a_cnt["r"] + a_cnt["s"] >= SEASONAL_A_MIN
+    use_b = b_cnt["r"] + b_cnt["s"] >= SEASONAL_B_MIN
+    w = {"a": 0.6, "b": 0.25, "c": 0.15} if use_a else ({"a": 0, "b": 0.6, "c": 0.4} if use_b else {"a": 0, "b": 0, "c": 1.0})
+    if use_a and not use_b:
+        w = {"a": 0.7, "b": 0, "c": 0.3}
+    C = {}
+    for o in rows:
+        sc, why = season_score(o.get("season"), today)
+        if sc:
+            C[o["id"]] = (sc, why)
+    mx = lambda m: max(m.values()) if m else 0
+    ma, mb, mc = mx(A), mx(B), max((v[0] for v in C.values()), default=0)
+    pop = {}
+    for k, wt in (("likes", 1), ("saves", 2)):
+        for i, n in (_SOCIAL_CACHE.get(k) or {}).items():
+            pop[i] = pop.get(i, 0) + wt * n
+    scored = []
+    for o in rows:
+        i = o["id"]
+        pa = A.get(i, 0) / ma if ma and w["a"] else 0
+        pb = B.get(i, 0) / mb if mb and w["b"] else 0
+        pc = C[i][0] / mc if i in C and mc and w["c"] else 0
+        score = w["a"] * pa + w["b"] * pb + w["c"] * pc
+        if score <= 0:
+            continue
+        why = "".join(k for k, v in (("a", pa), ("b", pb), ("c", pc)) if v > 0)
+        # 동점이면: 전체 추천·저장 많은 순 → 도안 있는 순 → 날마다 바뀌는 섞기(같은 날에는 늘 같은 순서)
+        tie = int(simple_hash(today.isoformat() + i), 16)
+        scored.append((-round(score, 6), -pop.get(i, 0), 0 if o["templateStatus"].startswith("도안 있음") else 1, tie, i,
+                       {"id": i, "s": round(score, 4), "r": why, "c": C[i][1] if i in C else ""}, o["grade"]))
+    scored.sort()
+    top = [x[5] for x in scored[:SEASONAL_TOP]]
+    by_grade = {g: [x[5]["id"] for x in scored if x[6] in (g, "전학년")][:SEASONAL_TOP_GRADE] for g in SEASONAL_GRADES}
+    mode = ("A" if w["a"] else "") + ("B" if w["b"] else "") + ("C" if w["c"] else "")
+    out = {
+        "date": today.isoformat(), "mode": mode, "weights": w, "source": src,
+        "windowA": [a_from.isoformat(), a_to.isoformat()], "windowB": [b_from.isoformat(), today.isoformat()],
+        "countA": a_cnt, "countB": b_cnt, "minA": SEASONAL_A_MIN, "minB": SEASONAL_B_MIN,
+        "months": [today.month, today.month % 12 + 1], "candidates": len(scored),
+        "top": top, "byGrade": by_grade,
+    }
+    path = OUT / "seasonal.json"
+    txt = dump(out)
+    try:
+        same = path.read_text(encoding="utf-8") == txt
+    except Exception:
+        same = False
+    if not same:
+        path.write_text(txt, encoding="utf-8")
+    print(f"이맘때 추천: 기준 {today} · 방식 {mode} (작년 창 후기 {a_cnt['r']}·저장 {a_cnt['s']}·추천 {a_cnt['l']}, "
+          f"최근 28일 후기 {b_cnt['r']}·저장 {b_cnt['s']}·추천 {b_cnt['l']}) · 후보 {len(scored)}개{'' if not same else ' · 변경 없음'}")
 
 
 # ----------------------------- 공유 미리보기 -----------------------------
@@ -617,6 +780,10 @@ def main():
 
     write_share_pages(visible)
     social = build_social({o["id"] for o in visible})
+    try:
+        build_seasonal(visible)
+    except Exception as e:  # 이 기능이 실패해도 발행은 계속
+        print(f"경고: 이맘때 추천을 만들지 못함 — {e}")
     if not GAS_URL:
         for p in [OUT / "social.json"]:
             p.unlink(missing_ok=True)
