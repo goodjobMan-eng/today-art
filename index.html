@@ -1157,7 +1157,7 @@
       grade: String(o.grade || "불명"), periods: String(o.periods || "불명"), prepLevel: String(o.prepLevel || ""), cleanupLevel: String(o.cleanupLevel || ""),
       templateStatus: ts, hasTemplate: /^도안 있음/.test(ts), season: String(o.season || ""), seasonTags: parseList(o.seasonTags),
       videoId: String(o.videoId || ""), channel: String(o.channel || ""), channelUrl: String(o.channelUrl || ""),
-      seconds: Number(o.seconds) || 0, tags: parseList(o.tags), num: Number((String(o.id).match(/(\d+)$/) || [0, 0])[1]) || 0,
+      seconds: Number(o.seconds) || 0, pick: Number(o.pick) || 0, tags: parseList(o.tags), num: Number((String(o.id).match(/(\d+)$/) || [0, 0])[1]) || 0,
       i18n, likes: 0, saves: 0, reviews: [], d: null
     };
     // 시트에서 바로 받은 경우: 상세 칸도 함께 들어 있다
@@ -1758,9 +1758,9 @@
       if (sortVal === "newest") return b.num - a.num;
       if (sortVal === "short") return (a.seconds || 1e9) - (b.seconds || 1e9);
       if (sortVal === "long") return (b.seconds || 0) - (a.seconds || 0);
-      // 기본순: 무료 도안 → 유료 도안 → 나머지, 같은 묶음 안에서는 인기 → 최근
+      // 기본순: 무료 도안 → 유료 도안 → 나머지, 같은 묶음 안에서는 이름 있는 채널 → 인기 → 최근
       const rank = x => x.templateStatus === "도안 있음(무료)" ? 2 : x.hasTemplate ? 1 : 0;
-      return rank(b) - rank(a) || popularityScore(b) - popularityScore(a) || b.num - a.num;
+      return rank(b) - rank(a) || (b.pick || 0) - (a.pick || 0) || popularityScore(b) - popularityScore(a) || b.num - a.num;
     });
     lastFiltered = list;
     document.getElementById("resultsCountText").innerHTML = u.results(list.length);

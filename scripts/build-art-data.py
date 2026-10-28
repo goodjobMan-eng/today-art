@@ -84,7 +84,7 @@ SHEET_HEADERS = (["id", "status", "region", "videoId", "channel", "channelId", "
 
 # 목록 파일에 들어가는 칸(언어 공통) + 언어별 칸
 LIST_COMMON = ["id", "region", "area", "activityType", "grade", "periods", "prepLevel", "cleanupLevel",
-               "templateStatus", "season", "seasonTags", "videoId", "channel", "channelUrl", "seconds", "tags", "title_ko"]
+               "templateStatus", "season", "seasonTags", "videoId", "channel", "channelUrl", "seconds", "tags", "title_ko", "pick"]
 LIST_LANG = ["title", "summary", "matReq"]
 # 상세 묶음 파일에 들어가는 칸
 DETAIL_LANG = ["objective", "matOpt", "prep", "outline", "tips", "linkNote"]
@@ -188,6 +188,14 @@ def read_db(path):
             time.sleep(3 * (i + 1))
     src.close()
     rows = []
+    # 이름 있는 채널(구독자·조회수 기준) 표시: 기본 정렬에서 앞에 두는 용도. 숫자 자체는 내보내지 않는다.
+    POPULAR_MIN = {"KR": (10000, 1000), "JP": (10000, 3000), "EN": (20000, 5000),
+                   "FR": (5000, 1000), "DE": (5000, 1000), "ES": (5000, 1000), "IT": (5000, 1000)}
+    try:
+        subs_of = dict(mem.execute("select channel_id, subs from channels"))
+    except sqlite3.OperationalError:
+        subs_of = {}
+    views_of = dict(mem.execute("select video_id, coalesce(views,0) from videos where status='done'"))
     q = ("select art_no, video_id, region, channel, channel_id, seconds, title, result, updated "
          "from videos where status='done' and art_no is not null order by art_no")
     for art_no, vid, region, channel, channel_id, seconds, vtitle, res, updated in mem.execute(q):
@@ -209,6 +217,9 @@ def read_db(path):
             "tags": j.get("free_tags") or [], "evidence": s(j.get("evidence")),
             "videoTitle": s(vtitle), "source": "수집", "createdAt": "", "updatedAt": s(updated),
         }
+        ms, mv = POPULAR_MIN.get(region, (0, 0))
+        sb = subs_of.get(channel_id, 0) or 0
+        o["pick"] = 1 if (sb >= ms or sb == -1) and views_of.get(vid, 0) >= mv else 0
         for f, key in TEXT_FIELDS.items():
             v = j.get(key) or {}
             for l in LANGS:
