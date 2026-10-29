@@ -196,6 +196,8 @@ def read_db(path):
     except sqlite3.OperationalError:
         subs_of = {}
     views_of = dict(mem.execute("select video_id, coalesce(views,0) from videos where status='done'"))
+    pub_of = dict(mem.execute("select video_id, substr(coalesce(published,''),1,10) from videos where status='done'"))
+    recent_cut = (dt.date.today() - dt.timedelta(days=365 * 3)).isoformat()
     q = ("select art_no, video_id, region, channel, channel_id, seconds, title, result, updated "
          "from videos where status='done' and art_no is not null order by art_no")
     for art_no, vid, region, channel, channel_id, seconds, vtitle, res, updated in mem.execute(q):
@@ -219,7 +221,10 @@ def read_db(path):
         }
         ms, mv = POPULAR_MIN.get(region, (0, 0))
         sb = subs_of.get(channel_id, 0) or 0
-        o["pick"] = 1 if (sb >= ms or sb == -1) and views_of.get(vid, 0) >= mv else 0
+        popular = (sb >= ms or sb == -1) and views_of.get(vid, 0) >= mv
+        recent = pub_of.get(vid, "") >= recent_cut
+        # 2: 이름 있는 채널의 최근 3년 영상, 1: 이름 있는 채널, 0: 나머지 (숫자 자체는 내보내지 않음)
+        o["pick"] = (2 if recent else 1) if popular else 0
         for f, key in TEXT_FIELDS.items():
             v = j.get(key) or {}
             for l in LANGS:
