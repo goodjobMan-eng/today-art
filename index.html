@@ -435,6 +435,7 @@
 <footer class="site-footer container">
   <p class="copy-main" id="footerCopyright">영상과 도안의 저작권은 원작자에게 있으며, 이 사이트는 소개와 연결만 합니다.</p>
   <p id="footerHow"></p>
+  <p class="needs-server" id="footerVisits" hidden style="font-size:12.5px;color:var(--text-muted);"></p>
   <p><span id="footerTakedownText"></span> <a id="footerMail" href="mailto:abujangi@korea.kr">abujangi@korea.kr</a><span class="needs-server"> · <button type="button" class="footer-link" id="btnTakedown" onclick="openTakedown()"></button></span></p>
   <form class="takedown-form" id="takedownForm" hidden onsubmit="submitTakedown(event)">
     <label for="takedownText" id="takedownLabel"></label>
@@ -696,7 +697,7 @@
       results: n => `미술 수업 <span>${n.toLocaleString()}</span>개`,
       loading: "미술 수업을 불러오는 중…", loadFail: "수업 목록을 불러오지 못했어요. 잠시 후 새로고침해 주세요.",
       syncOk: at => at ? `업데이트 ${at}` : "", syncFail: "목록 연결 안 됨",
-      sortDefault: "기본순 (도안 먼저)", sortPopular: "인기순", sortNewest: "새로 들어온 순", sortReviews: "후기 많은순", sortRating: "평점순", sortShort: "영상 짧은 순", sortLong: "영상 긴 순",
+      sortDefault: "기본순 (도안 먼저)", sortPopular: "인기순", sortNewest: "새로 들어온 순", visitLine: (t, n) => `오늘 방문 ${t.toLocaleString()} · 전체 방문 ${n.toLocaleString()}`, sortReviews: "후기 많은순", sortRating: "평점순", sortShort: "영상 짧은 순", sortLong: "영상 긴 순",
       saved: n => `★ 내 저장 ${n}`, draw: "오늘 미술 뭐 하지? 뽑기", drawAgain: "다른 수업 뽑기", drawNone: "조건에 맞는 수업이 없어요. 필터를 조금 풀어 보세요.",
       propose: "새 수업 제안",
       more: (rem, total) => `더 보기 (남은 ${rem.toLocaleString()}개 / 전체 ${total.toLocaleString()}개)`,
@@ -783,7 +784,7 @@
       results: n => `<span>${n.toLocaleString()}</span> art lessons`,
       loading: "Loading art lessons…", loadFail: "Couldn't load the lesson list. Please refresh in a moment.",
       syncOk: at => at ? `Updated ${at}` : "", syncFail: "List unavailable",
-      sortDefault: "Default (templates first)", sortPopular: "Most popular", sortNewest: "Newest", sortReviews: "Most reviewed", sortRating: "Top rated", sortShort: "Shortest video", sortLong: "Longest video",
+      sortDefault: "Default (templates first)", sortPopular: "Most popular", sortNewest: "Newest", visitLine: (t, n) => `Visitors today ${t.toLocaleString()} · All-time ${n.toLocaleString()}`, sortReviews: "Most reviewed", sortRating: "Top rated", sortShort: "Shortest video", sortLong: "Longest video",
       saved: n => `★ Saved ${n}`, draw: "Pick an art lesson for me", drawAgain: "Pick another", drawNone: "No lesson matches. Try loosening the filters.",
       propose: "Suggest a lesson",
       more: (rem, total) => `Load more (${rem.toLocaleString()} left of ${total.toLocaleString()})`,
@@ -863,7 +864,7 @@
       results: n => `図工の授業 <span>${n.toLocaleString()}</span>件`,
       loading: "授業を読み込み中…", loadFail: "授業一覧を読み込めませんでした。しばらくして再読み込みしてください。",
       syncOk: at => at ? `更新 ${at}` : "", syncFail: "一覧に接続できません",
-      sortDefault: "標準（図案ありを先に）", sortPopular: "人気順", sortNewest: "新着順", sortReviews: "レビューが多い順", sortRating: "評価順", sortShort: "動画が短い順", sortLong: "動画が長い順",
+      sortDefault: "標準（図案ありを先に）", sortPopular: "人気順", sortNewest: "新着順", visitLine: (t, n) => `今日の訪問 ${t.toLocaleString()} · 累計 ${n.toLocaleString()}`, sortReviews: "レビューが多い順", sortRating: "評価順", sortShort: "動画が短い順", sortLong: "動画が長い順",
       saved: n => `★ 保存 ${n}`, draw: "今日の図工をくじ引き", drawAgain: "別の授業を引く", drawNone: "条件に合う授業がありません。絞り込みを少し外してください。",
       propose: "授業を提案",
       more: (rem, total) => `もっと見る（残り${rem.toLocaleString()}件 / 全${total.toLocaleString()}件）`,
@@ -1323,13 +1324,24 @@
   }
 
   /* ---------- 방문 기록: 기기마다 하루 한 번 (기기 번호·언어만, 개인정보 없음) ---------- */
+  // 아래쪽에 「오늘 방문 N · 전체 N」 (같은 기기는 하루 1번)
+  let visitCount = null;
+  function loadVisitCount() {
+    apiGet("visitCount").then(d => { if (d && d.ok) { visitCount = d; renderVisitCount(); } }).catch(() => {});
+  }
+  function renderVisitCount() {
+    const el = document.getElementById("footerVisits");
+    if (!el || !visitCount) return;
+    el.textContent = ui().visitLine(visitCount.today, visitCount.total);
+    el.hidden = false;
+  }
   function logVisit() {
     try {
       const today = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
       const last = safeGet("art_visit_day");
-      if (last === today || !deviceId) return;
+      if (last === today || !deviceId) { loadVisitCount(); return; }
       apiGet("visit&dev=" + encodeURIComponent(deviceId) + "&lang=" + encodeURIComponent(currentLang) + (last ? "" : "&first=1"))
-        .then(d => { if (d && d.visit) safeSet("art_visit_day", today); }).catch(() => {});
+        .then(d => { if (d && d.visit) safeSet("art_visit_day", today); }).catch(() => {}).finally(loadVisitCount);
     } catch (e) {}
   }
 
@@ -1460,7 +1472,7 @@
     document.getElementById("btnCloseDetail").setAttribute("aria-label", u.close);
     set("popularLabelText", u.popular); set("adminHeaderBtn", u.admin);
     set("btnDraw", u.draw); set("btnProposeText", u.propose); set("tplOnlyText", u.tplOnly);
-    set("footerCopyright", u.footerCopyright); set("footerHow", u.footerHow); set("footerTakedownText", u.footerTakedown);
+    set("footerCopyright", u.footerCopyright); set("footerHow", u.footerHow); renderVisitCount(); set("footerTakedownText", u.footerTakedown);
     set("btnTakedown", u.takedownBtn); set("takedownLabel", u.takedownLabel); set("btnTakedownSend", u.takedownSend);
     // 상세 고정 글자
     set("tSummary", u.tSummary); set("tObjective", u.tObjective); set("tOutline", u.tOutline); set("tMaterials", u.tMaterials);
@@ -2455,7 +2467,8 @@
     const days = d.days || [];
     if (!days.length) { box.innerHTML = `<p style="padding:16px;color:var(--text-muted);">아직 방문 기록이 없습니다. 기록은 이 기능을 켠 날부터 쌓입니다.</p>`; return; }
     const sum = (arr, k) => arr.reduce((t, x) => t + (x[k] || 0), 0);
-    const today = days[days.length - 1], last7 = days.slice(-7), last30 = days.slice(-30);
+    const todayStr = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
+    const today = days[days.length - 1].date === todayStr ? days[days.length - 1] : { date: todayStr, visitors: 0, first: 0 }, last7 = days.slice(-7), last30 = days.slice(-30);
     const max = Math.max(...days.map(x => x.visitors), 1);
     const langTxt = l => Object.entries(l || {}).map(([k, v]) => `${k} ${v}`).join(" · ");
     const card = (label, v, sub) => `<div style="flex:1;min-width:120px;border:1px solid var(--border);border-radius:10px;padding:12px;">

@@ -90,6 +90,7 @@ function doGet(e) {
     if (action === 'reviewSources') return json_(reviewSources_());       // 데이터 발행용: 지금 파일 + 연도별 보관 파일 목록
     if (action === 'counts') return json_({ ok: true, at: now_(), likes: countMap_('likes'), saves: countMap_('saves') });
     if (action === 'visit') return json_({ ok: true, visit: logVisit_(e.parameter) }); // 사이트용: 기기마다 하루 한 번 방문 기록
+    if (action === 'visitCount') return json_(visitCount_());                         // 사이트 아래쪽 표시용: 오늘·전체 방문 기기 수 (5분 캐시)
     if (action === 'visitStats') return json_(visitStats_(e.parameter));               // 관리자 화면용: 날짜별 방문 기기 수 (개인정보 없음)
     if (action === 'recent') return json_(recentReviews_(e.parameter)); // 사이트용: 마지막 발행 이후 새 후기만
     if (action === 'adminActs') return json_({ ok: true, at: now_(), adminActs: adminActs_() }); // 데이터 발행용: 숨긴 수업·도안 링크 지운 수업
@@ -1009,6 +1010,7 @@ function logVisit_(p) {
     const now = new Date();
     sh.appendRow(["'" + Utilities.formatDate(now, TZ, 'yyyy-MM-dd'), Utilities.formatDate(now, TZ, 'HH:mm'), dev,
       String(p.lang || '').replace(/[^a-z]/g, '').slice(0, 5), p.first === '1' ? 'Y' : '']);
+    try { CacheService.getScriptCache().remove('visitCount'); } catch (e2) {}
     return true;
   } catch (err) { return false; }
 }
@@ -1032,4 +1034,22 @@ function visitStats_(p) {
   });
   return { ok: true, at: now_(), total: Object.keys(all).length, totalFirst,
     days: Object.keys(by).sort().map(d => ({ date: d, visitors: Object.keys(by[d].devices).length, first: by[d].first, lang: by[d].lang })) };
+}
+
+// 오늘 방문 기기 수와 지금까지 전체 방문 기기 수. 매번 시트를 읽지 않도록 5분 동안 캐시
+function visitCount_() {
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('visitCount');
+  if (hit) return JSON.parse(hit);
+  const today = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd');
+  const sh = ss_().getSheetByName(VISIT_TAB);
+  let out = { ok: true, date: today, today: 0, total: 0 };
+  if (sh && sh.getLastRow() >= 2) {
+    const v = sh.getRange(2, 1, sh.getLastRow() - 1, 3).getDisplayValues();
+    const t = {}, all = {};
+    v.forEach(r => { const d = String(r[0]).replace(/^'/, '').trim(); all[r[2]] = 1; if (d === today) t[r[2]] = 1; });
+    out = { ok: true, date: today, today: Object.keys(t).length, total: Object.keys(all).length };
+  }
+  cache.put('visitCount', JSON.stringify(out), 300);
+  return out;
 }
