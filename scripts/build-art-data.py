@@ -84,7 +84,7 @@ SHEET_HEADERS = (["id", "status", "region", "videoId", "channel", "channelId", "
 
 # 목록 파일에 들어가는 칸(언어 공통) + 언어별 칸
 LIST_COMMON = ["id", "region", "area", "activityType", "grade", "periods", "prepLevel", "cleanupLevel",
-               "templateStatus", "season", "seasonTags", "videoId", "channel", "channelUrl", "seconds", "tags", "title_ko", "pick"]
+               "templateStatus", "season", "seasonTags", "videoId", "channel", "channelUrl", "seconds", "tags", "title_ko", "pick", "device"]
 LIST_LANG = ["title", "summary", "matReq"]
 # 상세 묶음 파일에 들어가는 칸
 DETAIL_LANG = ["objective", "matOpt", "prep", "outline", "tips", "linkNote"]
@@ -225,6 +225,8 @@ def read_db(path):
         recent = pub_of.get(vid, "") >= recent_cut
         # 2: 이름 있는 채널의 최근 3년 영상, 1: 이름 있는 채널, 0: 나머지 (숫자 자체는 내보내지 않음)
         o["pick"] = (2 if recent else 1) if popular else 0
+        # 학생이 태블릿·크롬북(웨일북)·스마트폰·컴퓨터를 직접 쓰는 수업
+        o["device"] = 1 if j.get("device_use") == "학생 기기 활용" else 0
         for f, key in TEXT_FIELDS.items():
             v = j.get(key) or {}
             for l in LANGS:
