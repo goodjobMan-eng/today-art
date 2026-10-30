@@ -89,6 +89,8 @@ function doGet(e) {
     if (action === 'reviewsPage') return json_(reviewsPage_(e.parameter)); // 데이터 발행용: 후기를 나눠 받기 (src=main 또는 연도)
     if (action === 'reviewSources') return json_(reviewSources_());       // 데이터 발행용: 지금 파일 + 연도별 보관 파일 목록
     if (action === 'counts') return json_({ ok: true, at: now_(), likes: countMap_('likes'), saves: countMap_('saves') });
+    if (action === 'visit') return json_({ ok: true, visit: logVisit_(e.parameter) }); // 사이트용: 기기마다 하루 한 번 방문 기록
+    if (action === 'visitStats') return json_(visitStats_(e.parameter));               // 관리자 화면용: 날짜별 방문 기기 수 (개인정보 없음)
     if (action === 'recent') return json_(recentReviews_(e.parameter)); // 사이트용: 마지막 발행 이후 새 후기만
     if (action === 'adminActs') return json_({ ok: true, at: now_(), adminActs: adminActs_() }); // 데이터 발행용: 숨긴 수업·도안 링크 지운 수업
     if (action === 'seasonalStats') return json_(seasonalStats_(e.parameter)); // 데이터 발행용: 수업별·날짜별 후기·저장·추천 수 (개인정보 없음)
@@ -985,4 +987,49 @@ function setup() {
   Object.keys(TABS).forEach(getTab_);
   LanguageApp.translate('안녕하세요', 'ko', 'en');
   UrlFetchApp.fetch('https://www.youtube.com/oembed?format=json&url=https://www.youtube.com/watch?v=wzi2SnHffs8');
+}
+
+
+/* ------------------- 방문 기록 -------------------
+   사이트가 기기마다 하루 한 번 visit 요청(기기 번호·언어)을 보낸다 → 「방문」 탭에 한 줄.
+   기기 번호는 브라우저가 만든 임의 문자열이라 개인을 알 수 없다. 이름·IP 등은 기록하지 않는다. */
+const VISIT_TAB = '방문';
+
+function logVisit_(p) {
+  try {
+    const dev = String((p && p.dev) || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
+    if (!dev) return false;
+    const ss = ss_();
+    let sh = ss.getSheetByName(VISIT_TAB);
+    if (!sh) {
+      sh = ss.insertSheet(VISIT_TAB);
+      sh.getRange(1, 1, 1, 5).setValues([['날짜', '시각', '기기', '언어', '첫방문']]);
+      sh.setFrozenRows(1);
+    }
+    const now = new Date();
+    sh.appendRow(["'" + Utilities.formatDate(now, TZ, 'yyyy-MM-dd'), Utilities.formatDate(now, TZ, 'HH:mm'), dev,
+      String(p.lang || '').replace(/[^a-z]/g, '').slice(0, 5), p.first === '1' ? 'Y' : '']);
+    return true;
+  } catch (err) { return false; }
+}
+
+// 최근 n일(기본 60일) 날짜별: 방문 기기 수, 그중 첫 방문 수, 언어별 기기 수 + 기간 전체 기기 수
+function visitStats_(p) {
+  const days = Math.min(400, Math.max(1, Number(p && p.days) || 60));
+  const sh = ss_().getSheetByName(VISIT_TAB);
+  if (!sh || sh.getLastRow() < 2) return { ok: true, days: [], total: 0, totalFirst: 0 };
+  const v = sh.getRange(2, 1, sh.getLastRow() - 1, 5).getDisplayValues();
+  const since = Utilities.formatDate(new Date(Date.now() - days * 86400000), TZ, 'yyyy-MM-dd');
+  const by = {}, all = {};
+  let totalFirst = 0;
+  v.forEach(r => {
+    const d = String(r[0]).replace(/^'/, '').trim();
+    if (!d || d < since) return;
+    const o = by[d] || (by[d] = { devices: {}, first: 0, lang: {} });
+    if (!o.devices[r[2]]) { o.devices[r[2]] = 1; const l = r[3] || 'ko'; o.lang[l] = (o.lang[l] || 0) + 1; }
+    if (r[4] === 'Y') { o.first++; totalFirst++; }
+    all[r[2]] = 1;
+  });
+  return { ok: true, at: now_(), total: Object.keys(all).length, totalFirst,
+    days: Object.keys(by).sort().map(d => ({ date: d, visitors: Object.keys(by[d].devices).length, first: by[d].first, lang: by[d].lang })) };
 }

@@ -622,6 +622,7 @@
         <button class="admin-tab" id="tabBtnHidden" onclick="switchAdminTab('hidden')">숨긴 수업 목록</button>
         <button class="admin-tab" id="tabBtnSecurity" onclick="switchAdminTab('security')">비밀번호·보관</button>
         <button class="admin-tab" id="tabBtnSeasonal" onclick="switchAdminTab('seasonal')">이맘때 추천</button>
+        <button class="admin-tab" id="tabBtnVisits" onclick="switchAdminTab('visits')">방문자</button>
       </div>
       <div id="adminTabPending"><div id="pendingListContainer"></div></div>
       <div id="adminTabEdits" style="display:none;">
@@ -637,6 +638,7 @@
         <div id="hiddenActListContainer"></div>
       </div>
       <div id="adminTabSeasonal" style="display:none;"><div id="seasonalAdminBox"></div></div>
+      <div id="adminTabVisits" style="display:none;"><div id="visitsAdminBox"></div></div>
       <div id="adminTabSecurity" style="display:none;">
         <div class="panel-block">
           <div class="panel-title">관리자 비밀번호 변경</div>
@@ -694,7 +696,7 @@
       results: n => `미술 수업 <span>${n.toLocaleString()}</span>개`,
       loading: "미술 수업을 불러오는 중…", loadFail: "수업 목록을 불러오지 못했어요. 잠시 후 새로고침해 주세요.",
       syncOk: at => at ? `업데이트 ${at}` : "", syncFail: "목록 연결 안 됨",
-      sortDefault: "기본순 (도안 먼저)", sortPopular: "인기순", sortNewest: "새로 들어온 순", sortShort: "영상 짧은 순", sortLong: "영상 긴 순",
+      sortDefault: "기본순 (도안 먼저)", sortPopular: "인기순", sortNewest: "새로 들어온 순", sortReviews: "후기 많은순", sortRating: "평점순", sortShort: "영상 짧은 순", sortLong: "영상 긴 순",
       saved: n => `★ 내 저장 ${n}`, draw: "오늘 미술 뭐 하지? 뽑기", drawAgain: "다른 수업 뽑기", drawNone: "조건에 맞는 수업이 없어요. 필터를 조금 풀어 보세요.",
       propose: "새 수업 제안",
       more: (rem, total) => `더 보기 (남은 ${rem.toLocaleString()}개 / 전체 ${total.toLocaleString()}개)`,
@@ -781,7 +783,7 @@
       results: n => `<span>${n.toLocaleString()}</span> art lessons`,
       loading: "Loading art lessons…", loadFail: "Couldn't load the lesson list. Please refresh in a moment.",
       syncOk: at => at ? `Updated ${at}` : "", syncFail: "List unavailable",
-      sortDefault: "Default (templates first)", sortPopular: "Most popular", sortNewest: "Newest", sortShort: "Shortest video", sortLong: "Longest video",
+      sortDefault: "Default (templates first)", sortPopular: "Most popular", sortNewest: "Newest", sortReviews: "Most reviewed", sortRating: "Top rated", sortShort: "Shortest video", sortLong: "Longest video",
       saved: n => `★ Saved ${n}`, draw: "Pick an art lesson for me", drawAgain: "Pick another", drawNone: "No lesson matches. Try loosening the filters.",
       propose: "Suggest a lesson",
       more: (rem, total) => `Load more (${rem.toLocaleString()} left of ${total.toLocaleString()})`,
@@ -861,7 +863,7 @@
       results: n => `図工の授業 <span>${n.toLocaleString()}</span>件`,
       loading: "授業を読み込み中…", loadFail: "授業一覧を読み込めませんでした。しばらくして再読み込みしてください。",
       syncOk: at => at ? `更新 ${at}` : "", syncFail: "一覧に接続できません",
-      sortDefault: "標準（図案ありを先に）", sortPopular: "人気順", sortNewest: "新着順", sortShort: "動画が短い順", sortLong: "動画が長い順",
+      sortDefault: "標準（図案ありを先に）", sortPopular: "人気順", sortNewest: "新着順", sortReviews: "レビューが多い順", sortRating: "評価順", sortShort: "動画が短い順", sortLong: "動画が長い順",
       saved: n => `★ 保存 ${n}`, draw: "今日の図工をくじ引き", drawAgain: "別の授業を引く", drawNone: "条件に合う授業がありません。絞り込みを少し外してください。",
       propose: "授業を提案",
       more: (rem, total) => `もっと見る（残り${rem.toLocaleString()}件 / 全${total.toLocaleString()}件）`,
@@ -1226,6 +1228,7 @@
       handleUrlParams();
       if (SEASONAL_ENABLED) loadSeasonal().then(d => { if (d) renderQuick(); });
       if (serverOn()) {
+        logVisit();
         if (staticMeta.social && staticMeta.sv) {
           try { applyStaticSocial(await fetchJson(STATIC_BASE + "social.json?v=" + encodeURIComponent(staticMeta.sv))); refreshReactViews(); loadRecentReviews(); return; }
           catch (e2) { staticSocial = false; }
@@ -1315,6 +1318,17 @@
     const res = await fetch(gasWebAppUrl, { method: "POST", body: JSON.stringify(payload) });
     if (!res.ok) throw new Error("HTTP " + res.status);
     return res.json();
+  }
+
+  /* ---------- 방문 기록: 기기마다 하루 한 번 (기기 번호·언어만, 개인정보 없음) ---------- */
+  function logVisit() {
+    try {
+      const today = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
+      const last = safeGet("art_visit_day");
+      if (last === today || !deviceId) return;
+      apiGet("visit&dev=" + encodeURIComponent(deviceId) + "&lang=" + encodeURIComponent(currentLang) + (last ? "" : "&first=1"))
+        .then(d => { if (d && d.visit) safeSet("art_visit_day", today); }).catch(() => {});
+    } catch (e) {}
   }
 
   /* ---------- 추천·저장 수와 후기 ---------- */
@@ -1479,7 +1493,7 @@
   function renderSortOptions() {
     const s = document.getElementById("sortSelect"), u = ui();
     const cur = s.value || "default";
-    const opts = [["default", u.sortDefault], ...(serverOn() ? [["popular", u.sortPopular]] : []), ["newest", u.sortNewest], ["short", u.sortShort], ["long", u.sortLong]];
+    const opts = [["default", u.sortDefault], ...(serverOn() ? [["popular", u.sortPopular], ["reviews", u.sortReviews], ["rating", u.sortRating]] : []), ["newest", u.sortNewest], ["short", u.sortShort], ["long", u.sortLong]];
     s.innerHTML = opts.map(([v, l]) => `<option value="${v}"${v === cur ? " selected" : ""}>${l}</option>`).join("");
     if (!opts.some(o => o[0] === cur)) s.value = "default";
   }
@@ -1755,6 +1769,17 @@
       if (cands.length && (score[b.id] || 0) !== (score[a.id] || 0)) return (score[b.id] || 0) - (score[a.id] || 0);
       if (_seasonalRank && sortVal === "default") return _seasonalRank.get(a.id) - _seasonalRank.get(b.id);
       if (sortVal === "popular") return popularityScore(b) - popularityScore(a) || b.num - a.num;
+      if (sortVal === "reviews" || sortVal === "rating") {
+        // 후기 많은순: 후기 수 → 평균 평점 → 인기순 / 평점순: 평균 평점(후기 없는 수업은 맨 뒤) → 후기 수 → 인기순
+        const rA = reviewStats(a), rB = reviewStats(b);
+        if (sortVal === "reviews") { if (rB.n !== rA.n) return rB.n - rA.n; if (rB.avg !== rA.avg) return rB.avg - rA.avg; }
+        else {
+          if (!!rB.n !== !!rA.n) return rB.n ? 1 : -1;
+          if (rB.avg !== rA.avg) return rB.avg - rA.avg;
+          if (rB.n !== rA.n) return rB.n - rA.n;
+        }
+        return popularityScore(b) - popularityScore(a) || b.num - a.num;
+      }
       if (sortVal === "newest") return b.num - a.num;
       if (sortVal === "short") return (a.seconds || 1e9) - (b.seconds || 1e9);
       if (sortVal === "long") return (b.seconds || 0) - (a.seconds || 0);
@@ -2408,13 +2433,46 @@
     updateAdminHeaderButton(); closeAdminModal(); applyServerMode();
   }
   function switchAdminTab(tab) {
-    ["pending", "edits", "reports", "hidden", "security", "seasonal"].forEach(t => {
+    ["pending", "edits", "reports", "hidden", "security", "seasonal", "visits"].forEach(t => {
       const cap = t[0].toUpperCase() + t.slice(1);
       document.getElementById("tabBtn" + cap).classList.toggle("active", t === tab);
       document.getElementById("adminTab" + cap).style.display = t === tab ? "block" : "none";
     });
     if (tab === "security") loadArchives();
     if (tab === "seasonal") renderSeasonalAdmin();
+    if (tab === "visits") renderVisitsAdmin();
+  }
+  // 관리자 「방문자」 탭: 최근 60일 날짜별 방문 기기 수 (같은 기기는 하루 1번만 셈)
+  async function renderVisitsAdmin() {
+    const box = document.getElementById("visitsAdminBox");
+    box.innerHTML = `<p class="skeleton" style="padding:16px;">불러오는 중…</p>`;
+    let d;
+    try { d = await apiGet("visitStats&days=60"); } catch (e) { d = null; }
+    if (!d || !d.ok) { box.innerHTML = `<p style="padding:16px;color:var(--text-muted);">방문 기록을 불러오지 못했습니다. (시트 연결 또는 Apps Script 새 배포를 확인하세요)</p>`; return; }
+    const days = d.days || [];
+    if (!days.length) { box.innerHTML = `<p style="padding:16px;color:var(--text-muted);">아직 방문 기록이 없습니다. 기록은 이 기능을 켠 날부터 쌓입니다.</p>`; return; }
+    const sum = (arr, k) => arr.reduce((t, x) => t + (x[k] || 0), 0);
+    const today = days[days.length - 1], last7 = days.slice(-7), last30 = days.slice(-30);
+    const max = Math.max(...days.map(x => x.visitors), 1);
+    const langTxt = l => Object.entries(l || {}).map(([k, v]) => `${k} ${v}`).join(" · ");
+    const card = (label, v, sub) => `<div style="flex:1;min-width:120px;border:1px solid var(--border);border-radius:10px;padding:12px;">
+        <div style="font-size:12px;color:var(--text-muted);">${label}</div><div style="font-size:22px;font-weight:700;">${v.toLocaleString()}</div>
+        ${sub ? `<div style="font-size:11.5px;color:var(--text-muted);">${sub}</div>` : ""}</div>`;
+    box.innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        ${card("오늘(" + today.date.slice(5) + ")", today.visitors, "첫 방문 " + today.first)}
+        ${card("최근 7일 합계", sum(last7, "visitors"), "하루 평균 " + Math.round(sum(last7, "visitors") / last7.length))}
+        ${card("최근 30일 합계", sum(last30, "visitors"), "첫 방문 " + sum(last30, "first"))}
+        ${card("60일간 다른 기기", d.total, "첫 방문 " + d.totalFirst)}
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin:0 0 8px;">같은 기기는 하루에 한 번만 셉니다. 합계는 날짜별 수를 더한 값입니다.</p>
+      <div style="max-height:420px;overflow:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="text-align:left;color:var(--text-muted);"><th style="padding:6px;">날짜</th><th style="padding:6px;">방문</th><th style="padding:6px;">첫 방문</th><th style="padding:6px;width:40%;"></th><th style="padding:6px;">언어</th></tr></thead>
+        <tbody>${days.slice().reverse().map(x => `<tr style="border-top:1px solid var(--border);">
+          <td style="padding:6px;white-space:nowrap;">${escapeHtml(x.date)}</td><td style="padding:6px;font-weight:700;">${x.visitors}</td><td style="padding:6px;">${x.first}</td>
+          <td style="padding:6px;"><div style="height:8px;border-radius:4px;background:var(--text-primary);opacity:.55;width:${Math.max(2, Math.round(x.visitors / max * 100))}%;"></div></td>
+          <td style="padding:6px;color:var(--text-muted);font-size:12px;">${escapeHtml(langTxt(x.lang))}</td></tr>`).join("")}</tbody>
+      </table></div>`;
   }
   // 관리자 「이맘때 추천」 탭: 켜짐/꺼짐 안내, 계산 요약, 학년군별 상위 목록, 첫 화면 미리보기
   async function renderSeasonalAdmin() {
