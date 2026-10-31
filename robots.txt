@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /a/
-Sitemap: https://today-art.example/sitemap.xml
+Sitemap: https://today-art.com/sitemap.xml
