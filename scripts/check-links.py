@@ -171,6 +171,14 @@ def check(url):
     return "ok", f"HTTP {code}"
 
 
+def save_status(status):
+    OUT.mkdir(parents=True, exist_ok=True)
+    tmp = STATUS.with_suffix(".tmp")
+    tmp.write_text("{\n" + ",\n".join(json.dumps(k, ensure_ascii=False) + ":" + json.dumps(status[k], ensure_ascii=False)
+                                      for k in sorted(status)) + "\n}\n", encoding="utf-8")
+    tmp.replace(STATUS)
+
+
 def published_links():
     links = set()
     for f in sorted(glob.glob(str(OUT / "detail" / "*.json"))):
@@ -188,6 +196,7 @@ def main():
     ap.add_argument("--url", nargs="*", help="이 주소들만 판정해 보기(저장하지 않음)")
     ap.add_argument("--workers", type=int, default=6, help="동시에 여는 요청 수 (기본 6, 한 사이트에는 2개까지)")
     ap.add_argument("--force", action="store_true", help="오늘 이미 확인한 링크도 다시 확인")
+    ap.add_argument("--recheck-days", type=int, default=3, help="살아 있던 링크를 다시 확인하는 간격(일, 기본 3)")
     a = ap.parse_args()
 
     if a.url:
@@ -205,7 +214,14 @@ def main():
     # 발행 중인 링크 + 이미 빠진 죽은 링크(되살아났는지 확인)
     todo = sorted(pub | {u for u, v in status.items() if isinstance(v, dict) and v.get("ok") is False})
     if not a.force:
-        todo = [u for u in todo if (status.get(u) or {}).get("checkedAt") != today]
+        # 살아 있던 링크는 RECHECK_DAYS일마다, 새 링크·죽은 링크·판단 못 한 링크는 매일 확인
+        fresh = (dt.date.fromisoformat(today) - dt.timedelta(days=a.recheck_days - 1)).isoformat()
+        def due(u):
+            v = status.get(u) or {}
+            if v.get("checkedAt") == today:
+                return False
+            return not (v.get("ok") is True and (v.get("checkedAt") or "") >= fresh)
+        todo = [u for u in todo if due(u)]
     print(f"점검할 링크 {len(todo)}개 (발행 중 {len(pub)}개)")
 
     t0 = time.time()
@@ -225,11 +241,11 @@ def main():
             else:
                 status[u] = {"ok": prev.get("ok"), "checkedAt": prev.get("checkedAt", today), "fails": int(prev.get("fails") or 0),
                              "why": why}
+            if sum(counts.values()) % 100 == 0:  # 중간에 끊겨도 확인한 만큼은 남도록
+                save_status(status)
     # 발행에도 없고 살아 있는 기록은 지운다(파일이 커지지 않게)
     status = {u: v for u, v in status.items() if u in pub or (isinstance(v, dict) and v.get("ok") is False)}
-    OUT.mkdir(parents=True, exist_ok=True)
-    STATUS.write_text("{\n" + ",\n".join(json.dumps(k, ensure_ascii=False) + ":" + json.dumps(status[k], ensure_ascii=False)
-                                         for k in sorted(status)) + "\n}\n", encoding="utf-8")
+    save_status(status)
     gone = sum(1 for v in status.values() if v.get("ok") is False and int(v.get("fails") or 0) >= 2)
     print(f"살아 있음 {counts['ok']}개, 죽음 {counts['dead']}개, 판단 못 함 {counts['unknown']}개 ({time.time() - t0:.0f}초)")
     print(f"발행에서 빠질 링크(연속 2번 이상 죽음): {gone}개")
