@@ -1342,9 +1342,10 @@
     try {
       const today = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
       const last = safeGet("art_visit_day");
-      if (last === today || !deviceId) { loadVisitCount(); return; }
+      // 11/5 운영자 방침: 방문자 수는 화면에 보이지 않는다(서버 부담 줄이기). 기록만 남겨 관리자 화면에서 본다.
+      if (last === today || !deviceId) return;
       apiGet("visit&dev=" + encodeURIComponent(deviceId) + "&lang=" + encodeURIComponent(currentLang) + (last ? "" : "&first=1"))
-        .then(d => { if (d && d.visit) safeSet("art_visit_day", today); }).catch(() => {}).finally(loadVisitCount);
+        .then(d => { if (d && d.visit) safeSet("art_visit_day", today); }).catch(() => {});
     } catch (e) {}
   }
 
@@ -1406,7 +1407,14 @@
   }
   async function loadRecentReviews() {
     try {
-      const data = await apiGet("recent&since=" + encodeURIComponent(staticMeta.sAt || ""));
+      // 같은 기기에서 5분 안에 다시 열면 저장해 둔 결과를 쓴다(서버 부담 줄이기)
+      const rkey = "art_recent_" + (staticMeta.sAt || "");
+      let data = null;
+      try { const c = JSON.parse(safeGet(rkey) || "null"); if (c && Date.now() - c.t < 300000) data = c.d; } catch (e) {}
+      if (!data) {
+        data = await apiGet("recent&since=" + encodeURIComponent(staticMeta.sAt || ""));
+        if (data && data.ok) { try { safeSet(rkey, JSON.stringify({ t: Date.now(), d: data })); } catch (e) {} }
+      }
       if (!data || !data.ok) return;
       if (readAdminActs(data)) adminActsChanged();
       (data.hidden || []).forEach(id => hiddenReviews.add(String(id)));
