@@ -285,6 +285,57 @@
     .takedown-form[hidden] { display: none; }
     .takedown-form label { font-size: 12.5px; color: var(--text-secondary); font-weight: 600; }
 
+    /* ===== 인기 순위 탭 ===== */
+    .view-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border-strong); margin: 0 0 16px; }
+    .view-tab { appearance: none; border: 0; background: none; font: inherit; font-size: 16px; font-weight: 700; color: var(--text-muted); padding: 8px 14px 11px; position: relative; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+    .view-tab .n { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+    .view-tab .new { font-size: 11px; font-weight: 800; color: #fff; background: var(--accent); border-radius: 999px; padding: 1px 6px; }
+    .view-tab[aria-selected="true"] { color: var(--ink); }
+    .view-tab[aria-selected="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: var(--accent); }
+    .view-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+    body.rank-mode .page-layout { grid-template-columns: minmax(0, 1fr); }
+    body.rank-mode .filter-panel, body.rank-mode .btn-open-filters, body.rank-mode .results-hide { display: none !important; }
+    .rank-view { max-width: 900px; }
+    .rank-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .rank-head h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -.2px; }
+    .rank-head p { margin: 4px 0 0; font-size: 13px; color: var(--text-muted); }
+    .rank-seg { display: inline-flex; background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 999px; padding: 3px; }
+    .rank-seg button { appearance: none; border: 0; background: none; font: inherit; font-size: 14px; font-weight: 700; color: var(--text-secondary); padding: 7px 16px; border-radius: 999px; cursor: pointer; }
+    .rank-seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+    .rank-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 14px; }
+    .rank-chip { appearance: none; font: inherit; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .rank-chip[aria-pressed="true"] { border-color: var(--accent-line); background: var(--accent-soft); color: var(--accent-strong); }
+    .rank-notice { font-size: 13px; color: var(--text-secondary); background: var(--blue-soft); border-radius: var(--radius-md); padding: 9px 12px; margin-bottom: 10px; }
+    .rank-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .rank-row { display: grid; grid-template-columns: 40px 120px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 14px; border-top: 1px solid var(--border); cursor: pointer; }
+    .rank-row:first-child { border-top: 0; }
+    .rank-row:hover { background: #fffaf4; }
+    .rank-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .rank-no { font-size: 18px; font-weight: 800; text-align: center; color: var(--text-secondary); }
+    .rank-row.top .rank-no { color: var(--accent-strong); }
+    .rank-th { width: 120px; aspect-ratio: 16/9; border-radius: var(--radius-sm); background: #e9dfd2; overflow: hidden; }
+    .rank-th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .rank-row h3 { margin: 0 0 4px; font-size: 15px; font-weight: 700; line-height: 1.35; }
+    .rank-meta { font-size: 12.5px; color: var(--text-secondary); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .rank-tpl { font-size: 11.5px; font-weight: 700; color: var(--accent-strong); background: var(--accent-soft); border-radius: 999px; padding: 2px 8px; }
+    .rank-right { text-align: right; font-size: 12.5px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; align-items: flex-end; white-space: nowrap; }
+    .rank-mv { font-size: 11.5px; font-weight: 800; border-radius: 999px; padding: 1px 7px; }
+    .rank-mv.up { color: var(--green); background: var(--green-soft); }
+    .rank-mv.dn { color: var(--text-muted); background: var(--surface-subtle); }
+    .rank-mv.nw { color: var(--blue); background: var(--blue-soft); }
+    .rank-mv.eq { color: var(--text-muted); }
+    .rank-mv.hot { color: var(--accent-strong); background: var(--accent-soft); }
+    .rank-more { display: block; width: 100%; appearance: none; border: 0; border-top: 1px solid var(--border); background: var(--surface); padding: 12px; font: inherit; font-size: 14px; font-weight: 700; color: var(--accent-strong); cursor: pointer; }
+    .rank-foot { font-size: 12.5px; color: var(--text-muted); margin-top: 10px; }
+    @media (max-width: 640px) {
+      .rank-row { grid-template-columns: 28px 96px minmax(0, 1fr); gap: 10px; padding: 10px 12px; }
+      .rank-th { width: 96px; }
+      .rank-right { grid-column: 3; flex-direction: row; align-items: center; justify-content: flex-start; }
+      .rank-seg { width: 100%; } .rank-seg button { flex: 1; padding: 8px 6px; }
+      .rank-head { align-items: stretch; }
+      .view-tab { font-size: 15px; padding: 8px 10px 10px; }
+    }
+
     /* ===== 태블릿·휴대폰 ===== */
     @media (max-width: 1023px) {
       :root { --header-h: 108px; }
@@ -392,7 +443,12 @@
   </aside>
 
   <main class="results-col">
-    <section class="intro">
+    <nav class="view-tabs" role="tablist" aria-label="보기">
+      <button type="button" class="view-tab" role="tab" id="viewTabAll" aria-selected="true" onclick="setView('all')"></button>
+      <button type="button" class="view-tab" role="tab" id="viewTabRank" aria-selected="false" onclick="setView('rank')"></button>
+    </nav>
+    <section class="rank-view" id="rankView" hidden></section>
+    <section class="intro results-hide">
       <p class="intro-text" id="introText"></p>
       <button type="button" class="tpl-toggle" id="btnTplOnly" aria-pressed="false" onclick="toggleTemplateOnly()">
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>
@@ -400,13 +456,13 @@
       </button>
     </section>
 
-    <div class="quick-row" id="quickRow"></div>
-    <div class="popular-row">
+    <div class="quick-row results-hide" id="quickRow"></div>
+    <div class="popular-row results-hide">
       <span class="popular-label" id="popularLabelText">추천 검색어</span>
       <div id="popularKeywordsWrap" class="popular-wrap"></div>
     </div>
 
-    <div class="results-toolbar">
+    <div class="results-toolbar results-hide">
       <div class="results-left">
         <div class="results-count" id="resultsCountText"></div>
         <span id="syncStatus" class="sync-status"></span>
@@ -428,9 +484,11 @@
       </div>
     </div>
 
+    <div class="results-hide">
     <section class="cards-grid" id="cardsGrid" aria-live="polite"></section>
     <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
       <button type="button" class="btn-load-more" id="btnLoadMore" onclick="loadMoreItems()"></button>
+    </div>
     </div>
   </main>
 </div>
@@ -764,6 +822,13 @@
       quickPicks: { easy: "준비·정리 쉬운 수업", one: "1차시에 끝내기", low: "저학년", appreciate: "감상 수업", device: "태블릿·웨일북 수업", season: s => `지금 계절: ${s}` },
       filterLabels: { tpl: "도안", region: "나라", area: "영역", type: "활동 유형", grade: "학년", periods: "차시", device: "전자기기", prep: "준비 난이도", cleanup: "정리 난이도", season: "계절·행사" },
       seasonalQuick: "이맘때 많이 한 수업", seasonalPreviewTag: "미리보기",
+      rk: { tabAll: "전체 수업", tabRank: "인기 순위", isNew: "NEW", win: { day: "오늘", week: "이번 주", month: "이번 달" },
+        title: { day: "오늘 선생님들이 많이 고른 수업", week: "이번 주 선생님들이 많이 고른 수업", month: "이번 달 선생님들이 많이 고른 수업" },
+        sub: "추천·저장·후기를 더해 매일 새로 매겨요", allGrades: "전체 학년", tplOnly: "도안 있는 수업만",
+        filled: n => n ? `이 기간은 선생님들 기록이 ${n}개 수업뿐이라, 그다음은 요즘 유튜브에서 뜨는 수업으로 채웠어요.` : "이 기간은 아직 선생님들 기록이 없어서, 요즘 유튜브에서 뜨는 수업으로 채웠어요.",
+        hot: "요즘 뜨는", more: (a, b) => `${a}~${b}위 더 보기`, loading: "순위를 불러오는 중…", fail: "순위를 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.",
+        none: "조건에 맞는 수업이 아직 없어요.", reviews: "후기",
+        foot: "순위는 이 사이트에서 선생님들이 누른 추천·저장과 남긴 후기로 매깁니다. 유튜브 조회수 숫자는 보여 주지 않아요." },
       seasonalNote: m => m.includes("A") ? "작년 이맘때 선생님들이 많이 저장하고 후기를 남긴 수업부터 보여 드려요." : m.includes("B") ? "요즘 선생님들이 많이 저장한 수업과 이맘때 계절·행사에 맞는 수업이에요." : "이맘때 계절·행사에 맞는 수업이에요. 기록이 쌓이면 선생님들이 많이 한 수업 순서로 바뀌어요.",
       seasonalAdmin: {
         title: "「이맘때 많이 한 수업」", stateOn: "켜져 있음 — 모든 방문자의 첫 화면 바로가기에 보입니다.", stateOff: "꺼져 있음 — 방문자에게는 보이지 않습니다. (기록 수집은 계속됩니다)",
@@ -844,6 +909,13 @@
       quickPicks: { easy: "Easy prep & cleanup", one: "Done in one period", low: "Grades 1–2", appreciate: "Art appreciation", device: "Tablet & laptop lessons", season: s => `Now: ${s}` },
       filterLabels: { tpl: "Template", region: "Country", area: "Area", type: "Activity type", grade: "Grade", periods: "Periods", device: "Devices", prep: "Prep difficulty", cleanup: "Cleanup difficulty", season: "Season / event" },
       seasonalQuick: "Popular this time of year", seasonalPreviewTag: "Preview",
+      rk: { tabAll: "All lessons", tabRank: "Top lessons", isNew: "NEW", win: { day: "Today", week: "This week", month: "This month" },
+        title: { day: "Teachers' top picks today", week: "Teachers' top picks this week", month: "Teachers' top picks this month" },
+        sub: "Ranked daily by likes, saves and reviews", allGrades: "All grades", tplOnly: "With templates only",
+        filled: n => n ? `Only ${n} lessons have teacher activity in this period, so the rest are lessons trending on YouTube.` : "No teacher activity yet in this period, so these are lessons trending on YouTube.",
+        hot: "Trending", more: (a, b) => `Show #${a}–${b}`, loading: "Loading rankings…", fail: "Couldn't load rankings. Please try again later.",
+        none: "No lessons match yet.", reviews: "Reviews",
+        foot: "Rankings use teachers' likes, saves and reviews on this site. YouTube view counts are never shown." },
       seasonalNote: m => m.includes("A") ? "Lessons teachers saved and reviewed most at this time last year come first." : m.includes("B") ? "Lessons teachers are saving lately, plus lessons that fit this season and its events." : "Lessons that fit this season and its events. As records build up, this will follow what teachers actually taught.",
       seasonalAdmin: {
         title: "“Popular this time of year”", stateOn: "On — shown in Quick picks for every visitor.", stateOff: "Off — hidden from visitors. (Records are still being collected.)",
@@ -924,6 +996,13 @@
       quickPicks: { easy: "準備・片付けがかんたん", one: "1時間で完成", low: "低学年", appreciate: "鑑賞の授業", device: "タブレット・PCの授業", season: s => `今の季節: ${s}` },
       filterLabels: { tpl: "図案", region: "国", area: "領域", type: "活動の種類", grade: "学年", periods: "時間", device: "デジタル機器", prep: "準備の手間", cleanup: "片付けの手間", season: "季節・行事" },
       seasonalQuick: "この時期によく行われた授業", seasonalPreviewTag: "プレビュー",
+      rk: { tabAll: "すべての授業", tabRank: "人気ランキング", isNew: "NEW", win: { day: "今日", week: "今週", month: "今月" },
+        title: { day: "今日先生たちがよく選んだ授業", week: "今週先生たちがよく選んだ授業", month: "今月先生たちがよく選んだ授業" },
+        sub: "いいね・保存・レビューを合計して毎日更新", allGrades: "全学年", tplOnly: "型紙ありのみ",
+        filled: n => n ? `この期間の先生の記録は${n}件の授業だけなので、残りはYouTubeで最近人気の授業で補っています。` : "この期間はまだ先生の記録がないため、YouTubeで最近人気の授業を表示しています。",
+        hot: "話題", more: (a, b) => `${a}～${b}位をもっと見る`, loading: "ランキングを読み込み中…", fail: "ランキングを読み込めませんでした。しばらくしてからもう一度お試しください。",
+        none: "条件に合う授業はまだありません。", reviews: "レビュー",
+        foot: "順位はこのサイトでの先生のいいね・保存・レビューで決まります。YouTubeの再生回数は表示しません。" },
       seasonalNote: m => m.includes("A") ? "昨年の今ごろ先生たちがよく保存し、感想を残した授業から表示します。" : m.includes("B") ? "最近よく保存されている授業と、今の季節・行事に合う授業です。" : "今の季節・行事に合う授業です。記録がたまると、先生たちがよく行った順に変わります。",
       seasonalAdmin: {
         title: "「この時期によく行われた授業」", stateOn: "オン — すべての訪問者のショートカットに表示されます。", stateOff: "オフ — 訪問者には表示されません。（記録の収集は続いています）",
@@ -1232,6 +1311,7 @@
       setSyncStatus("ok");
       renderAll();
       handleUrlParams();
+      if (location.hash === "#rank") setView("rank", true);
       if (SEASONAL_ENABLED) loadSeasonal().then(d => { if (d) renderQuick(); });
       if (serverOn()) {
         logVisit();
@@ -1627,6 +1707,77 @@
     renderFilterChips(); renderActivities();
   }
 
+  /* 인기 순위 (data/popular.json: build-art-data.py 가 매일 미리 계산) */
+  let viewMode = "all", rankWin = "week", rankGrade = "", rankTpl = false, rankLimit = 10, popularData = null, _popularLoad = null;
+  function loadPopular() {
+    if (!_popularLoad) {
+      const d = new Date(), day = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+      _popularLoad = fetchJson(STATIC_BASE + "popular.json?d=" + day)
+        .then(j => { popularData = j && j.w ? j : null; return popularData; })
+        .catch(() => { _popularLoad = null; return null; });
+    }
+    return _popularLoad;
+  }
+  function renderViewTabs() {
+    const r = ui().rk;
+    const all = document.getElementById("viewTabAll"), rk = document.getElementById("viewTabRank");
+    if (!all) return;
+    all.innerHTML = `${escapeHtml(r.tabAll)} <span class="n">${(activities.length || 0).toLocaleString()}</span>`;
+    rk.innerHTML = `${escapeHtml(r.tabRank)} <span class="new">${r.isNew}</span>`;
+    all.setAttribute("aria-selected", viewMode === "all"); rk.setAttribute("aria-selected", viewMode === "rank");
+  }
+  function setView(m, quiet) {
+    viewMode = m === "rank" ? "rank" : "all";
+    document.body.classList.toggle("rank-mode", viewMode === "rank");
+    document.getElementById("rankView").hidden = viewMode !== "rank";
+    try { history.replaceState(null, "", viewMode === "rank" ? "#rank" : location.pathname + location.search); } catch (e) {}
+    renderViewTabs();
+    if (viewMode === "rank") { rankLimit = 10; renderRank(); if (!popularData) loadPopular().then(renderRank); }
+    if (!quiet) window.scrollTo({ top: 0 });
+  }
+  function setRank(k, v) {
+    if (k === "win") rankWin = v; else if (k === "grade") rankGrade = rankGrade === v ? "" : v; else if (k === "tpl") rankTpl = !rankTpl;
+    rankLimit = 10; renderRank();
+  }
+  function renderRank() {
+    const box = document.getElementById("rankView"); if (!box || viewMode !== "rank") return;
+    const u = ui(), r = u.rk;
+    const seg = ["day", "week", "month"].map(k => `<button type="button" aria-pressed="${rankWin === k}" onclick="setRank('win','${k}')">${escapeHtml(r.win[k])}</button>`).join("");
+    const chips = `<button type="button" class="rank-chip" aria-pressed="${!rankGrade}" onclick="setRank('grade','')">${escapeHtml(r.allGrades)}</button>`
+      + ["1-2", "3-4", "5-6"].map(g => `<button type="button" class="rank-chip" aria-pressed="${rankGrade === g}" onclick="setRank('grade','${g}')">${escapeHtml(tTerm("grade", g))}</button>`).join("")
+      + `<button type="button" class="rank-chip" aria-pressed="${rankTpl}" onclick="setRank('tpl')">${escapeHtml(r.tplOnly)}</button>`;
+    const w = popularData && popularData.w ? popularData.w[rankWin] : null;
+    const fmtD = s => { const p = String(s || "").split("-"); return p.length === 3 ? `${+p[1]}.${+p[2]}.` : ""; };
+    const range = w ? (rankWin === "day" ? fmtD(w.to) : `${fmtD(w.from)}~${fmtD(w.to)}`) : "";
+    let body;
+    if (!w) body = `<div class="loading-box" role="status">${escapeHtml(_popularLoad ? r.loading : r.fail)}</div>`;
+    else {
+      const byId = new Map(activities.map(a => [a.id, a]));
+      const list = (w.top || []).map(x => ({ x, a: byId.get(x.id) })).filter(o => o.a
+        && (!rankGrade || o.a.grade === rankGrade || o.a.grade === "전학년") && (!rankTpl || o.a.hasTemplate));
+      const real = list.filter(o => !o.x.f).length;
+      const notice = list.length && list.some(o => o.x.f) ? `<div class="rank-notice">${escapeHtml(r.filled(real))}</div>` : "";
+      const rows = list.slice(0, rankLimit).map((o, i) => {
+        const a = o.a, x = o.x, no = i + 1, th = thumbUrl(a.videoId);
+        const meta = [a.grade && a.grade !== "불명" ? tTerm("grade", a.grade) : "", a.periods && a.periods !== "불명" ? tTerm("periods", a.periods) : "", a.activityType ? tTerm("activityType", a.activityType) : ""]
+          .filter(Boolean).map(v => `<span>${escapeHtml(v)}</span>`).join("") + (a.hasTemplate ? `<span class="rank-tpl">${escapeHtml(tTerm("templateStatus", a.templateStatus) || a.templateStatus)}</span>` : "");
+        let mv = "";
+        if (x.f) mv = `<span class="rank-mv hot">${escapeHtml(r.hot)}</span>`;
+        else if (!rankGrade && !rankTpl && w.prev) mv = !x.p ? `<span class="rank-mv nw">NEW</span>` : x.p > no ? `<span class="rank-mv up">▲${x.p - no}</span>` : x.p < no ? `<span class="rank-mv dn">▼${no - x.p}</span>` : `<span class="rank-mv eq">–</span>`;
+        const cnt = x.f ? "" : `<span>♡ ${x.l || 0} · ☆ ${x.s || 0}${x.r ? ` · ${escapeHtml(r.reviews)} ${x.r}` : ""}</span>`;
+        return `<div class="rank-row${no <= 3 ? " top" : ""}" role="listitem" tabindex="0" onclick="openDetailModal('${a.id}')" onkeydown="if(event.key==='Enter')openDetailModal('${a.id}')">
+          <div class="rank-no">${no}</div>
+          <div class="rank-th">${th ? `<img src="${th}" alt="" loading="lazy" decoding="async" width="160" height="90" onerror="this.style.display='none'">` : ""}</div>
+          <div><h3>${escapeHtml(loc(a, "title"))}</h3><div class="rank-meta">${meta}</div></div>
+          <div class="rank-right">${mv}${cnt}</div></div>`;
+      }).join("");
+      const more = list.length > rankLimit ? `<button type="button" class="rank-more" onclick="rankLimit+=20;renderRank()">${escapeHtml(r.more(rankLimit + 1, Math.min(list.length, rankLimit + 20)))}</button>` : "";
+      body = list.length ? `${notice}<div class="rank-list" role="list">${rows}${more}</div>` : `<div class="empty-box"><p>${escapeHtml(r.none)}</p></div>`;
+    }
+    box.innerHTML = `<div class="rank-head"><div><h2>${escapeHtml(r.title[rankWin])}</h2><p>${escapeHtml(r.sub)}${range ? " · " + range : ""}</p></div><div class="rank-seg" role="group">${seg}</div></div>
+      <div class="rank-chips">${chips}</div>${body}<p class="rank-foot">${escapeHtml(r.foot)}</p>`;
+  }
+
   /* 이맘때 많이 한 수업 (data/seasonal.json: build-art-data.py 가 미리 계산) */
   function seasonalVisible() { return (SEASONAL_ENABLED || seasonalPreview) && !!(seasonalData && Array.isArray(seasonalData.top) && seasonalData.top.length); }
   function loadSeasonal() {
@@ -1756,6 +1907,8 @@
     const grid = document.getElementById("cardsGrid"), more = document.getElementById("loadMoreWrap");
     const total = activities.length, tplTotal = activities.filter(a => a.hasTemplate).length;
     document.getElementById("introText").innerHTML = u.intro(total, tplTotal);
+    if (viewMode === "rank" && document.getElementById("searchInput").value.trim()) setView("all", true);
+    renderViewTabs(); if (viewMode === "rank") renderRank();
     renderQuick();
     updateSavedFilterButton();
     if (!dataReady || loadFailed) {

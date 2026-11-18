@@ -225,6 +225,12 @@ def read_db(path):
         recent = pub_of.get(vid, "") >= recent_cut
         # 2: 이름 있는 채널의 최근 3년 영상, 1: 이름 있는 채널, 0: 나머지 (숫자 자체는 내보내지 않음)
         o["pick"] = (2 if recent else 1) if popular else 0
+        # 인기 순위 보충용: 올린 뒤 하루 평균 조회수(최근 1년 영상만). 숫자는 내보내지 않고 순서에만 쓴다
+        try:
+            age = max(30, (dt.date.today() - dt.date.fromisoformat(pub_of.get(vid, "")[:10])).days)
+            TREND[o["id"]] = views_of.get(vid, 0) / age if age <= 365 else 0
+        except ValueError:
+            TREND[o["id"]] = 0
         # 학생이 태블릿·크롬북(웨일북)·스마트폰·컴퓨터를 직접 쓰는 수업
         o["device"] = 1 if j.get("device_use") == "학생 기기 활용" else 0
         for f, key in TEXT_FIELDS.items():
@@ -434,6 +440,7 @@ REVIEW_H = ["reviewId", "activityId", "teacher", "grade", "fitScore", "rating", 
             "caution_ko", "caution_en", "caution_ja", "tip_ko", "tip_en", "tip_ja", "createdAt"]
 
 
+TREND = {}  # 수업 id → 최근 인기(하루 평균 조회수). 「인기 순위」 보충에만 쓰고 내보내지 않음
 _SOCIAL_CACHE = {}  # build_social 이 받은 후기·추천·저장 수 (이맘때 계산에서 다시 씀)
 
 
@@ -650,6 +657,70 @@ def build_seasonal(rows):
           f"최근 28일 후기 {b_cnt['r']}·저장 {b_cnt['s']}·추천 {b_cnt['l']}) · 후보 {len(scored)}개{'' if not same else ' · 변경 없음'}")
 
 
+# ----------------------------- 「인기 순위」 (오늘·이번 주·이번 달) -----------------------------
+# data/popular.json: 기간마다 이 사이트의 후기(3)·저장(2)·추천(1) 가중 합으로 순위를 매긴다.
+#   변동(▲▼·NEW)은 바로 앞 같은 길이 기간의 순위와 비교한다.
+#   반응이 있는 수업이 POPULAR_TOP 개보다 적으면, 유튜브에서 최근 뜨는 영상(최근 1년, 하루 평균 조회수)으로 채운다.
+#   보충한 수업은 f:1 로 표시한다(사이트에서 '요즘 뜨는' 표시). 조회수 숫자는 내보내지 않는다.
+POPULAR_TOP = 100
+POPULAR_WIN = {"day": 1, "week": 7, "month": 30}
+
+
+def build_popular(rows):
+    today = kst_today()
+    ids = {o["id"]: o for o in rows}
+    events, src = fetch_seasonal_events(today - dt.timedelta(days=2 * max(POPULAR_WIN.values())))
+    ev = []
+    for d, a, k, n in events:
+        if a in ids and k in SEASONAL_W and n > 0:
+            try:
+                ev.append((dt.date.fromisoformat(d), a, k, n))
+            except ValueError:
+                pass
+    trend = sorted((i for i in ids if TREND.get(i, 0) > 0), key=lambda i: (-TREND[i], i))
+    out = {"date": today.isoformat(), "source": src, "w": {}}
+    for key, days in POPULAR_WIN.items():
+        cur_from = today - dt.timedelta(days=days - 1)
+        prev_from, prev_to = cur_from - dt.timedelta(days=days), cur_from - dt.timedelta(days=1)
+
+        def tally(f, t_):
+            sc, cnt = {}, {}
+            for day, a, k, n in ev:
+                if f <= day <= t_:
+                    sc[a] = sc.get(a, 0) + SEASONAL_W[k] * n
+                    c = cnt.setdefault(a, {"r": 0, "s": 0, "l": 0})
+                    c[k] += n
+            return sc, cnt
+        cur, cnt = tally(cur_from, today)
+        prev, _ = tally(prev_from, prev_to)
+        order = lambda m: sorted(m, key=lambda i: (-m[i], -TREND.get(i, 0), i))
+        prev_rank = {i: n + 1 for n, i in enumerate(order(prev))}
+        top = []
+        for n, i in enumerate(order(cur)[:POPULAR_TOP]):
+            c = cnt[i]
+            top.append({"id": i, "l": c["l"], "s": c["s"], "r": c["r"], "p": prev_rank.get(i, 0)})
+        seen = {x["id"] for x in top}
+        per_ch = {}
+        for i in trend:
+            if len(top) >= POPULAR_TOP:
+                break
+            ch = ids[i].get("channelId") or ids[i].get("channel")
+            if i not in seen and per_ch.get(ch, 0) < 2:  # 보충은 한 채널에서 2개까지만
+                per_ch[ch] = per_ch.get(ch, 0) + 1
+                top.append({"id": i, "f": 1})
+                seen.add(i)
+        out["w"][key] = {"from": cur_from.isoformat(), "to": today.isoformat(), "n": len(cur), "prev": len(prev), "top": top}
+    path = OUT / "popular.json"
+    txt = dump(out)
+    try:
+        same = path.read_text(encoding="utf-8") == txt
+    except Exception:
+        same = False
+    if not same:
+        path.write_text(txt, encoding="utf-8")
+    print("인기 순위: " + " · ".join(f"{k} 반응 {v['n']}개" for k, v in out["w"].items()) + f" (보충 후보 {len(trend)}개)")
+
+
 # ----------------------------- 공유 미리보기 -----------------------------
 def short(t, n):
     t = re.sub(r"\s+", " ", s(t))
@@ -802,6 +873,10 @@ def main():
         build_seasonal(visible)
     except Exception as e:  # 이 기능이 실패해도 발행은 계속
         print(f"경고: 이맘때 추천을 만들지 못함 — {e}")
+    try:
+        build_popular(visible)
+    except Exception as e:  # 이 기능이 실패해도 발행은 계속
+        print(f"경고: 인기 순위를 만들지 못함 — {e}")
     if not GAS_URL:
         for p in [OUT / "social.json"]:
             p.unlink(missing_ok=True)
